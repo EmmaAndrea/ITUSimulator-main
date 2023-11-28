@@ -5,6 +5,8 @@ import itumulator.world.Location;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlant;
 import ourcode.Setup.IDGenerator;
 
+// Yaaay det virker!
+
 /**
  * Represents a Grass entity in a simulated world.
  * Grass is a type of NonBlockingPlant that has the ability to spread under certain conditions.
