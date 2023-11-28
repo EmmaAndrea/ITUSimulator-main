@@ -19,7 +19,7 @@ public abstract class Plant extends Organism {
      * @param world providing details of the position on which the actor is currently located and much more.
      */
     @Override
-    public void act(World world) {
-        super.act(world);
+    public void plantAct(World world) {
+        super.plantAct(world);
     }
 }

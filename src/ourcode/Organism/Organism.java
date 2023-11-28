@@ -6,6 +6,7 @@ import itumulator.world.World;
 
 import ourcode.Setup.IDGenerator;
 
+import java.util.HashMap;
 import java.util.Random;
 
 /**
@@ -32,6 +33,7 @@ public abstract class Organism implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
+
     /**
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.
@@ -41,6 +43,7 @@ public abstract class Organism implements Actor {
         id_generator = original_id_generator;
         id = id_generator.getID();
         age = 1;
+        nutritional_value = 2;
     }
 
     /**
@@ -54,6 +57,9 @@ public abstract class Organism implements Actor {
         }
 
         world.setTile(location, this); // If it's empty, spawn organism into this location.
+
+        id_generator.addLocationToIdMap(location, id);
+        id_generator.addAnimalToIdMap(id, this);
     }
 
 
@@ -75,6 +81,28 @@ public abstract class Organism implements Actor {
      * The general act method, calling both animalAct() and plantAct()
      */
     public void act(World world) {
+        animalAct(world);
+        plantAct(world);
+    }
+
+    /**
+     * An act method for animals. The animals increases their age by 1 for each act by calling the 'ageIncrease()' method
+     */
+    public void animalAct(World world) {
+        ageIncrease(world);
+    }
+
+    /**
+     * An act method for plants. Plants will have their age increased by 1 calling the 'ageIncrease()' method
+     */
+    public void plantAct(World world) {
+        ageIncrease(world);
+    }
+
+    /**
+     * A method for increasing animals age. If the age meets a certain threshold, it will 'die' calling the 'delete()' method from the World class
+     */
+    public void ageIncrease(World world) {
         age++;
 
         // An organism can die of old age.

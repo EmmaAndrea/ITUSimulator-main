@@ -20,6 +20,7 @@ public abstract class NonBlockingPlant extends Plant implements NonBlocking {
 
     /**
      * Spawns a non-blocking plant in a random location that does not already contain a non-blocking.
+     * Adds the nonblockingplant to the id_generator hashmaps.
      */
     @Override
     public void spawn(World world) {
@@ -30,13 +31,16 @@ public abstract class NonBlockingPlant extends Plant implements NonBlocking {
             location = getRandomLocation(world);
         }
         world.setTile(location, this);
+        id_generator.addAnimalToIdMap(id, this);
+        id_generator.addLocationToIdMap(location, id);
+        // add plant to id list with entities location.
     }
 
     /**
      * Calls super.act.
      */
     @Override
-    public void act(World world) {
-        super.act(world);
+    public void plantAct(World world) {
+        super.plantAct(world);
     }
 }

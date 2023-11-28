@@ -19,6 +19,7 @@ public class Grass extends NonBlockingPlant {
     public Grass(IDGenerator original_id_generator) {
         super(original_id_generator, "grass");
         max_age = 200;
+        nutritional_value = 3;
     }
 
     /**
@@ -28,8 +29,8 @@ public class Grass extends NonBlockingPlant {
 
 
     @Override
-    public void act(World world) {
-        super.act(world);
+    public void plantAct(World world) {
+        super.plantAct(world);
 
         // After a given amount of steps, the grass will spread
         if (age % 5 == 0) {
@@ -58,5 +59,7 @@ public class Grass extends NonBlockingPlant {
             Grass spreadedgrass = new Grass(id_generator);
             world.setTile(spreadLocation, spreadedgrass);
         }
+        id_generator.addAnimalToIdMap(id, this);
+        id_generator.addLocationToIdMap(spreadLocation, id);
     }
 }

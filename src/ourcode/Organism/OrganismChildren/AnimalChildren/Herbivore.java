@@ -22,21 +22,13 @@ public abstract class Herbivore extends Animal {
 
 
     /**
-     * Needs to be adapted so any herbivore can eat any plant!!!
+     * checks if a given Herbivore is hungry enough and will use the 'eat()' method.
      */
     @Override
-    public void act(World world) {
-        super.act(world);
-        // checks if the hunger of a given Herbivore has reached the limit of hunger, then 'kills' it.
-        // the 'else if' checks if a given Herbivore is 'hungry' and will use the 'eat()' method.
-        if (getHunger() > getMaxHunger()) {
-            world.delete(this);
-        } else if (getHunger() >= 2 && world.containsNonBlocking(world.getCurrentLocation())) { // problem here, what if rabbits eats turtle satisfying 3 hunger, the hunger = -1
-            Location current_location = world.getCurrentLocation();
+    public void herbivoreAct(World world) {
 
-            world.delete(world.getNonBlocking(current_location));
-
-            // eat();
+        if (world.containsNonBlocking(world.getCurrentLocation()) && hunger >= getStandingOnNutritionalValue(world)) {
+            eat(world);
         }
     }
 

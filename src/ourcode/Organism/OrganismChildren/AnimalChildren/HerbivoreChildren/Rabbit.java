@@ -32,10 +32,10 @@ public class Rabbit extends Herbivore {
     /**
      * Gives the behaviour of a Rabbit; how a rabbit should 'act'.
      */
-    @Override
-    public void act(World world) {
+
+    public void herbivoreAct(World world) {
         // Gets older and hungrier, dies if too old or hungry
-        super.act(world);
+        super.herbivoreAct(world);
 
         // if (condition), breed
 

@@ -7,7 +7,9 @@ import ourcode.Setup.IDGenerator;
 
 /**
  * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
- *  class and has the field hunger.
+ *  class and has the fields hunger and max hunger.
+ *  The animal class controls the movement of an animal
+ *  the eat method is here, which gets the correct nutritional value of the organism being eaten
  */
 public abstract class Animal extends Organism {
     public int hunger;
@@ -23,21 +25,28 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Spawns an Animal at a random location.
+     * Finds nutritional value of the object we are standing on
      */
-    public void eat(Organism organism) {
-        // Eats another organism and deducts hunger by the nutritional value of the eaten organism.
-        hunger -= organism.getNutritionalValue();
+    public int getStandingOnNutritionalValue(World world) {
+        // Deducts hunger by the nutritional value of the eaten organism.
+        Organism organism = id_generator.getOrganism(world.getLocation(world.getNonBlocking(world.getCurrentLocation())));
+        return organism.getNutritionalValue();
+    }
 
-        // delete eaten organism from world
-        // our code here
+    /**
+     * A method for giving animals the ability to eat. They decrease their 'hunger' by a certain amount of 'nutritional value'
+     *  and the object the animal is standing on will be 'eaten' by calling the 'delete()' method from the World class
+     */
+    public void eat(World world) {
+        hunger -= getStandingOnNutritionalValue(world);
+        world.delete(world.getNonBlocking(world.getCurrentLocation()));
     }
 
     /**
      * Calls the act method from Actor and overrides the method. Increases hunger by 1.
      */
-    public void act(World world) {
-        super.act(world);
+    public void animalAct(World world) {
+        super.animalAct(world);
 
         // Animal gains hunger by 1.
         hunger++;
@@ -59,6 +68,10 @@ public abstract class Animal extends Organism {
             herbivoreAct(world);
         }
     }
+
+    public void herbivoreAct(World world) {}
+
+    //when food is removed from world, take away hunger from animal
 
         /**
          * Gives the ability to breed with a partner, if there exists another one of its kind.
@@ -92,4 +105,6 @@ public abstract class Animal extends Organism {
     public void deductHunger(int nutritional_value) {
         hunger -= nutritional_value;
     }
+
+
 }
