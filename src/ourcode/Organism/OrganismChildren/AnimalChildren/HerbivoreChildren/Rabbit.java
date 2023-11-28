@@ -13,11 +13,12 @@ import ourcode.Obstacles.Burrow;
  * Represents a Rabbit entity in the simulated world.
  * Rabbits are a type of Herbivore.
  * Each Rabbit has a unique identifier and a maximum hunger level as well as a life_counter.
- * The behavior of a Rabbit in the simulated world can be defined in the {@code act} method
- * .
+ * The behavior of a Rabbit in the simulated world can be defined in the {@code act} method.
  */
 
 public class Rabbit extends Herbivore {
+    Burrow burrow;
+    boolean has_burrow;
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "rabbit";
@@ -45,7 +46,7 @@ public class Rabbit extends Herbivore {
 
     /**
      * Make burrow from location where the rabbit currently is.
-     * adds rabbit to list of residents
+     * Adds rabbit to list of residents
      */
     public void makeBurrow(int id, World world, Rabbit rabbit) {
         Location rabbitLocation = world.getLocation(rabbit);
@@ -53,6 +54,13 @@ public class Rabbit extends Herbivore {
         burrow.addRabbit(this);
     }
 
+    /**
+     * sets 'has_burrow' boolean to 'True'. This is helpful for adding a rabbit to a resident,
+     * making sure the rabbit won't go anywhere else
+     */
+    public void setBurrow() {
+        has_burrow = true;
+    }
     /**
      *
      */
@@ -68,9 +76,9 @@ public class Rabbit extends Herbivore {
     }
 
     /**
-     *
+     * Puts a rabbit at the location where the burrow is located
      */
-    public void exitBurrow(int burrow_id, World world) {
-        //world.setTile(burrow_id.getBurrowLocation);
+    public void exitBurrow(World world) {
+        world.setTile(burrow.getBurrowLocation(), this);
     }
 }

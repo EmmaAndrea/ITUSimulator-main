@@ -16,6 +16,7 @@ import java.util.List;
 public class Burrow implements NonBlocking {
     // list of rabbits which live there
     List<Rabbit> residents;
+    List<Location> listOfBurrowLocation;
     int burrow_id;
     Location burrow_location;
 
@@ -25,6 +26,8 @@ public class Burrow implements NonBlocking {
     public Burrow(int burrow_id, World world, Location location) {
         residents = new ArrayList<>();
         this.burrow_id = burrow_id;
+        listOfBurrowLocation = new ArrayList<>();
+        listOfBurrowLocation.add(location);
         world.setTile(location, this);
         burrow_location = location;
     }
@@ -32,7 +35,7 @@ public class Burrow implements NonBlocking {
     /**
      * method for adding rabbit to list of residents
      */
-    public void addRabbit(Rabbit rabbit){
+    public void addResident(Rabbit rabbit){
         residents.add(rabbit);
     }
 
@@ -52,5 +55,13 @@ public class Burrow implements NonBlocking {
 
     public Location getBurrowLocation() {
         return burrow_location;
+    }
+
+    public List<Location> getListOfBurrowLocation() {
+        return listOfBurrowLocation;
+    }
+
+    public List<Rabbit> getResidents(Rabbit rabbit) {
+        return residents;
     }
 }
