@@ -69,9 +69,12 @@ public abstract class Animal extends Organism {
         }
     }
 
-    public void herbivoreAct(World world) {}
+    /**
+     * explain here why we chose to have an herbivoreAct method
+     */
+    public void herbivoreAct(World world) {
 
-    //when food is removed from world, take away hunger from animal
+    }
 
         /**
          * Gives the ability to breed with a partner, if there exists another one of its kind.

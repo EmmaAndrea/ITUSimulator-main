@@ -3,7 +3,9 @@ package ourcode.Setup;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.World;
+import itumulator.world.Location;
 
+import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
@@ -15,7 +17,9 @@ import java.io.File;
  */
 public class ProgramRunner {
     // fields
-    Program p;
+    private Program p;
+
+    private IDGenerator original_id_generator;
 
     // constructor
     public ProgramRunner() {
@@ -27,17 +31,17 @@ public class ProgramRunner {
      * Adds actors to the simulation as dictated in the input file.
      * @throws Exception If an error occurs during the simulation setup or execution.
      */
-    public void create() throws Exception {
+    public void create(String file_name) throws Exception {
         // create IDGenerator
-        IDGenerator original_id_generator = new IDGenerator();
+        original_id_generator = new IDGenerator();
 
         // create scanner
         // Scanner scanner = new Scanner(System.in);
 
         // get the file
         // later: String fileName = scanner.nextLine();
-        String fileName = "./data/t1-2cde.txt";
-        File file = new File(fileName);
+
+        File file = new File(file_name);
 
         // read file with input-reader
         InputReader inputReader = new InputReader(file.getAbsolutePath());
@@ -71,7 +75,6 @@ public class ProgramRunner {
             int id = original_id_generator.getID();
             Rabbit rabbit = new Rabbit(original_id_generator);
             rabbit.spawn(world);
-
         }
 
         // spawns grass
@@ -80,15 +83,7 @@ public class ProgramRunner {
             int id = original_id_generator.getID();
             Grass grass = new Grass(original_id_generator);
             grass.spawn(world);
-        }
-
-        // displays world
-        p.show();
-
-        System.out.println("");
-        // run the simulation
-        for (int j = 0; j < 101; j++) {
-            p.simulate();
+            world.setCurrentLocation(world.getLocation(grass));
         }
     }
 
@@ -97,19 +92,33 @@ public class ProgramRunner {
      *
      * @param step_count The number of simulation steps to run.
      */
-    /*
-    public void runSimulation ( int step_count){
+
+    public void runSimulation (int step_count){
         // show the simulation
         p.show();
 
         // run the simulation
-        for (int i = 0; i < 200; i++) {
+        for (int i = 0; i < step_count; i++) {
             p.simulate();
         }
-
-
     }
 
-     */
+    public World getWorld(){
+        return p.getWorld();
+    }
+
+    public Object getObject(){
+        World world = p.getWorld();
+        Location location = world.getCurrentLocation();
+        return world.getEntities().get(location);
+    }
+
+    public Organism getOrganism(){
+        return original_id_generator.getOrganism(p.getWorld().getCurrentLocation());
+    }
+
+    public IDGenerator getOriginal_id_generator(){
+        return original_id_generator;
+    }
 }
 

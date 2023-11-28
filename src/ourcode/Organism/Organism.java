@@ -38,8 +38,7 @@ public abstract class Organism implements Actor {
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.
      */
-    public Organism(IDGenerator original_id_generator, String type) {
-        this.type = type;
+    public Organism(IDGenerator original_id_generator) {
         id_generator = original_id_generator;
         id = id_generator.getID();
         age = 1;
