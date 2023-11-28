@@ -50,19 +50,29 @@ public class Rabbit extends Herbivore {
      * Make burrow
      * add rabbit to list of residents
      */
-    public void makeBurrow(int id, World world, Location location) {
-        Burrow burrow = new Burrow(id, world, location);
+    public void makeBurrow(int id, World world, Rabbit rabbit) {
+        Location rabbitLocation = world.getLocation(rabbit);
+        Burrow burrow = new Burrow(id, world, rabbitLocation);
         burrow.addRabbit(this);
     }
 
+    /**
+     *
+     */
     public void enterBurrow(int burrow_id, World world) {
         world.remove(this);
     }
 
+    /**
+     *
+     */
     public void joinBurrow(int burrow_id, World world) {
 
     }
 
+    /**
+     *
+     */
     public void exitBurrow(int burrow_id, World world) {
         //world.setTile(burrow_id.getBurrowLocation);
     }

@@ -10,7 +10,7 @@ import java.util.List;
 
 /**
  * The Burrow class represents holes and are also the home of rabbits. The Burrow class can add rabbits to live inside
- *  or
+ *  or remove
  */
 
 public class Burrow implements NonBlocking {
@@ -34,6 +34,13 @@ public class Burrow implements NonBlocking {
      */
     public void addRabbit(Rabbit rabbit){
         residents.add(rabbit);
+    }
+
+    /**
+     * removes a given rabbit from the list of residents
+     */
+    public void removeRabbit(Rabbit rabbit) {
+        residents.remove(rabbit);
     }
 
     /**
