@@ -25,6 +25,7 @@ public class Rabbit extends Herbivore {
         max_hunger = 10;
         nutritional_value = 3;
         max_age = 100;
+        has_burrow = false;
     }
 
     public void spawn(World world) {
@@ -35,9 +36,8 @@ public class Rabbit extends Herbivore {
         // Gets older and hungrier, dies if too old or hungry
         super.herbivoreAct(world);
 
-        // if (condition), breed
-
-        // if (condition), make burrow
+        // Makes a burrow rabbit does not already have a burrow.
+        if (!has_burrow) makeBurrow();
 
         // if (isNight()), find nearby burrow and enter
 

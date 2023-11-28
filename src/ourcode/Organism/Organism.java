@@ -78,34 +78,29 @@ public abstract class Organism implements Actor {
      * The general act method, calling both animalAct() and plantAct()
      */
     public void act(World world) {
-        animalAct(world);
-        plantAct(world);
+        age++;
+        // An organism can die of old age.
+        if (age > max_age) {
+            world.delete(this);
+        } else if(world.getEntities().containsKey(this)) {
+            animalAct(world);
+            if (world.getEntities().containsKey(this)) {
+                plantAct(world);
+            }
+        }
     }
 
     /**
      * An act method for animals. The animals increases their age by 1 for each act by calling the 'ageIncrease()' method
      */
     public void animalAct(World world) {
-        ageIncrease(world);
     }
 
     /**
      * An act method for plants. Plants will have their age increased by 1 calling the 'ageIncrease()' method
      */
     public void plantAct(World world) {
-        ageIncrease(world);
-    }
 
-    /**
-     * A method for increasing animals age. If the age meets a certain threshold, it will 'die' calling the 'delete()' method from the World class
-     */
-    public void ageIncrease(World world) {
-        age++;
-
-        // An organism can die of old age.
-        if (age > max_age) {
-            world.delete(this);
-        }
     }
 
     /**

@@ -156,10 +156,11 @@ public abstract class Animal extends Organism {
     /**
      * Animal dies of hunger if it is hungrier than its max hunger.
      */
-    public void checkHunger(World world) {
+    public boolean checkHunger(World world) {
         if (hunger > max_hunger) {
             world.delete(this);
-        }
+            return false;
+        } return true;
     }
 
     /**

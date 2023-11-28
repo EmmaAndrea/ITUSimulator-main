@@ -21,6 +21,7 @@ public class ProgramRunner {
 
     private IDGenerator original_id_generator;
 
+    private Grass grass;
     // constructor
     public ProgramRunner() {
         // constructor code
@@ -81,7 +82,7 @@ public class ProgramRunner {
         int amountOfGrass = inputReader.getAmount("grass");
         for (int i = 0; i < amountOfGrass; i++) {
             int id = original_id_generator.getID();
-            Grass grass = new Grass(original_id_generator);
+            grass = new Grass(original_id_generator);
             grass.spawn(world);
             world.setCurrentLocation(world.getLocation(grass));
         }
@@ -119,6 +120,10 @@ public class ProgramRunner {
 
     public IDGenerator getOriginal_id_generator(){
         return original_id_generator;
+    }
+
+    public Grass getGrass(){
+        return grass;
     }
 }
 
