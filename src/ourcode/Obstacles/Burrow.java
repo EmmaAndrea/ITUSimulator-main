@@ -46,4 +46,6 @@ public class Burrow implements NonBlocking {
     public Location getBurrowLocation() {
         return burrow_location;
     }
+
+    //hej fra emma
 }
