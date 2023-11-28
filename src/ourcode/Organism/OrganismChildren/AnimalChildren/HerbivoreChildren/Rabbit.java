@@ -1,11 +1,9 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 
 import itumulator.world.World;
-import itumulator.world.Location;
-
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
-import ourcode.Obstacles.Burrow;
 
 // yooooo! haha :D
 
@@ -39,19 +37,25 @@ public class Rabbit extends Herbivore {
         // Makes a burrow rabbit does not already have a burrow.
         if (!has_burrow) makeBurrow();
 
-        // if (isNight()), find nearby burrow and enter
-
-        //
+        // if (world.isNight()), find nearby burrow and enter
+        if (world.isNight()) {
+            // go to burrow
+        }
     }
 
     /**
      * Make burrow from location where the rabbit currently is.
      * Adds rabbit to list of residents
      */
-    public void makeBurrow(int id, World world, Rabbit rabbit) {
-        Location rabbitLocation = world.getLocation(rabbit);
-        Burrow burrow = new Burrow(id, world, rabbitLocation);
-        burrow.addRabbit(this);
+    public void makeBurrow(World world) {
+        // Creates new burrow at the location of the burrow creator.
+        burrow = new Burrow(id_generator.getID(), world, world.getLocation(this));
+
+        // Adds rabbit to the list of residents of the burrow, and then removes rabbit from world.
+        burrow.addResident(this);
+
+        // It is now true that the rabbit has a burrow.
+        has_burrow = true;
     }
 
     /**
@@ -62,17 +66,28 @@ public class Rabbit extends Herbivore {
         has_burrow = true;
     }
     /**
-     *
+     * Puts a rabbit inside a burrow, 'removing' them from the world and adding them to the lists of residents
+     *  if the specified rabbit doesn't exist in the burrow
      */
-    public void enterBurrow(int burrow_id, World world) {
-        world.remove(this);
+    public void enterBurrow(World world) {
+        if (!this.has_burrow) {
+            burrow.addResident(this);
+            this.setBurrow();
+            world.remove(this);
+        } else {
+            world.remove(this);
+        }
     }
 
     /**
-     *
+     * Currently magically transports rabbit to its burrow.
+     * We should fix it so that it is incremental by step.
      */
-    public void joinBurrow(int burrow_id, World world) {
-
+    public void goToBed(World world) {
+        if (world.isNight()) {
+            world.move(this, burrow.getBurrowLocation()); // give statements for
+            world.remove(this);
+        }
     }
 
     /**

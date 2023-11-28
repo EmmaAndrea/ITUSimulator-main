@@ -3,10 +3,8 @@ package ourcode.Organism;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-
 import ourcode.Setup.IDGenerator;
 
-import java.util.HashMap;
 import java.util.Random;
 
 /**

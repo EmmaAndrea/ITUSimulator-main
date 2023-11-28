@@ -19,16 +19,14 @@ public class Grass extends NonBlockingPlant {
     public Grass(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "grass";
-        max_age = 200;
-        nutritional_value = 3;
+        max_age = 30;
+        nutritional_value = 4;
     }
 
     /**
      * Controls what grass does when act() is called from the world.
-     * Grass spreads after a given time (lifeCounter).
+     * Grass spreads every fifth step.
      */
-
-
     @Override
     public void plantAct(World world) {
         super.plantAct(world);
@@ -56,11 +54,13 @@ public class Grass extends NonBlockingPlant {
         }
 
         // If a suitable location is found, spread the grass
+        Grass spreaded_grass = null;
         if (spreadLocation != null) {
-            Grass spreadedgrass = new Grass(id_generator);
-            world.setTile(spreadLocation, spreadedgrass);
+            spreaded_grass = new Grass(id_generator);
+            world.setTile(spreadLocation, spreaded_grass);
+            id_generator.addAnimalToIdMap(spreaded_grass.getId(), spreaded_grass);
+            id_generator.addLocationToIdMap(spreadLocation, spreaded_grass.getId());
         }
-        id_generator.addAnimalToIdMap(id, this);
-        id_generator.addLocationToIdMap(spreadLocation, id);
+
     }
 }

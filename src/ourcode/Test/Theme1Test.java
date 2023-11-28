@@ -1,14 +1,17 @@
 package ourcode.Test;
+
+import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
-import ourcode.Setup.ProgramRunner;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import ourcode.Setup.ProgramRunner;
 
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * A class which tests all the requirements of theme 1
