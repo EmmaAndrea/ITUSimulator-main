@@ -7,6 +7,8 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 import ourcode.Obstacles.Burrow;
 
+// yooooo! haha :D
+
 /**
  * Represents a Rabbit entity in the simulated world.
  * Rabbits are a type of Herbivore.
