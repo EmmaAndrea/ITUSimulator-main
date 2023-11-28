@@ -3,6 +3,7 @@ package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 import itumulator.world.World;
 import itumulator.world.Location;
 
+import ourcode.Conditions.Hierarchy;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 import ourcode.Obstacles.Burrow;
@@ -21,6 +22,7 @@ public class Rabbit extends Herbivore {
         max_hunger = 10;
         nutritional_value = 3;
         max_age = 100;
+        Hierarchy myVar = Hierarchy.LOW;
     }
 
     public void spawn(World world) {
