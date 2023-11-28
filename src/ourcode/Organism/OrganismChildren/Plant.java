@@ -11,8 +11,8 @@ import ourcode.Setup.IDGenerator;
  */
 public abstract class Plant extends Organism {
 
-    public Plant(IDGenerator original_id_generator, String type) {
-        super(original_id_generator, type);
+    public Plant(IDGenerator original_id_generator) {
+        super(original_id_generator);
     }
 
     /**

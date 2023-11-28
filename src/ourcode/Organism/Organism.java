@@ -16,7 +16,7 @@ import java.util.Random;
  */
 public abstract class Organism implements Actor {
     // Type (subclass) of organism
-    private final String type;
+    protected String type;
 
     // Life counter for the organism. Used for when to die or breed.
     protected int age;
@@ -60,8 +60,6 @@ public abstract class Organism implements Actor {
         id_generator.addLocationToIdMap(location, id);
         id_generator.addAnimalToIdMap(id, this);
     }
-
-
 
     /**
      * Returns a random location.

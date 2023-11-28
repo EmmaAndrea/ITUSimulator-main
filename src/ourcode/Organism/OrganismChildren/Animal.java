@@ -3,7 +3,11 @@ package ourcode.Organism.OrganismChildren;
 import itumulator.world.World;
 import itumulator.world.Location;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.IDGenerator;
+
+import java.util.ArrayList;
+import java.util.Random;
 
 /**
  * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
@@ -18,8 +22,8 @@ public abstract class Animal extends Organism {
     /**
      * The constructor of an Animal.
      */
-    public Animal(IDGenerator original_id_generator, String type) {
-        super(original_id_generator, type); // life_counter = 1;
+    public Animal(IDGenerator original_id_generator) {
+        super(original_id_generator); // life_counter = 1;
         hunger = 1;
         max_hunger = 1;
     }
@@ -43,30 +47,25 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Calls the act method from Actor and overrides the method. Increases hunger by 1.
+     * Calls the act method from Organism.
+     * Increases hunger by 1.
+     * Dies, if max hunger is reached.
+     * Moves, if possible.
+     * Breeds, if circumstances are met.
+     * Calls herbivoreAct().
      */
     public void animalAct(World world) {
         super.animalAct(world);
 
-        // Animal gains hunger by 1.
         hunger++;
 
-        // An animal can die of hunger if it is hungrier than its max hunger.
-        if (hunger > max_hunger) {
-            world.delete(this);
-        } else {
-            // Sets the new location of the animal to be the same, if there is nowhere to go
-            Location new_location = world.getCurrentLocation();
+        checkHunger(world);
 
-            // Finds a random free tile.
-            for (Location location : world.getEmptySurroundingTiles(world.getCurrentLocation())) {
-                new_location = location;
-            }
-            // Moves animal to this new tile
-            world.move(this, new_location);
+        nextMove(world);
 
-            herbivoreAct(world);
-        }
+        //checkBreed(world);
+
+        herbivoreAct(world);
     }
 
     /**
@@ -76,18 +75,75 @@ public abstract class Animal extends Organism {
 
     }
 
-        /**
-         * Gives the ability to breed with a partner, if there exists another one of its kind.
-         */
-    public void breed(World world) {
-        // only if there exists 2 or more rabbits - check entities list?
-        // only if the rabbits are 20 steps old (modulo 20, only every 20 steps)
-        // only if there is space for one more rabbit
-        // check these factors in the act method
-
+    /**
+     * Gives the ability to breed with a partner, if there exists another one of its kind in surrounding tiles
+     */
+    public void breed(World world, Animal animal) {
         // calls spawn() method from Organism class
-        super.spawn(world); // should make new rabbit with new id, but doesn't
+        // not sure if this works yet
+        // super.spawn(world); // should make new rabbit with new id, but doesn't
 
+        // Retrieve current location
+        Location currentLocation = world.getLocation(this);
+
+        // Find a random suitable location to spawn baby
+        ArrayList<Location> possibleSpawnLocations = new ArrayList<>();
+
+        for (Location surroundingTile : world.getSurroundingTiles(currentLocation, 1)) {
+            if (world.isTileEmpty(surroundingTile)) {
+                possibleSpawnLocations.add(surroundingTile);
+            }
+        }
+
+        Random random = new Random();
+        int random_index = random.nextInt(0, possibleSpawnLocations.size()-1);
+
+
+        String animal_type = animal.getType();
+        switch (animal_type) {
+            case "rabbit":
+                //Animal baby = new Rabbit(IDGenerato);
+                break;
+            case "wolf":
+                // Animal baby_wolf = new Wolf();
+                break;
+            default:
+                // Animal baby_wolf = new W:
+
+        }
+
+        //world.setTile(location, this); // If it's empty, spawn organism into this location.
+
+        //id_generator.addLocationToIdMap(location, id);
+        id_generator.addAnimalToIdMap(id, this);
+
+
+
+
+
+        /*
+        // If a suitable location is found, spread the grass
+        if (spreadLocation != null) {
+            Grass spreadedgrass = new Grass(id_generator);
+            world.setTile(spreadLocation, spreadedgrass);
+        }
+        id_generator.addAnimalToIdMap(id, this);
+        id_generator.addLocationToIdMap(spreadLocation, id);
+         */
+    }
+
+    /**
+     * Checks if the circumstances for breeding are met:
+     * If there is a nearby same animal type;
+     * If animal is older than 20;
+     * If there is space for one more animal.
+     */
+    public void checkBreed(World world, Animal animal) {
+        // only if there is another one of its type in the surrounding tiles
+            // only if the animal is 20 steps old
+                // only if there is space for one more rabbit
+                    // only if they haven't bred in 10 steps
+                        breed(world, animal);
     }
 
     /**
@@ -97,17 +153,27 @@ public abstract class Animal extends Organism {
 
     }
 
-    public int getHunger() {
-        return hunger;
+    /**
+     * Animal dies of hunger if it is hungrier than its max hunger.
+     */
+    public void checkHunger(World world) {
+        if (hunger > max_hunger) {
+            world.delete(this);
+        }
     }
 
-    public int getMaxHunger() {
-        return max_hunger;
+    /**
+     * Moves to new tile, if there is a free surrounding tile.
+     */
+    public void nextMove(World world) {
+        // If there are no free surrounding tiles, then animal stays in position.
+        Location new_location = world.getCurrentLocation();
+
+        // Finds a random free tile.
+        for (Location location : world.getEmptySurroundingTiles(world.getCurrentLocation())) {
+            new_location = location;
+        }
+        // Moves animal to this new tile
+        world.move(this, new_location);
     }
-
-    public void deductHunger(int nutritional_value) {
-        hunger -= nutritional_value;
-    }
-
-
 }

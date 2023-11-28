@@ -12,8 +12,8 @@ import ourcode.Setup.IDGenerator;
 
 public abstract class Herbivore extends Animal {
 
-    public Herbivore(IDGenerator original_id_generator, String type) {
-        super(original_id_generator, type);
+    public Herbivore(IDGenerator original_id_generator) {
+        super(original_id_generator);
     }
 
     public void spawn(World world) {

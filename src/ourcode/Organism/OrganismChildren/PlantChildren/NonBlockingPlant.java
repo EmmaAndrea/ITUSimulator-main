@@ -14,8 +14,8 @@ import ourcode.Setup.IDGenerator;
  * in the world that do not contain other non-blocking entities.
  */
 public abstract class NonBlockingPlant extends Plant implements NonBlocking {
-    public NonBlockingPlant(IDGenerator original_id_generator, String type) {
-        super(original_id_generator, type);
+    public NonBlockingPlant(IDGenerator original_id_generator) {
+        super(original_id_generator);
     }
 
     /**

@@ -17,7 +17,8 @@ public class Grass extends NonBlockingPlant {
      * The constructor of a new grass.
      */
     public Grass(IDGenerator original_id_generator) {
-        super(original_id_generator, "grass");
+        super(original_id_generator);
+        type = "grass";
         max_age = 200;
         nutritional_value = 3;
     }

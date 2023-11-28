@@ -19,7 +19,8 @@ import ourcode.Obstacles.Burrow;
 
 public class Rabbit extends Herbivore {
     public Rabbit(IDGenerator original_id_generator) {
-        super(original_id_generator, "Rabbit");
+        super(original_id_generator);
+        type = "rabbit";
         max_hunger = 10;
         nutritional_value = 3;
         max_age = 100;
@@ -28,10 +29,6 @@ public class Rabbit extends Herbivore {
     public void spawn(World world) {
         super.spawn(world);
     }
-
-    /**
-     * Gives the behaviour of a Rabbit; how a rabbit should 'act'.
-     */
 
     public void herbivoreAct(World world) {
         // Gets older and hungrier, dies if too old or hungry
@@ -47,8 +44,8 @@ public class Rabbit extends Herbivore {
     }
 
     /**
-     * Make burrow
-     * add rabbit to list of residents
+     * Make burrow from location where the rabbit currently is.
+     * adds rabbit to list of residents
      */
     public void makeBurrow(int id, World world, Rabbit rabbit) {
         Location rabbitLocation = world.getLocation(rabbit);
