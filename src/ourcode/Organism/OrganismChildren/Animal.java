@@ -45,17 +45,19 @@ public abstract class Animal extends Organism {
         // An animal can die of hunger if it is hungrier than its max hunger.
         if (hunger > max_hunger) {
             world.delete(this);
-        }
+        } else {
+            // Sets the new location of the animal to be the same, if there is nowhere to go
+            Location new_location = world.getCurrentLocation();
 
-        // Sets the new location of the animal to be the same, if there is nowhere to go
-        Location new_location = world.getCurrentLocation();
+            // Finds a random free tile.
+            for (Location location : world.getEmptySurroundingTiles(world.getCurrentLocation())) {
+                new_location = location;
+            }
+            // Moves animal to this new tile
+            world.move(this, new_location);
 
-        // Finds a random free tile.
-        for (Location location : world.getEmptySurroundingTiles(world.getCurrentLocation())) {
-            new_location = location;
+            herbivoreAct(world);
         }
-        // Moves animal to this new tile
-        world.move(this, new_location);
     }
 
         /**
@@ -75,7 +77,7 @@ public abstract class Animal extends Organism {
     /**
      * A method for creating a new burrow from the Burrow class.
      */
-    public void makeBurrow(){
+    public void makeBurrow() {
 
     }
 

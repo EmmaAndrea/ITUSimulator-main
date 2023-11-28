@@ -55,7 +55,7 @@ public class Grass extends NonBlockingPlant {
 
         // If a suitable location is found, spread the grass
         if (spreadLocation != null) {
-            Grass spreadedgrass = new Grass(id_generator); // right now, spread grass has same id as original grass
+            Grass spreadedgrass = new Grass(id_generator);
             world.setTile(spreadLocation, spreadedgrass);
         }
     }

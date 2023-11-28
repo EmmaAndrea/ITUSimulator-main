@@ -72,7 +72,7 @@ public abstract class Organism implements Actor {
     }
 
     /**
-     *
+     * The general act method, calling both animalAct() and plantAct()
      */
     public void act(World world) {
         age++;
@@ -104,10 +104,17 @@ public abstract class Organism implements Actor {
         return nutritional_value;
     }
 
+
+    /**
+     * Returns the age threshold.
+     */
     public int getMaxAge() {
         return max_age;
     }
 
+    /**
+     * Returns the id number
+     */
     public int getId() {
         return id;
     }

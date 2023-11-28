@@ -87,7 +87,7 @@ public class ProgramRunner {
 
         System.out.println("");
         // run the simulation
-        for (int j = 0; j < 200; j++) {
+        for (int j = 0; j < 101; j++) {
             p.simulate();
         }
     }
