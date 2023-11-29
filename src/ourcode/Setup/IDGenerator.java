@@ -86,5 +86,9 @@ public class IDGenerator {
     public void addBurrowToIdMap(int id, Burrow burrow){
         map_id_to_burrow.put(id, burrow);
     }
+
+    public Burrow getBurrow(Location location){
+        return map_id_to_burrow.get(map_location_to_id.get(location));
+    }
 }
 

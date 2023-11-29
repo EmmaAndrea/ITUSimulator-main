@@ -59,7 +59,7 @@ public class Grass extends NonBlockingPlant {
             spreaded_grass = new Grass(id_generator);
             world.setTile(spreadLocation, spreaded_grass);
             id_generator.addAnimalToIdMap(spreaded_grass.getId(), spreaded_grass);
-            id_generator.addLocationToIdMap(spreadLocation, spreaded_grass.getId());
+            id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
         }
 
     }

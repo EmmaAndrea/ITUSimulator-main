@@ -2,6 +2,7 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 /**
@@ -24,9 +25,12 @@ public abstract class Herbivore extends Animal {
      */
     @Override
     public void herbivoreAct(World world) {
-
-        if (world.containsNonBlocking(world.getCurrentLocation()) && hunger >= getStandingOnNutritionalValue(world)) {
-            eat(world);
+        if (world.containsNonBlocking(world.getLocation(this))) {
+            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
+                if (hunger >= getStandingOnNutritionalValue(world)) {
+                    eat(world);
+                }
+            }
         }
     }
 }

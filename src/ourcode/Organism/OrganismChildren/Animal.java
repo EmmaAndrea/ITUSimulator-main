@@ -31,7 +31,7 @@ public abstract class Animal extends Organism {
      * Returns the nutritional value of the organism of the current location.
      */
     public int getStandingOnNutritionalValue(World world) {
-        Organism organism = id_generator.getOrganism(world.getLocation(world.getNonBlocking(world.getCurrentLocation())));
+        Organism organism = id_generator.getOrganism(world.getLocation(world.getNonBlocking(world.getLocation(this))));
         return organism.getNutritionalValue();
     }
 
@@ -55,8 +55,9 @@ public abstract class Animal extends Organism {
      * Breeds, if circumstances are met.
      * Calls herbivoreAct().
      */
-    public void animalAct(World world) {
-        super.animalAct(world);
+
+    @Override
+    public boolean animalAct(World world) {
 
         hunger++;
         days_since_last_birth++;
@@ -66,7 +67,12 @@ public abstract class Animal extends Organism {
             nextMove(world);
             checkBreed(world);
             herbivoreAct(world);
+
+            //predatorAct coming soon
+        } else {
+            return false;
         }
+        return true;
     }
 
     /**
@@ -169,5 +175,63 @@ public abstract class Animal extends Organism {
         if (random_location != null) {
             world.move(this, getRandomSurroundingFreeLocation(world));
         }
+    }
+
+    /**
+     * EMMA FOR THE LOVE OF GOD HUSK AT FREAKING JAVADOC!!!!!!!!!!!!!!!!!!!
+     */
+    public void moveCloser(World world, Location location) {
+        if (location.getX() != world.getLocation(this).getX()) {
+            if (location.getX() > world.getLocation(this).getX()) {
+                Location new_location = new Location(world.getLocation(this).getX() + 1, world.getLocation(this).getY());
+                world.move(this, new_location);
+            } else if (location.getX() < world.getLocation(this).getX()) {
+                Location new_location = new Location(world.getLocation(this).getX() - 1, world.getLocation(this).getY());
+                world.move(this, new_location);
+            }
+        } else if (location.getY() != world.getLocation(this).getY()){
+            if (location.getY() > world.getLocation(this).getY()){
+                Location new_location = new Location(world.getLocation(this).getX(), world.getLocation(this).getY() + 1);
+                world.move(this, new_location);
+            } else if (location.getY() < world.getLocation(this).getY()){
+                Location new_location = new Location(world.getLocation(this).getX(), world.getLocation(this).getY() - 1);
+                world.move(this, new_location);
+            }
+        }
+    }
+
+    public void moveFurther(Location location) {
+
+    }
+
+    /**
+     * Returns the sum of steps needed to align x + y coordinates with current world location to a desired location.
+     * Useful for finding out how far away something is.
+     * E.g. if it's closer to being night than how long it will take for a rabbit to go to burrow/
+     */
+    public int distanceTo(World world, Location location) {
+        int step_x = 0;
+        int step_y = 0;
+
+        // Gets distance to align x coordinates.
+        if (location.getX() != world.getLocation(this).getX()) {
+            if (location.getX() > world.getLocation(this).getX()) {
+                step_x = location.getX() - world.getLocation(this).getX();
+            } else if (location.getX() < world.getLocation(this).getX()) {
+                step_x = location.getX() + world.getLocation(this).getX();
+            }
+        }
+
+        // Gets distance to align y coordinates.
+        if (location.getY() != world.getLocation(this).getY()) {
+            if (location.getY() > world.getLocation(this).getY()) {
+                step_y = location.getY() - world.getLocation(this).getY();
+            } else if (location.getY() < world.getLocation(this).getY()) {
+                step_y = location.getY() + world.getLocation(this).getY();
+            }
+        }
+
+        // Returns the sum of x and y steps.
+        return step_x + step_y;
     }
 }

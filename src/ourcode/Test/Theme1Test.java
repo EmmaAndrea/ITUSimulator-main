@@ -27,9 +27,8 @@ public class Theme1Test {
         programRunner = new ProgramRunner();
     }
     @BeforeAll
-    public void setUp(){
+    public static void setUp(){
         System.out.println("Testing for theme 1: ");
-
     }
 
     @BeforeEach
@@ -47,7 +46,7 @@ public class Theme1Test {
         world = programRunner.getWorld();
         programRunner.runSimulation(1);
         assertEquals(world.getEntities().size(), 1);
-        assertEquals(world.getEntities().containsKey(programRunner.getGrass()), true);
+        assertTrue(world.getEntities().containsKey(programRunner.getGrass()));
     }
 
     /**
@@ -66,12 +65,11 @@ public class Theme1Test {
         grass2.spawn(world);
         Location location2 = (world.getLocation(grass2));
         assertNotEquals(location1, location2);
-        System.out.println();
     }
 
     /**
      * Creates a world based on file "t1-1c", such that 1 grass is spawned.
-     * Creates one new grass in world and spawns it, then runs the simulation for 100 steps.
+     * Creates one new grass in world and spawns it, then runs the simulation for 31 steps.
      * Checks entities does not contain grass1, showing that it is deleted and thereby dead.
      */
     @Test
@@ -110,13 +108,50 @@ public class Theme1Test {
         assertEquals(grassBeforeRabbit, grassAfterRabbit);
     }
 
+    /**
+     * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
+     * Checks that entities contains exactly four entities,
+     * Checks a rabbit is in entities
+     */
+    @Test
+    public void testRabbit1() throws Exception{
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
+        assertEquals(world.getEntities().size(), 4);
+        assertTrue(world.getEntities().containsKey(programRunner.getRabbit()));
+    }
+
+    /**
+     * Creates a world based on file "t1-2fg", such that some rabbits and grass are spawned.
+     * Spawns one specific rabbit which we track
+     * Before the program runs, we check the rabbit is in entities
+     * After the program runs a
+     */
+    @Test
+    public void testRabbit2() throws Exception{
+        programRunner.create("./data/t1-2cde.txt");
+        world = programRunner.getWorld();
+        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator());
+        rabbit1.spawn(world);
+        assertTrue(world.getEntities().containsKey(rabbit1));
+        programRunner.runSimulation(101);
+        assertFalse(world.getEntities().containsKey(rabbit1));
+    }
+
+    @Test
+    public void testRabbit3() throws Exception{
+
+    }
+
+
     @AfterEach
     public void endTest(){
         System.out.println("Test Ended");
     }
 
     @AfterAll
-    public void tearDown(){
+    public static void tearDown(){
         System.out.println("All tests complete");
     }
 }

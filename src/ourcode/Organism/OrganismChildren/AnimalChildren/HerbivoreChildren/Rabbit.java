@@ -56,6 +56,40 @@ public class Rabbit extends Herbivore {
             // go to burrow
             moveCloser(world, burrow.getLocation());
         }
+
+        // If it's night, then the rabbit enters burrow.
+        if (burrow != null && timeToNight(world) == 0) {
+            if (distanceTo(world, burrow.getLocation()) == 1 ) { // not certain if rabbit is 'close' to burrow
+                this.enterBurrow(world, burrow);
+            }
+        }
+        // If a burrow contains given resident and if it is daytime, leave the burrow
+        if (burrow != null) {
+            if (burrow.getResidents().contains(this)) {
+                if (world.getCurrentTime() % 20 == 0) {
+                    exitBurrow(world);
+                }
+            }
+        }
+
+        // Enters a burrow:
+        // If rabbit does not have a burrow.
+        if (burrow == null) {
+            // If there is a non-blocking at location.
+            if (world.containsNonBlocking(world.getLocation(this))) {
+
+                // If said non-blocking is a burrow.
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
+
+                    // If it is night.
+                    if (timeToNight(world) == 0) {
+
+                        // Gets burrow
+                        enterBurrow(world, id_generator.getBurrow(world.getLocation(world.getNonBlocking(world.getLocation(this)))));
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -118,5 +152,13 @@ public class Rabbit extends Herbivore {
      */
     public void exitBurrow(World world) {
         world.setTile(burrow.getLocation(), this);
+    }
+
+    public int timeToNight(World world){
+        if (world.getCurrentTime()%20 > 10){
+            return 0;
+        } else {
+            return 10 - world.getCurrentTime()%20;
+        }
     }
 }

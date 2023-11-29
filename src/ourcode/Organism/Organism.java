@@ -82,6 +82,7 @@ public abstract class Organism implements Actor {
      */
     public void act(World world) {
         age++;
+
         // An organism can die of old age.
         if (age > max_age) {
             world.delete(this);
@@ -101,14 +102,17 @@ public abstract class Organism implements Actor {
     /**
      * An act method for animals. The animals increase their age by 1 for each act by calling the 'ageIncrease()' method
      */
-    public void animalAct(World world) {
+
+
+    public boolean animalAct(World world) {
+        return true;
     }
+
 
     /**
      * An act method for plants. Plants will have their age increased by 1 calling the 'proceedAge()' method
      */
     public void plantAct(World world) {
-
     }
 
     /**

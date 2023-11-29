@@ -8,6 +8,7 @@ import itumulator.world.Location;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
+import ourcode.Obstacles.Burrow;
 
 import java.awt.*;
 import java.io.File;
@@ -22,6 +23,8 @@ public class ProgramRunner {
     private IDGenerator original_id_generator;
 
     private Grass grass;
+
+    private Rabbit rabbit;
     // constructor
     public ProgramRunner() {
         // constructor code
@@ -63,6 +66,8 @@ public class ProgramRunner {
         p.setDisplayInformation(Rabbit.class, rabbit_color);
         DisplayInformation grass_color = new DisplayInformation(Color.green);
         p.setDisplayInformation(Grass.class, grass_color);
+        DisplayInformation burrow_color = new DisplayInformation(Color.red);
+        p.setDisplayInformation(Burrow.class, burrow_color);
 
         // run inputReader
         inputReader.readSpawns(); // interprets the input file
@@ -74,7 +79,7 @@ public class ProgramRunner {
 
         for (int i = 0; i < amountOfRabbits; i++) {
             int id = original_id_generator.getID();
-            Rabbit rabbit = new Rabbit(original_id_generator);
+            rabbit = new Rabbit(original_id_generator);
             rabbit.spawn(world);
         }
 
@@ -124,6 +129,10 @@ public class ProgramRunner {
 
     public Grass getGrass(){
         return grass;
+    }
+
+    public Rabbit getRabbit(){
+        return rabbit;
     }
 }
 
