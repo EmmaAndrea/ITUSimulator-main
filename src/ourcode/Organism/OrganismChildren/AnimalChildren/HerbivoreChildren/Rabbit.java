@@ -5,8 +5,6 @@ import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 
-// yooooo! haha :D
-
 /**
  * Represents a Rabbit entity in the simulated world.
  * Rabbits are a type of Herbivore.
@@ -15,8 +13,13 @@ import ourcode.Setup.IDGenerator;
  */
 
 public class Rabbit extends Herbivore {
+
     Burrow burrow;
     boolean has_burrow;
+
+    /**
+     * Has max_hunger, that dictates how hungry it can be
+     */
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "rabbit";
@@ -38,7 +41,7 @@ public class Rabbit extends Herbivore {
      * If it doesn't have a burrow, make a burrow.
      */
     public void herbivoreAct(World world) {
-        // Gets older and hungrier, dies if too old or hungry
+        // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
         // Makes a burrow if rabbit does not already have a burrow.
@@ -57,38 +60,48 @@ public class Rabbit extends Herbivore {
 
     /**
      * Make burrow from location where the rabbit currently is.
-     * Adds rabbit to list of residents
+     *
      */
     public void makeBurrow(World world) {
-        // Creates new burrow at the location of the burrow creator.
-        burrow = new Burrow(id_generator.getID(), world, world.getLocation(this));
+        // Removes whatever nonblocking it’s standing on if there is one.
+        if (world.containsNonBlocking(world.getLocation(this))) {
+            // Remove the nonblocking tile from id_generators lists
+            world.delete(world.getNonBlocking(world.getLocation(this)));
+        }
 
-        // Adds rabbit to the list of residents of the burrow, and then removes rabbit from world.
-        burrow.addResident(this);
+        // Instantiates new burrow and sets the tile with current location.
+        Burrow burrow = new Burrow(id_generator.getID(), world, world.getLocation(this));
 
-        // It is now true that the rabbit has a burrow.
+        // Set rabbit’s boolean has_burrow to be true
         has_burrow = true;
+
+        // Add to maps to keep track of where things are.
+        id_generator.addBurrowToIdMap(burrow.getId(), burrow);
+        id_generator.addLocationToIdMap(burrow.getLocation(), burrow.getId());
     }
 
     /**
-     * sets 'has_burrow' boolean to 'True'. This is helpful for adding a rabbit to a resident,
-     * making sure the rabbit won't go anywhere else
+     * Puts a rabbit inside a burrow.
+     * 'Removes' them from the world.
+     * Adds them to the lists of residents of the particular burrow.
+     * If the rabbit didn't beforehand have a personal burrow, it sets this burrow as the personal burrow.
      */
-    public void setBurrow() {
-        has_burrow = true;
-    }
-    /**
-     * Puts a rabbit inside a burrow, 'removing' them from the world and adding them to the lists of residents
-     *  if the specified rabbit doesn't exist in the burrow
-     */
-    public void enterBurrow(World world) {
-        if (!this.has_burrow) {
-            burrow.addResident(this);
-            this.setBurrow();
+    public void enterBurrow(World world, Burrow burrow) {
+        // If it has not been assigned a burrow.
+        if (this.burrow == null) {
+            has_burrow = true;
+
+            // Sets its personal burrow to be the burrow it enters.
+            this.burrow = burrow;
+
+            // "Enters" burrow; removes - not deletes - from world.
             world.remove(this);
         } else {
             world.remove(this);
         }
+
+        // Adds rabbit to the list of residents of the particular burrow.
+        burrow.addResident(this);
     }
 
     /**

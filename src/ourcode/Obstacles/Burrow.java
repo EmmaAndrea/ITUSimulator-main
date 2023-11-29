@@ -14,14 +14,23 @@ import java.util.List;
  */
 
 public class Burrow implements NonBlocking {
-    // list of rabbits which live there
+    // List of rabbits which are currently inside the burrow.
     List<Rabbit> residents;
-    List<Location> listOfBurrowLocation;
+
+    // List of locations of the burrows.
+    List<Location> list_of_burrow_locations;
+
+    // A unique identifier for the burrow.
     int burrow_id;
+
+    // A location for the burrow such that a rabbit can find a way to it.
     Location burrow_location;
 
     /**
-     * the constructor for a Burrow
+     * The constructor for a Burrow.
+     * Makes and ID.
+     * Sets the tile in the world to burrow.
+     * A burrow has its own location.
      */
     public Burrow(int burrow_id, World world, Location location) {
         residents = new ArrayList<>();
@@ -31,35 +40,37 @@ public class Burrow implements NonBlocking {
     }
 
     /**
-     * method for adding rabbit to list of residents
+     * Adds a given rabbit to the list of residents of the burrow.
      */
     public void addResident(Rabbit rabbit){
         residents.add(rabbit);
     }
 
     /**
-     * removes a given rabbit from the list of residents
+     * Removes a given rabbit from the list of residents of the burrow.
      */
     public void removeRabbit(Rabbit rabbit) {
         residents.remove(rabbit);
     }
 
     /**
-     * A method for retrieving the ID of a burrow. Returns an integer.
+     * Returns the ID of a burrow.
      */
-    public int getBurrowId() {
+    public int getId() {
         return burrow_id;
     }
 
-    public Location getBurrowLocation() {
+    /**
+     * Returns the location of the burrow.
+     */
+    public Location getLocation() {
         return burrow_location;
     }
 
-    public List<Location> getListOfBurrowLocation() {
-        return listOfBurrowLocation;
-    }
-
-    public List<Rabbit> getResidents(Rabbit rabbit) {
+    /**
+     * Returns the list of residents of the burrow.
+     */
+    public List<Rabbit> getResidents() {
         return residents;
     }
 }

@@ -21,7 +21,7 @@ public class Theme1Test {
     public World world;
 
     /**
-     * Creates one programrunner for all the tests to use
+     * Creates one program-runner for all the tests to use
      */
     public Theme1Test(){
         programRunner = new ProgramRunner();

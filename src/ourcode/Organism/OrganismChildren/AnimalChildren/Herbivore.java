@@ -1,6 +1,5 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren;
 
-import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
@@ -30,14 +29,4 @@ public abstract class Herbivore extends Animal {
             eat(world);
         }
     }
-
-    /**
-     * Subtracts 2 from hunger.
-     * Unfinished method!!! Quick fix.
-     */
-    /*
-    public void eat(Organism organism) {
-        deductHunger(organism.getNutritionalValue()); // random int 2 instead of nutritional value
-    }
-     */
 }

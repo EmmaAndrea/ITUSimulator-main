@@ -83,33 +83,17 @@ public abstract class Animal extends Organism {
      */
     public void breed(World world, Animal animal) {
         // Retrieve current location
-        Location currentLocation = world.getLocation(this);
-
-        // Makes list of possible spawn locations (locations with no blocking elements).
-        ArrayList<Location> possibleSpawnLocations = new ArrayList<>();
-        for (Location surroundingTile : world.getSurroundingTiles(currentLocation, 1)) {
-            if (world.isTileEmpty(surroundingTile)) {
-                possibleSpawnLocations.add(surroundingTile);
-            }
-        }
-
-        // Finds a random index in this list of locations.
-        Random random = new Random();
-
-        // Removes itself from possible locations to spawn.
-        possibleSpawnLocations.remove(world.getLocation(this));
+        Location random_location = getRandomSurroundingFreeLocation(world);
 
         // Checks if there is a possible spawn location.
-        if (!possibleSpawnLocations.isEmpty()) {
-            int random_index = random.nextInt(0, possibleSpawnLocations.size());
-            Location random_spawn_location = possibleSpawnLocations.get(random_index);
+        if (random_location != null) {
 
             // Finds which type of animal to make baby of.
-            Animal baby = null;
+            Animal offspring = null;
             String animal_type = animal.getType();
             switch (animal_type) {
                 case "rabbit":
-                    baby = new Rabbit(id_generator);
+                    offspring = new Rabbit(id_generator);
                     break;
                 case "wolf":
                     //baby = new Wolf(id_generator);
@@ -119,10 +103,10 @@ public abstract class Animal extends Organism {
             }
 
             // Spawns baby and adds to location and id maps.
-            world.setTile(random_spawn_location, baby);
-            assert baby != null; // We promise that a baby exists.
-            id_generator.addAnimalToIdMap(baby.getId(), baby);
-            id_generator.addLocationToIdMap(random_spawn_location, baby.getId());
+            world.setTile(random_location, offspring);
+            assert offspring != null; // We promise that a baby exists.
+            id_generator.addAnimalToIdMap(offspring.getId(), offspring);
+            id_generator.addLocationToIdMap(random_location, offspring.getId());
         }
     }
 
@@ -131,7 +115,6 @@ public abstract class Animal extends Organism {
      * If there is a nearby same animal type;
      * If animal is older than 20;
      * If there is space for one more animal.
-     *
      * ERROR: SOMETIMES BREEDS ITSELF
      */
     public void checkBreed(World world) {
@@ -171,7 +154,6 @@ public abstract class Animal extends Organism {
      */
     public boolean checkHunger(World world) {
         if (hunger > max_hunger) {
-            world.delete(this);
             return false;
         } return true;
     }

@@ -42,11 +42,11 @@ public class Grass extends NonBlockingPlant {
      */
     public void spread(World world) {
         // Retrieve current location once
-        Location currentLocation = world.getLocation(this);
+        Location current_location = world.getLocation(this);
 
         // Find a suitable location to spread grass
         Location spreadLocation = null;
-        for (Location surroundingTile : world.getSurroundingTiles(currentLocation, 1)) {
+        for (Location surroundingTile : world.getSurroundingTiles(current_location, 1)) {
             if (!world.containsNonBlocking(surroundingTile)) {
                 spreadLocation = surroundingTile;
                 break;

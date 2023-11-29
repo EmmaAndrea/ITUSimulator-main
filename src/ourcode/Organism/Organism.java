@@ -5,6 +5,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Setup.IDGenerator;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -31,6 +32,9 @@ public abstract class Organism implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
+    // Boolean to check if an organism has been killed
+    protected boolean hasBeenKilled;
+
 
     /**
      * Constructor for an Organism, the parent class for all life on the world.
@@ -41,6 +45,7 @@ public abstract class Organism implements Actor {
         id = id_generator.getID();
         age = 1;
         nutritional_value = 2;
+        hasBeenKilled = false;
     }
 
     /**
@@ -94,13 +99,13 @@ public abstract class Organism implements Actor {
     }
 
     /**
-     * An act method for animals. The animals increases their age by 1 for each act by calling the 'ageIncrease()' method
+     * An act method for animals. The animals increase their age by 1 for each act by calling the 'ageIncrease()' method
      */
     public void animalAct(World world) {
     }
 
     /**
-     * An act method for plants. Plants will have their age increased by 1 calling the 'ageIncrease()' method
+     * An act method for plants. Plants will have their age increased by 1 calling the 'proceedAge()' method
      */
     public void plantAct(World world) {
 
@@ -114,25 +119,10 @@ public abstract class Organism implements Actor {
     }
 
     /**
-     * Returns an Integer describing how long the organism has been on the world.
-     */
-    public int getAge() {
-        return age;
-    }
-
-    /**
      *Returns the nutritional value of the organism, ergo how much hunger it satisfies when eaten.
      */
     public int getNutritionalValue() {
         return nutritional_value;
-    }
-
-
-    /**
-     * Returns the age threshold.
-     */
-    public int getMaxAge() {
-        return max_age;
     }
 
     /**
@@ -140,6 +130,37 @@ public abstract class Organism implements Actor {
      */
     public int getId() {
         return id;
+    }
+
+    /**
+     * Checks surrounding locations within a radius of one.
+     * Returns a 'random' location
+     */
+    public Location getRandomSurroundingFreeLocation(World world) {
+        // Retrieve current location
+        Location current_location = world.getLocation(this);
+
+        // Makes list of possible spawn locations (locations with no blocking elements).
+        ArrayList<Location> possible_spawn_locations = new ArrayList<>();
+        for (Location surroundingTile : world.getSurroundingTiles(current_location, 1)) {
+            if (world.isTileEmpty(surroundingTile)) {
+                possible_spawn_locations.add(surroundingTile);
+            }
+        }
+
+        // Removes itself from possible locations to spawn.
+        possible_spawn_locations.remove(world.getLocation(this));
+
+        // Return null value if there is not empty location (to be used in if statement in larger method to check)
+        if (possible_spawn_locations.isEmpty()) {
+            return null;
+        }
+
+        // Finds a random index in this list of locations.
+        Random random = new Random();
+        int random_index = random.nextInt(0, possible_spawn_locations.size());
+
+        return possible_spawn_locations.get(random_index);
     }
 
 }
