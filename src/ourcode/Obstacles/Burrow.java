@@ -26,8 +26,6 @@ public class Burrow implements NonBlocking {
     public Burrow(int burrow_id, World world, Location location) {
         residents = new ArrayList<>();
         this.burrow_id = burrow_id;
-        listOfBurrowLocation = new ArrayList<>();
-        listOfBurrowLocation.add(location);
         world.setTile(location, this);
         burrow_location = location;
     }

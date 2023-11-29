@@ -6,9 +6,6 @@ import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.IDGenerator;
 
-import java.util.ArrayList;
-import java.util.Random;
-
 /**
  * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
  *  class and has the fields hunger and max hunger.
@@ -47,7 +44,7 @@ public abstract class Animal extends Organism {
         hunger -= getStandingOnNutritionalValue(world);
 
         // Deletes the eaten organism from the world.
-        world.delete(world.getNonBlocking(world.getCurrentLocation()));
+        world.delete(world.getNonBlocking(world.getLocation(this)));
     }
 
     /**
@@ -169,13 +166,6 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * A method for creating a new burrow from the Burrow class.
-     */
-    public void makeBurrow() {
-
-    }
-
-    /**
      * Animal dies of hunger if it is hungrier than its max hunger.
      * If the animal dies from hunger, method returns false.
      */
@@ -190,15 +180,12 @@ public abstract class Animal extends Organism {
      * Moves to new tile, if there is a free surrounding tile.
      */
     public void nextMove(World world) {
-        // If there are no free surrounding tiles, then animal stays in position.
-        Location new_location = world.getCurrentLocation();
+        // Gets random location.
+        Location random_location = getRandomSurroundingFreeLocation(world);
 
-        // Finds a "random" free tile.
-        for (Location location : world.getEmptySurroundingTiles(world.getCurrentLocation())) {
-            new_location = location;
-            break;
+        // Moves to new location, if location isn't null.
+        if (random_location != null) {
+            world.move(this, getRandomSurroundingFreeLocation(world));
         }
-        // Moves animal to this new tile
-        world.move(this, new_location);
     }
 }

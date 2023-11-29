@@ -26,20 +26,32 @@ public class Rabbit extends Herbivore {
         has_burrow = false;
     }
 
+    /**
+     * Spawns a rabbit.
+     */
     public void spawn(World world) {
         super.spawn(world);
     }
 
+    /**
+     * Calls herbivoreAct.
+     * If it doesn't have a burrow, make a burrow.
+     */
     public void herbivoreAct(World world) {
         // Gets older and hungrier, dies if too old or hungry
         super.herbivoreAct(world);
 
-        // Makes a burrow rabbit does not already have a burrow.
-        if (!has_burrow) makeBurrow();
+        // Makes a burrow if rabbit does not already have a burrow.
+        if (age > 5 && burrow == null) {
+            makeBurrow(world);
+        }
 
-        // if (world.isNight()), find nearby burrow and enter
-        if (world.isNight()) {
+        // If it has a burrow and if it is past midday
+        // and if it takes longer or same time to get to burrow than steps there is to night,
+        // Move closer to burrow.
+        if (burrow != null && timeToNight(world)>4 && distanceTo(world, burrow.getLocation()) >= timeToNight(world)) {
             // go to burrow
+            moveCloser(world, burrow.getLocation());
         }
     }
 
@@ -84,16 +96,14 @@ public class Rabbit extends Herbivore {
      * We should fix it so that it is incremental by step.
      */
     public void goToBed(World world) {
-        if (world.isNight()) {
-            world.move(this, burrow.getBurrowLocation()); // give statements for
+            world.move(this, burrow.getLocation()); // give statements for locating threats
             world.remove(this);
-        }
     }
 
     /**
      * Puts a rabbit at the location where the burrow is located
      */
     public void exitBurrow(World world) {
-        world.setTile(burrow.getBurrowLocation(), this);
+        world.setTile(burrow.getLocation(), this);
     }
 }

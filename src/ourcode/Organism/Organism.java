@@ -80,10 +80,15 @@ public abstract class Organism implements Actor {
         // An organism can die of old age.
         if (age > max_age) {
             world.delete(this);
-        } else if(world.getEntities().containsKey(this)) {
-            animalAct(world);
-            if (world.getEntities().containsKey(this)) {
+        } else {
+            // Checks if the organism still should be alive after running act method.
+            // before: world.getEntities().containsKey(this)
+            if (animalAct(world)) {
+                // then run the plant methods
                 plantAct(world);
+            } else {
+                //delete the animal if animalAct returns false
+                world.delete(this);
             }
         }
     }

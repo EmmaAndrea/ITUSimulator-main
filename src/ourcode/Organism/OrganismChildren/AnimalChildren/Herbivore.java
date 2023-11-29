@@ -2,7 +2,6 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
 
