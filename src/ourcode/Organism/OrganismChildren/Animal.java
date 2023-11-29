@@ -63,7 +63,7 @@ public abstract class Animal extends Organism {
         days_since_last_birth++;
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
-        if (checkHunger(world)) {
+        if (checkHunger()) {
             nextMove(world);
             checkBreed(world);
             herbivoreAct(world);
@@ -158,10 +158,8 @@ public abstract class Animal extends Organism {
      * Animal dies of hunger if it is hungrier than its max hunger.
      * If the animal dies from hunger, method returns false.
      */
-    public boolean checkHunger(World world) {
-        if (hunger > max_hunger) {
-            return false;
-        } return true;
+    public boolean checkHunger() {
+        return hunger <= max_hunger;
     }
 
     /**
@@ -200,7 +198,7 @@ public abstract class Animal extends Organism {
         }
     }
 
-    public void moveFurther(Location location) {
+    public void moveFurther() {
 
     }
 

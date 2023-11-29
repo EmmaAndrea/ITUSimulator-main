@@ -45,7 +45,7 @@ public class Rabbit extends Herbivore {
         super.herbivoreAct(world);
 
         // Makes a burrow if rabbit does not already have a burrow.
-        if (age > 5 && burrow == null) {
+        if (age > 5 && !has_burrow) {
             makeBurrow(world);
         }
 
