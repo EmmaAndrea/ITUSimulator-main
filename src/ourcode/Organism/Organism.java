@@ -4,6 +4,7 @@ import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Setup.IDGenerator;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -138,9 +139,9 @@ public abstract class Organism implements Actor {
 
     /**
      * Checks surrounding locations within a radius of one.
-     * Returns a 'random' location
+     * Returns a list of free locations around the organism
      */
-    public Location getRandomSurroundingFreeLocation(World world) {
+    public ArrayList<Location> getSurroundingFreeLocation(World world) {
         // Retrieve current location
         Location current_location = world.getLocation(this);
 
@@ -160,11 +161,38 @@ public abstract class Organism implements Actor {
             return null;
         }
 
+        return possible_spawn_locations;
+    }
+
+    /**
+     * uses list of free locations to find a random location to go to
+     * @param world
+     * @return
+     */
+    public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
         Random random = new Random();
-        int random_index = random.nextInt(0, possible_spawn_locations.size());
+        int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
 
-        return possible_spawn_locations.get(random_index);
+        return getSurroundingFreeLocation(world).get(random_index);
+    }
+
+    /**
+     * Finds out if there is grass on an organisms surrounding tile
+     * Returns the location of the grass if there is one
+     * Otherwise null
+     */
+    public Location getGrassLocation(World world){
+        Location grassLocation = null;
+        for(Location location: getSurroundingFreeLocation(world)){
+            if(world.containsNonBlocking(location)){
+                if ((world.getNonBlocking(location) instanceof Grass)) {
+                    grassLocation = location;
+                    return grassLocation;
+                }
+            }
+        }
+        return null;
     }
 
     /**

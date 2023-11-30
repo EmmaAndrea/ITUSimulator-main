@@ -33,4 +33,21 @@ public abstract class Herbivore extends Animal {
             }
         }
     }
+
+    /**
+     * method to move animals if they only eat grass
+     * overrides method for other animals
+     * @param world dependent on world
+     */
+    @Override
+    public void nextMove(World world){
+        // Moves to grass, if there is grass nearby.
+        if (getGrassLocation(world) != null) {
+            world.move(this, getGrassLocation(world));
+
+            // if there is no grass, move randomly
+        } else if (getRandomMoveLocation(world) != null){
+            world.move(this, getRandomMoveLocation(world));
+        }
+    }
 }

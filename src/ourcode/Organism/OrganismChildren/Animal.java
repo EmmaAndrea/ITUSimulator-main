@@ -97,7 +97,7 @@ public abstract class Animal extends Organism {
      */
     public void breed(World world, Animal animal) {
         // Retrieve current location
-        Location random_location = getRandomSurroundingFreeLocation(world);
+        Location random_location = getRandomMoveLocation(world);
 
         // Checks if there is a possible spawn location.
         if (random_location != null) {
@@ -174,39 +174,50 @@ public abstract class Animal extends Organism {
      * Moves to new tile, if there is a free surrounding tile.
      */
     public void nextMove(World world) {
-        // Gets random location.
-        Location random_location = getRandomSurroundingFreeLocation(world);
 
-        // Moves to new location, if location isn't null.
-        if (random_location != null) {
-            world.move(this, getRandomSurroundingFreeLocation(world));
+        // Moves to new location, if the surrounding tiles aren't all full
+        if (getRandomMoveLocation(world) != null) {
+            world.move(this, getRandomMoveLocation(world));
         }
     }
 
     /**
-     * EMMA FOR THE LOVE OF GOD HUSK AT FREAKING JAVADOC!!!!!!!!!!!!!!!!!!!
+     * If animal needs to go to specific location
+     * Checks if the x coordinate is different, and then moves closer
+     * If not, it checks if the y coordinate is different, and then moves closer
      */
-    public void moveCloser(World world, Location location) {
-        if (location.getX() != world.getLocation(this).getX()) {
-            if (location.getX() > world.getLocation(this).getX()) {
-                Location new_location = new Location(world.getLocation(this).getX() + 1, world.getLocation(this).getY());
+    public void moveCloser(World world, Location target_location) {
+        Location current_location = world.getLocation(this);
+
+        // Instantiate variables for finding out which direction to move.
+        int dx = 0;
+        int dy = 0;
+
+        // Check what direction we need to move.
+        if (target_location.getX() > current_location.getX()) dx = 1;
+        if (target_location.getX() < current_location.getX()) dx = -1;
+        if (target_location.getY() > current_location.getY()) dy = 1;
+        if (target_location.getY() < current_location.getY()) dy = -1;
+
+        // Move in the X direction first, if needed.
+        if (dx != 0) {
+            Location new_location = new Location(current_location.getX() + dx, current_location.getY());
+            if (world.isTileEmpty(new_location)) {
                 world.move(this, new_location);
-            } else if (location.getX() < world.getLocation(this).getX()) {
-                Location new_location = new Location(world.getLocation(this).getX() - 1, world.getLocation(this).getY());
-                world.move(this, new_location);
+                return;
             }
-        } else if (location.getY() != world.getLocation(this).getY()){
-            if (location.getY() > world.getLocation(this).getY()){
-                Location new_location = new Location(world.getLocation(this).getX(), world.getLocation(this).getY() + 1);
-                world.move(this, new_location);
-            } else if (location.getY() < world.getLocation(this).getY()){
-                Location new_location = new Location(world.getLocation(this).getX(), world.getLocation(this).getY() - 1);
+        }
+
+        // If moving in the X direction is not needed, move in the Y direction.
+        if (dy != 0) {
+            Location new_location = new Location(current_location.getX(), current_location.getY() + dy);
+            if (world.isTileEmpty(new_location)) {
                 world.move(this, new_location);
             }
         }
     }
 
-    public void moveFurther() {
+    public void moveAway() {
 
     }
 
