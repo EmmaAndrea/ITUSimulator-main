@@ -55,7 +55,7 @@ public class Rabbit extends Herbivore {
         }
 
         boolean isNight = timeToNight(world) == 0;
-        boolean isCloseToBurrow = !in_hiding && burrow != null && distanceTo(world, burrow.getLocation()) <= 1;
+        boolean isCloseToBurrow = !in_hiding && burrow != null && distanceTo(world, world.getLocation(world)) <= 1;
 
         // Handle daytime burrow exit.
         if (burrow != null && in_hiding && !isNight) {
@@ -80,7 +80,7 @@ public class Rabbit extends Herbivore {
 
             // Move closer to the burrow if it's later than midday and far from the burrow.
             if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
-                moveCloser(world, burrow.getLocation());
+                moveCloser(world, world.getLocation(burrow));
                 return;
             }
 
@@ -124,7 +124,7 @@ public class Rabbit extends Herbivore {
 
         // Add to maps to keep track of where things are.
         id_generator.addBurrowToIdMap(burrow.getId(), burrow);
-        id_generator.addLocationToIdMap(burrow.getLocation(), burrow.getId());
+        id_generator.addLocationToIdMap(world.getLocation(world), burrow.getId());
     }
 
     /**
@@ -157,7 +157,7 @@ public class Rabbit extends Herbivore {
      */
     public void exitBurrow(World world) {
         // Retrieve current location
-        Location burrow_location = burrow.getLocation();
+        Location burrow_location = world.getLocation(burrow);
 
         // Makes list of possible spawn locations (locations with no blocking elements).
         ArrayList<Location> possible_spawn_locations = new ArrayList<>();
