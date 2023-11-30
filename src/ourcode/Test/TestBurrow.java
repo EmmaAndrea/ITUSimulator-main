@@ -1,12 +1,16 @@
 package ourcode.Test;
 
+import itumulator.executable.Program;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Burrow;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestBurrow {
@@ -65,4 +69,37 @@ public class TestBurrow {
     }
 
      */
+
+    /**
+     * Tests both addResident() method and getResident() method.
+     */
+    @Test
+    public void testResident() throws Exception {
+        Program p = new Program(1, 800, 200);
+        World world = p.getWorld();
+        IDGenerator id = new IDGenerator();
+        Burrow burrow = new Burrow(id);
+        Rabbit rabbit = new Rabbit(id);
+        Rabbit rabbit1 = new Rabbit(id);
+
+        burrow.addResident(rabbit);
+        burrow.addResident(rabbit1);
+
+        assertEquals(burrow.getResidents().size(), 2);
+
+    }
+
+    /**
+     * Tests the spawn() method for a burrow.
+     */
+    @Test
+    public void testBurrowSpawn() throws Exception {
+        Program p = new Program(2, 800, 200);
+        World world = p.getWorld();
+        IDGenerator id = new IDGenerator();
+        Burrow burrow = new Burrow(id);
+
+        burrow.spawn(world);
+        assertEquals(world.getEntities().size(),  1);
+    }
 }
