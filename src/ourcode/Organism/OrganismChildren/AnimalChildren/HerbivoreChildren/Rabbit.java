@@ -27,9 +27,9 @@ public class Rabbit extends Herbivore {
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "rabbit";
-        max_hunger = 10;
-        nutritional_value = 3;
-        max_age = 9; // changed from 100 for testing purposes
+        max_hunger = 100; // changed from 10 due to testing
+        nutritional_value = 4;
+        max_age = 100;
         has_burrow = false;
     }
 
@@ -105,7 +105,7 @@ public class Rabbit extends Herbivore {
     /**
      * Make burrow from location where the rabbit currently is.
      */
-    /*
+
     public void makeBurrow(World world) {
         // Removes whatever nonblocking it’s standing on if there is one.
         if (world.containsNonBlocking(world.getLocation(this))) {
@@ -114,7 +114,7 @@ public class Rabbit extends Herbivore {
         }
 
         // Instantiates new burrow and sets the tile with current location.
-        Burrow burrow = new Burrow(id_generator.getID(), world, world.getLocation(this));
+        Burrow burrow = new Burrow(id_generator);
 
         // Rabbit now has a personal burrow.
         this.burrow = burrow;
@@ -126,8 +126,6 @@ public class Rabbit extends Herbivore {
         id_generator.addBurrowToIdMap(burrow.getId(), burrow);
         id_generator.addLocationToIdMap(burrow.getLocation(), burrow.getId());
     }
-
-     */
 
     /**
      * Puts a rabbit inside a burrow.
@@ -189,5 +187,9 @@ public class Rabbit extends Herbivore {
 
     public int getHunger() {
         return hunger;
+    }
+
+    public Burrow getBurrow() {
+        return burrow;
     }
 }

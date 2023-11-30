@@ -3,6 +3,7 @@ package ourcode.Test;
 import itumulator.executable.Program;
 import itumulator.world.World;
 import org.junit.jupiter.api.*;
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
@@ -114,12 +115,99 @@ public class RabbitTest {
         rabbit.eat(world);
 
         // Assert that hunger level has decreased
-        assertThrows(Exception.class, () -> {
-            assertNull(world.getNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten.");
-        });
+        assertThrows(Exception.class, () -> assertNull(world.getNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten."));
     }
 
-    // More tests for Age-Related Energy, Reproduction, and Burrow Interactions
+    @Test
+    public void testRabbitBreeding() {
+        // Create a world
+        Program p = new Program(5, 800, 100); // Assuming a world size that allows for breeding
+        World world = p.getWorld();
+
+        IDGenerator idGenerator = new IDGenerator();
+
+        // Spawn rabbits in the world
+        Rabbit rabbit1 = new Rabbit(idGenerator);
+        Rabbit rabbit2 = new Rabbit(idGenerator);
+
+        // Set up the rabbits in suitable locations and conditions for breeding
+        rabbit1.spawn(world);
+        rabbit2.spawn(world);
+
+        // Get the initial count of rabbits
+        int initialRabbitCount = countRabbits(world);
+
+        // Run the simulation for a number of steps to allow breeding
+        for (int i = 0; i < 10; i++) {
+            p.simulate();
+
+            // Deletes burrows if they make them, we don't want them to go in yet due to bugs.
+            for (Object object : world.getEntities().keySet()) {
+                if (object instanceof Burrow) {
+                    world.delete(object);
+                }
+            }
+        }
+
+        // Get the count of rabbits after running the simulation
+        int postSimulationRabbitCount = countRabbits(world);
+        System.out.println(postSimulationRabbitCount);
+
+        // Assert that the number of rabbits has increased
+        assertTrue(postSimulationRabbitCount > initialRabbitCount, "Rabbits should breed and increase in number");
+    }
+
+    private int countRabbits(World world) {
+        int counter = 0;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Rabbit) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    @Test
+    public void testRabbitsDontBreedThemselves() {
+        // Create a world
+        Program p = new Program(5, 800, 100); // Assuming a world size that allows for breeding
+        World world = p.getWorld();
+
+        IDGenerator idGenerator = new IDGenerator();
+
+        // Spawn rabbits in the world
+        Rabbit rabbit1 = new Rabbit(idGenerator);
+
+        // Set up the rabbits in suitable locations and conditions for breeding
+        rabbit1.spawn(world);
+
+        // Get the initial count of rabbits
+        int initialRabbitCount = countRabbits(world);
+
+        // Run the simulation for a number of steps to allow breeding
+        for (int i = 0; i < 99; i++) {
+            p.simulate();
+
+            // Deletes burrows if they make them, we don't want them to go in yet due to bugs.
+            for (Object object : world.getEntities().keySet()) {
+                if (object instanceof Burrow) {
+                    world.delete(object);
+
+                }
+                if (object instanceof Rabbit) {
+                    Rabbit rabbit = (Rabbit) object;
+                    //rabbit.getBurrow()
+                }
+            }
+        }
+
+        // Get the count of rabbits after running the simulation
+        int postSimulationRabbitCount = countRabbits(world);
+        System.out.println(postSimulationRabbitCount);
+
+        // Assert that the number of rabbits has increased
+        assertTrue(postSimulationRabbitCount == initialRabbitCount, "Rabbits should not breed themselves.");
+    }
 
     @AfterEach
     public void endTest() {

@@ -2,13 +2,11 @@ package ourcode.Setup;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
-import itumulator.world.World;
 import itumulator.world.Location;
-
-import ourcode.Organism.Organism;
+import itumulator.world.World;
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
-import ourcode.Obstacles.Burrow;
 
 import java.awt.*;
 import java.io.File;
@@ -124,7 +122,7 @@ public class ProgramRunner {
         return world.getEntities().get(location);
     }
 
-    public Organism getOrganism(){
+    public Entity getOrganism(){
         return original_id_generator.getEntity(p.getWorld().getCurrentLocation());
     }
 
