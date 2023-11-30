@@ -25,7 +25,10 @@ public class ProgramRunner {
     private Grass grass;
 
     private Rabbit rabbit;
-    // constructor
+
+    private Burrow burrow;
+
+    // constructor for ProgramRunner
     public ProgramRunner() {
         // constructor code
     }
@@ -76,7 +79,6 @@ public class ProgramRunner {
         // spawns rabbits
 
         int amountOfRabbits = inputReader.getAmount("rabbit");
-
         for (int i = 0; i < amountOfRabbits; i++) {
             rabbit = new Rabbit(original_id_generator);
             rabbit.spawn(world);
@@ -88,6 +90,11 @@ public class ProgramRunner {
             grass = new Grass(original_id_generator);
             grass.spawn(world);
             world.setCurrentLocation(world.getLocation(grass));
+        }
+
+        int amountOfBurrows = inputReader.getAmount("burrow");
+        for (int i = 0; i < amountOfBurrows; i++) {
+
         }
     }
 
@@ -132,5 +139,7 @@ public class ProgramRunner {
     public Rabbit getRabbit(){
         return rabbit;
     }
+
+    public Burrow getBurrow() { return burrow; }
 }
 

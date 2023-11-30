@@ -1,9 +1,9 @@
 package ourcode.Obstacles;
 
 import itumulator.world.Location;
-import itumulator.world.NonBlocking;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +13,9 @@ import java.util.List;
  *  or remove
  */
 
-public class Burrow implements NonBlocking {
+public class Burrow extends Obstacle {
     // List of rabbits which are currently inside the burrow.
     List<Rabbit> residents;
-
-    // A unique identifier for the burrow.
-    int burrow_id;
 
     // A location for the burrow such that a rabbit can find a way to it.
     Location burrow_location;
@@ -29,11 +26,17 @@ public class Burrow implements NonBlocking {
      * Sets the tile in the world to burrow.
      * A burrow has its own location.
      */
-    public Burrow(int burrow_id, World world, Location location) {
+    public Burrow(IDGenerator id) {
+        super(id);
+        type = "burrow";
         residents = new ArrayList<>();
-        this.burrow_id = burrow_id;
-        world.setTile(location, this);
-        burrow_location = world.getLocation(this);
+    }
+
+    /**
+     * calls
+     */
+    public void spawn(World world) {
+        super.spawn(world);
     }
 
     /**
@@ -46,9 +49,12 @@ public class Burrow implements NonBlocking {
     /**
      * Returns the ID of a burrow.
      */
+    /*
     public int getId() {
         return burrow_id;
     }
+
+     */
 
     /**
      * Returns the location of the burrow.
