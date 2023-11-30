@@ -1,6 +1,5 @@
 package ourcode.Setup;
 
-import itumulator.world.World;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -69,21 +68,11 @@ public class InputReader {
     }
 
     /**
-     * Returns map_of_spawns.
-     */
-    public Map<String, Integer> getMapOfSpawns() {
-        return map_of_spawns;
-    }
-
-    /**
      * Returns the value of a given key in map_of_spawns.
      * Takes a string as a parameter, which is supposed to be the key.
      */
     public int getAmount(String key) {
-        if (map_of_spawns.containsKey(key)) {
-            return map_of_spawns.get(key);
-        } else
-            return 0;
+        return map_of_spawns.getOrDefault(key, 0);
     }
 }
 

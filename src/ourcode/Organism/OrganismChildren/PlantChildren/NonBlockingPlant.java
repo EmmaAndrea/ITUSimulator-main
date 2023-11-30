@@ -20,7 +20,7 @@ public abstract class NonBlockingPlant extends Plant implements NonBlocking {
 
     /**
      * Spawns a non-blocking plant in a random location that does not already contain a non-blocking.
-     * Adds the nonblockingplant to the id_generator hashmaps.
+     * Adds the nonblocking plant to the id_generator hashmaps.
      */
     @Override
     public void spawn(World world) {

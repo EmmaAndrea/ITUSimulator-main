@@ -41,10 +41,10 @@ public class Grass extends NonBlockingPlant {
      * Spawns new grass where there is an available tile.
      */
     public void spread(World world) {
-        // Retrieve current location once
+        // Retrieve current location once.
         Location current_location = world.getLocation(this);
 
-        // Find a suitable location to spread grass
+        // Find a suitable location to spread grass.
         Location spreadLocation = null;
         for (Location surroundingTile : world.getSurroundingTiles(current_location, 1)) {
             if (!world.containsNonBlocking(surroundingTile)) {
@@ -53,14 +53,12 @@ public class Grass extends NonBlockingPlant {
             }
         }
 
-        // If a suitable location is found, spread the grass
-        Grass spreaded_grass = null;
+        // If a suitable location is found, spread the grass.
         if (spreadLocation != null) {
-            spreaded_grass = new Grass(id_generator);
+            Grass spreaded_grass = new Grass(id_generator);
             world.setTile(spreadLocation, spreaded_grass);
             id_generator.addAnimalToIdMap(spreaded_grass.getId(), spreaded_grass);
             id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
         }
-
     }
 }

@@ -17,9 +17,6 @@ public class Burrow implements NonBlocking {
     // List of rabbits which are currently inside the burrow.
     List<Rabbit> residents;
 
-    // List of locations of the burrows.
-    List<Location> list_of_burrow_locations;
-
     // A unique identifier for the burrow.
     int burrow_id;
 
@@ -44,13 +41,6 @@ public class Burrow implements NonBlocking {
      */
     public void addResident(Rabbit rabbit){
         residents.add(rabbit);
-    }
-
-    /**
-     * Removes a given rabbit from the list of residents of the burrow.
-     */
-    public void removeRabbit(Rabbit rabbit) {
-        residents.remove(rabbit);
     }
 
     /**

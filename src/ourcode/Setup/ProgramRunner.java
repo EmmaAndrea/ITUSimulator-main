@@ -78,7 +78,6 @@ public class ProgramRunner {
         int amountOfRabbits = inputReader.getAmount("rabbit");
 
         for (int i = 0; i < amountOfRabbits; i++) {
-            int id = original_id_generator.getID();
             rabbit = new Rabbit(original_id_generator);
             rabbit.spawn(world);
         }
@@ -86,7 +85,6 @@ public class ProgramRunner {
         // spawns grass
         int amountOfGrass = inputReader.getAmount("grass");
         for (int i = 0; i < amountOfGrass; i++) {
-            int id = original_id_generator.getID();
             grass = new Grass(original_id_generator);
             grass.spawn(world);
             world.setCurrentLocation(world.getLocation(grass));

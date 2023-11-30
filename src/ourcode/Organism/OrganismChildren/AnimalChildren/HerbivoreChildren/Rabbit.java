@@ -7,7 +7,7 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Random;
 
 /**
  * Represents a Rabbit entity in the simulated world.
@@ -49,6 +49,11 @@ public class Rabbit extends Herbivore {
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
+        // If the rabbit has died, then stop method.
+        if (!world.contains(this)) {
+            return;
+        }
+
         boolean isNight = timeToNight(world) == 0;
         boolean isCloseToBurrow = burrow != null && distanceTo(world, burrow.getLocation()) <= 1;
 
@@ -70,18 +75,26 @@ public class Rabbit extends Herbivore {
             return;
         }
 
-        // Move closer to the burrow if it's later than midday and far from the burrow.
-        if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow && !burrow.getResidents().contains(this)) {
-            moveCloser(world, burrow.getLocation());
-            return;
-        }
+            // Move closer to the burrow if it's later than midday and far from the burrow.
+            if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
+                moveCloser(world, burrow.getLocation());
+                return;
+            }
 
-        // If the rabbit doesn't have a burrow, try finding and entering another burrow.
-        if (burrow == null && isNight) {
-            Location currentLocation = world.getLocation(this);
-            if (world.containsNonBlocking(currentLocation) && world.getNonBlocking(currentLocation) instanceof Burrow) {
-                enterBurrow(world, id_generator.getBurrow(currentLocation));
+            // If the rabbit doesn't have a burrow, try finding and entering another burrow.
+            if (burrow == null && isNight) {
+                Location currentLocation = world.getLocation(this);
 
+                // If there is a nonblocking location.
+                if (world.containsNonBlocking(currentLocation)) {
+
+                    // If the nonblocking at the current location is a burrow.
+                    if (world.getNonBlocking(currentLocation) instanceof Burrow) {
+
+                        // Rabbit enters the burrow.
+                        enterBurrow(world, id_generator.getBurrow(currentLocation));
+                    }
+                }
             }
         }
     }
@@ -142,9 +155,14 @@ public class Rabbit extends Herbivore {
         for (int i = 0; i < empty_surrounding_location.size() ; i++) {
             world.setTile(empty_surrounding_location.get(i), burrow.getResidents().get(i));
         }
+        // Finds a random index in this list of locations.
+        Random random = new Random();
+        int random_index = random.nextInt(0, possible_spawn_locations.size());
 
-        // Rabbit is now inside burrow.
+        world.setTile(possible_spawn_locations.get(random_index), this);
+        // Rabbit is now outside of burrow.
         in_hiding = false;
 
-    } // rabbits jump up at same time in same place
+        // rabbits jump up at same time in same place
+    }
 }

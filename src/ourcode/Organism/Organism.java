@@ -156,7 +156,7 @@ public abstract class Organism implements Actor {
         // Removes itself from possible locations to spawn.
         possible_spawn_locations.remove(world.getLocation(this));
 
-        // Return null value if there is not empty location (to be used in if statement in larger method to check)
+        // Return null value if there is no empty location (to be used in if statement in larger method to check).
         if (possible_spawn_locations.isEmpty()) {
             return null;
         }
@@ -166,8 +166,6 @@ public abstract class Organism implements Actor {
 
     /**
      * uses list of free locations to find a random location to go to
-     * @param world
-     * @return
      */
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
@@ -183,12 +181,10 @@ public abstract class Organism implements Actor {
      * Otherwise null
      */
     public Location getGrassLocation(World world){
-        Location grassLocation = null;
         for(Location location: getSurroundingFreeLocation(world)){
             if(world.containsNonBlocking(location)){
                 if ((world.getNonBlocking(location) instanceof Grass)) {
-                    grassLocation = location;
-                    return grassLocation;
+                    return location;
                 }
             }
         }
