@@ -69,12 +69,14 @@ public class Rabbit extends Herbivore {
                 enterBurrow(world, burrow);
                 return;
             }
-
+            /*
             // Create a burrow if old enough and doesn't have one.
             if (age > 5 && !has_burrow) {
                 makeBurrow(world);
                 return;
             }
+
+             */
 
             // Move closer to the burrow if it's later than midday and far from the burrow.
             if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
@@ -103,6 +105,7 @@ public class Rabbit extends Herbivore {
     /**
      * Make burrow from location where the rabbit currently is.
      */
+    /*
     public void makeBurrow(World world) {
         // Removes whatever nonblocking it’s standing on if there is one.
         if (world.containsNonBlocking(world.getLocation(this))) {
@@ -123,6 +126,8 @@ public class Rabbit extends Herbivore {
         id_generator.addBurrowToIdMap(burrow.getId(), burrow);
         id_generator.addLocationToIdMap(burrow.getLocation(), burrow.getId());
     }
+
+     */
 
     /**
      * Puts a rabbit inside a burrow.
