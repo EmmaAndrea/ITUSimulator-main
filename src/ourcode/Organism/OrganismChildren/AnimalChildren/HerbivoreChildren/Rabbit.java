@@ -55,7 +55,7 @@ public class Rabbit extends Herbivore {
         }
 
         boolean isNight = timeToNight(world) == 0;
-        boolean isCloseToBurrow = !in_hiding && burrow != null && distanceTo(world, world.getLocation(world)) <= 1;
+        boolean isCloseToBurrow = !in_hiding && burrow != null && distanceTo(world, world.getLocation(burrow)) <= 1;
 
         // Handle daytime burrow exit.
         if (burrow != null && in_hiding && !isNight) {
@@ -69,14 +69,14 @@ public class Rabbit extends Herbivore {
                 enterBurrow(world, burrow);
                 return;
             }
-            /*
+
             // Create a burrow if old enough and doesn't have one.
             if (age > 5 && !has_burrow) {
                 makeBurrow(world);
                 return;
             }
 
-             */
+
 
             // Move closer to the burrow if it's later than midday and far from the burrow.
             if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
@@ -115,6 +115,7 @@ public class Rabbit extends Herbivore {
 
         // Instantiates new burrow and sets the tile with current location.
         Burrow burrow = new Burrow(id_generator);
+        world.setTile(world.getLocation(this), burrow);
 
         // Rabbit now has a personal burrow.
         this.burrow = burrow;
@@ -124,7 +125,7 @@ public class Rabbit extends Herbivore {
 
         // Add to maps to keep track of where things are.
         id_generator.addBurrowToIdMap(burrow.getId(), burrow);
-        id_generator.addLocationToIdMap(world.getLocation(world), burrow.getId());
+        id_generator.addLocationToIdMap(world.getLocation(burrow), burrow.getId());
     }
 
     /**

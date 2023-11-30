@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.ProgramRunner;
@@ -16,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * A class which tests all the requirements of theme 1
  */
-public class Theme1Test {
+public class GrassTest {
     public ProgramRunner programRunner;
     public World world;
 
     /**
      * Creates one program-runner for all the tests to use
      */
-    public Theme1Test(){
+    public GrassTest(){
         programRunner = new ProgramRunner();
     }
     @BeforeAll
@@ -139,9 +140,22 @@ public class Theme1Test {
         assertFalse(world.getEntities().containsKey(rabbit1));
     }
 
+    /**
+     * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
+     * Checks that they each make burrows at age 6,
+     */
     @Test
     public void testRabbit3() throws Exception{
-
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(6);
+        int burrowCount = 0;
+        for (Object entity : world.getEntities().keySet()) {
+            if (entity instanceof Burrow) {
+                burrowCount++;
+            }
+        }
+        assertEquals(4, burrowCount);
     }
 
 
