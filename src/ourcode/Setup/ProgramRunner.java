@@ -2,13 +2,11 @@ package ourcode.Setup;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
-import itumulator.world.World;
 import itumulator.world.Location;
-
-import ourcode.Organism.Organism;
+import itumulator.world.World;
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
-import ourcode.Obstacles.Burrow;
 
 import java.awt.*;
 import java.io.File;
@@ -94,7 +92,9 @@ public class ProgramRunner {
 
         int amountOfBurrows = inputReader.getAmount("burrow");
         for (int i = 0; i < amountOfBurrows; i++) {
-
+            burrow = new Burrow(original_id_generator);
+            burrow.spawn(world);
+            world.setCurrentLocation(world.getLocation(burrow));
         }
     }
 
@@ -124,7 +124,7 @@ public class ProgramRunner {
         return world.getEntities().get(location);
     }
 
-    public Organism getOrganism(){
+    public Entity getOrganism(){
         return original_id_generator.getEntity(p.getWorld().getCurrentLocation());
     }
 
@@ -142,4 +142,3 @@ public class ProgramRunner {
 
     public Burrow getBurrow() { return burrow; }
 }
-
