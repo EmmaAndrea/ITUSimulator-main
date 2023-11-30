@@ -1,4 +1,4 @@
-package ourcode.Test;
+package ourcode.Test.Theme1;
 
 import itumulator.world.Location;
 import itumulator.world.World;

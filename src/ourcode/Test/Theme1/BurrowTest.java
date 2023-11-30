@@ -1,4 +1,4 @@
-package ourcode.Test;
+package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
 import itumulator.world.World;
@@ -13,11 +13,11 @@ import ourcode.Setup.ProgramRunner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class TestBurrow {
+public class BurrowTest {
     public ProgramRunner programRunner;
     public World world;
 
-    public TestBurrow() {
+    public BurrowTest() {
         programRunner = new ProgramRunner();
     }
 
