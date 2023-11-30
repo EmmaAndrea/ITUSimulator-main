@@ -74,8 +74,8 @@ public abstract class Animal extends Organism {
             if (!in_hiding) {
                 nextMove(world);
                 checkBreed(world);
-                herbivoreAct(world);
             }
+            herbivoreAct(world);
             //predatorAct coming soon
         } else {
             return false;

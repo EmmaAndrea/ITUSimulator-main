@@ -25,10 +25,20 @@ public abstract class Herbivore extends Animal {
      */
     @Override
     public void herbivoreAct(World world) {
-        if (world.containsNonBlocking(world.getLocation(this))) {
-            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
-                if (hunger >= getStandingOnNutritionalValue(world)) {
-                    eat(world);
+
+        // If the herbivore is not currently hiding in e.g. a burrow.
+        if (!in_hiding) {
+
+            // If the herbivore is standing on a nonblocking tile
+            if (world.containsNonBlocking(world.getLocation(this))) {
+
+                // If the non-blocking at this location is grass.
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
+
+                    // If the herbivore is hungrier than how full the grass will make it.
+                    if (hunger >= getStandingOnNutritionalValue(world)) {
+                        eat(world);
+                    }
                 }
             }
         }
