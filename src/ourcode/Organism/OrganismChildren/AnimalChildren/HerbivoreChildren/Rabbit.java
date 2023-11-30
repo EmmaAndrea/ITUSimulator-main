@@ -141,6 +141,8 @@ public class Rabbit extends Herbivore {
 
         // Adds rabbit to the list of residents of the particular burrow.
         burrow.addResident(this);
+
+        // Rabbit is now inside of burrow.
         in_hiding = true;
     }
 
