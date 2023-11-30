@@ -16,7 +16,7 @@ public class IDGenerator {
 
     private int ID;
     protected HashMap<Location, Integer> map_location_to_id;
-    protected HashMap<Integer, Organism> map_id_to_organism;
+    protected HashMap<Integer, Entity> map_id_to_entity;
     protected HashMap<Integer, Burrow> map_id_to_burrow;
 
     /**
@@ -25,7 +25,7 @@ public class IDGenerator {
     public IDGenerator() {
         IDs = new HashSet<>();
         map_location_to_id = new HashMap<>();
-        map_id_to_organism = new HashMap<>();
+        map_id_to_entity = new HashMap<>();
         map_id_to_burrow = new HashMap<>();
     }
 
@@ -53,11 +53,11 @@ public class IDGenerator {
     }
 
     public void addAnimalToIdMap(int id, Organism organism) {
-        map_id_to_organism.put(id, organism);
+        map_id_to_entity.put(id, organism);
     }
 
-    public Organism getOrganism(Location location) {
-        return map_id_to_organism.get(map_location_to_id.get(location));
+    public Entity getEntity(Location location) {
+        return map_id_to_entity.get(map_location_to_id.get(location));
     }
 
     public void addBurrowToIdMap(int id, Burrow burrow){

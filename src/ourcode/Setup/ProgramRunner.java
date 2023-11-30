@@ -118,7 +118,7 @@ public class ProgramRunner {
     }
 
     public Organism getOrganism(){
-        return original_id_generator.getOrganism(p.getWorld().getCurrentLocation());
+        return original_id_generator.getEntity(p.getWorld().getCurrentLocation());
     }
 
     public IDGenerator getOriginal_id_generator(){

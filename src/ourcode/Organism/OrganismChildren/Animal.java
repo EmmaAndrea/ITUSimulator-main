@@ -4,6 +4,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
 /**
@@ -33,8 +34,14 @@ public abstract class Animal extends Organism {
      * Returns the nutritional value of the organism of the current location.
      */
     public int getStandingOnNutritionalValue(World world) {
-        Organism organism = id_generator.getOrganism(world.getLocation(world.getNonBlocking(world.getLocation(this))));
-        return organism.getNutritionalValue();
+        Entity entity = id_generator.getEntity(world.getLocation(world.getNonBlocking(world.getLocation(this))));
+
+        if (entity instanceof Organism organism) {
+            return organism.getNutritionalValue();
+        }
+
+        // Handle the case where the entity is not an Organism (e.g., return a default value or throw an exception)
+        return 0; // Or handle this scenario appropriately
     }
 
     /**
@@ -139,7 +146,7 @@ public abstract class Animal extends Organism {
         for (Location location : world.getSurroundingTiles(world.getLocation(this), 1)) {
             if (location != world.getLocation(this)) { // this part is redundant as get surrounding doesn't include center
 
-                if (id_generator.getOrganism(location) != null && id_generator.getOrganism(location).getType().equals(type)) {
+                if (id_generator.getEntity(location) != null && id_generator.getEntity(location).getType().equals(type)) {
 
                     // If the animal is in breeding age (older than 10% and younger than 90% of its age).
                     if (age >= max_age * 0.1) {
@@ -227,28 +234,13 @@ public abstract class Animal extends Organism {
      * E.g. if it's closer to being night than how long it will take for a rabbit to go to burrow/
      */
     public int distanceTo(World world, Location location) {
-        int step_x = 0;
-        int step_y = 0;
+        Location currentLocation = world.getLocation(this);
 
-        // Gets distance to align x coordinates.
-        if (location.getX() != world.getLocation(this).getX()) {
-            if (location.getX() > world.getLocation(this).getX()) {
-                step_x = location.getX() - world.getLocation(this).getX();
-            } else if (location.getX() < world.getLocation(this).getX()) {
-                step_x = location.getX() + world.getLocation(this).getX();
-            }
-        }
+        // Calculate the absolute difference in x and y coordinates
+        int step_x = Math.abs(location.getX() - currentLocation.getX());
+        int step_y = Math.abs(location.getY() - currentLocation.getY());
 
-        // Gets distance to align y coordinates.
-        if (location.getY() != world.getLocation(this).getY()) {
-            if (location.getY() > world.getLocation(this).getY()) {
-                step_y = location.getY() - world.getLocation(this).getY();
-            } else if (location.getY() < world.getLocation(this).getY()) {
-                step_y = location.getY() + world.getLocation(this).getY();
-            }
-        }
-
-        // Returns the sum of x and y steps.
+        // Return the sum of x and y steps
         return step_x + step_y;
     }
 }

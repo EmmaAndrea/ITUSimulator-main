@@ -29,7 +29,7 @@ public class Rabbit extends Herbivore {
         type = "rabbit";
         max_hunger = 10;
         nutritional_value = 3;
-        max_age = 100;
+        max_age = 9; // changed from 100 for testing purposes
         has_burrow = false;
     }
 
@@ -180,5 +180,9 @@ public class Rabbit extends Herbivore {
         in_hiding = false;
 
         // rabbits jump up at same time in same place
+    }
+
+    public int getHunger() {
+        return hunger;
     }
 }
