@@ -18,7 +18,7 @@ import java.util.Random;
 
 public class Rabbit extends Herbivore {
 
-    Burrow burrow;
+    ArrayList <Burrow> my_burrows;
     boolean has_burrow;
 
     /**
@@ -31,6 +31,7 @@ public class Rabbit extends Herbivore {
         nutritional_value = 4;
         max_age = 100;
         has_burrow = false;
+        my_burrows = new ArrayList<>();
     }
 
     /**
@@ -49,55 +50,74 @@ public class Rabbit extends Herbivore {
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
+
+        for (Object object : world.getEntities().keySet()){
+            if (object instanceof Burrow){
+                System.out.println(world.getEntities().get(object));
+            }
+        }
+
         // If the rabbit has died, then stop method.
         if (!world.contains(this)) {
             return;
         }
 
+        boolean isCloseToBurrow = false;
+
         boolean isNight = timeToNight(world) == 0;
-        boolean isCloseToBurrow = !in_hiding && burrow != null && distanceTo(world, world.getLocation(burrow)) <= 1;
+        if(!my_burrows.isEmpty()) {
+            if (!in_hiding && distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1){
+                isCloseToBurrow = true;
+            }
+        }
 
         // Handle daytime burrow exit.
-        if (burrow != null && in_hiding && !isNight) {
+        if (in_hiding && my_burrows != null && !isNight) {
             exitBurrow(world);
             return;
         }
 
+        // if not in burrow
         if (!in_hiding) {
-            // Prioritize entering the burrow at night if close to it.
-            if (isNight && isCloseToBurrow) {
-                enterBurrow(world, burrow);
-                return;
+            // if it is night
+            if (isNight) {
+                // Enter the burrow if close to it.
+                if (!my_burrows.isEmpty()) {
+                    if (isCloseToBurrow) {
+                        try {
+                            enterBurrow(world, my_burrows.get(0));
+                        } catch (Exception e) {
+                            System.out.println(e.getMessage());
+                        }
+                        return;
+                        // otherwise move closer
+                    } else {
+                        moveCloser(world, world.getLocation(my_burrows.get(0)));
+                        return;
+                    }
+                }
+
+                // if it is night and rabbit doesn't have burrow
+                if (my_burrows.isEmpty()) {
+                   for(Location location : id_generator.getLocationOfBurrows()){
+                       if (location == world.getLocation(this)){
+                           my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                       }
+                   }
+
+                }
             }
 
             // Create a burrow if old enough and doesn't have one.
-            if (age > 5 && !has_burrow) {
+            if (age > 5 && my_burrows.isEmpty()) {
                 makeBurrow(world);
                 return;
             }
 
-
-
             // Move closer to the burrow if it's later than midday and far from the burrow.
-            if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
-                moveCloser(world, world.getLocation(burrow));
+            if (!my_burrows.isEmpty() && timeToNight(world) > 4 && !isCloseToBurrow) {
+                moveCloser(world, world.getLocation(my_burrows.get(0)));
                 return;
-            }
-
-            // If the rabbit doesn't have a burrow, try finding and entering another burrow.
-            if (burrow == null && isNight) {
-                Location currentLocation = world.getLocation(this);
-
-                // If there is a nonblocking location.
-                if (world.containsNonBlocking(currentLocation)) {
-
-                    // If the nonblocking at the current location is a burrow.
-                    if (world.getNonBlocking(currentLocation) instanceof Burrow) {
-
-                        // Rabbit enters the burrow.
-                        enterBurrow(world, id_generator.getBurrow(currentLocation));
-                    }
-                }
             }
         }
     }
@@ -114,18 +134,18 @@ public class Rabbit extends Herbivore {
         }
 
         // Instantiates new burrow and sets the tile with current location.
-        Burrow burrow = new Burrow(id_generator);
-        world.setTile(world.getLocation(this), burrow);
+        Burrow newburrow = new Burrow(id_generator);
+        world.setTile(world.getLocation(this), newburrow);
 
         // Rabbit now has a personal burrow.
-        this.burrow = burrow;
+        my_burrows.add(newburrow);
 
         // Set rabbit’s boolean has_burrow to be true.
         has_burrow = true;
 
         // Add to maps to keep track of where things are.
-        id_generator.addBurrowToIdMap(burrow.getId(), burrow);
-        id_generator.addLocationToIdMap(world.getLocation(burrow), burrow.getId());
+        id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
+        id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
     }
 
     /**
@@ -134,23 +154,36 @@ public class Rabbit extends Herbivore {
      * Adds them to the lists of residents of the particular burrow.
      * If the rabbit didn't beforehand have a personal burrow, it sets this burrow as the personal burrow.
      */
-    public void enterBurrow(World world, Burrow burrow) {
+    public void enterBurrow(World world, Burrow newburrow) {
         // If it has not been assigned a burrow.
-        if (this.burrow == null) {
-            has_burrow = true;
+        if (my_burrows.isEmpty()) {
 
             // Sets its personal burrow to be the burrow it enters.
-            this.burrow = burrow;
+            my_burrows.add(id_generator.getBurrow(world.getLocation(this)));
+
+            has_burrow = true;
+            // "Enters" burrow; removes - not deletes - from world.
+
+            // Adds rabbit to the list of residents of the particular burrow.
+
+            // Rabbit is now inside of burrow.
+
+        } else {
+
+            // "Enters" burrow; removes - not deletes - from world.
+
+            // Adds rabbit to the list of residents of the particular burrow.
+
+            // Rabbit is now inside of burrow.
+
         }
 
-        // "Enters" burrow; removes - not deletes - from world.
+        if(my_burrows.get(0) == null) my_burrows.get(1).addResident(this);
+        if(my_burrows.get(0) != null) my_burrows.get(0).addResident(this);
         world.remove(this);
 
-        // Adds rabbit to the list of residents of the particular burrow.
-        burrow.addResident(this);
-
-        // Rabbit is now inside of burrow.
         in_hiding = true;
+        return;
     }
 
     /**
@@ -158,7 +191,8 @@ public class Rabbit extends Herbivore {
      */
     public void exitBurrow(World world) {
         // Retrieve current location
-        Location burrow_location = world.getLocation(burrow);
+
+        Location burrow_location = world.getLocation(my_burrows.get(0));
 
         // Makes list of possible spawn locations (locations with no blocking elements).
         ArrayList<Location> possible_spawn_locations = new ArrayList<>();
@@ -191,6 +225,6 @@ public class Rabbit extends Herbivore {
     }
 
     public Burrow getBurrow() {
-        return burrow;
+        return my_burrows.get(1);
     }
 }

@@ -3,6 +3,7 @@ package ourcode.Setup;
 import itumulator.world.Location;
 import ourcode.Obstacles.Burrow;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -20,6 +21,11 @@ public class IDGenerator {
     protected HashMap<Integer, Entity> map_id_to_entity;
     protected HashMap<Integer, Burrow> map_id_to_burrow;
 
+    protected HashMap<Location, Burrow> map_location_to_burrow;
+
+    protected ArrayList<Location> locations_of_burrows;
+
+
     /**
      * Instantiates the list of IDs, and hashmaps to obtain id and corresponding organism from location
      */
@@ -27,7 +33,9 @@ public class IDGenerator {
         IDs = new HashSet<>();
         map_location_to_id = new HashMap<>();
         map_id_to_entity = new HashMap<>();
+        map_location_to_burrow = new HashMap<>();
         map_id_to_burrow = new HashMap<>();
+        locations_of_burrows = new ArrayList<>();
     }
 
     /**
@@ -61,12 +69,20 @@ public class IDGenerator {
         return map_id_to_entity.get(map_location_to_id.get(location));
     }
 
-    public void addBurrowToIdMap(int id, Burrow burrow){
-        map_id_to_burrow.put(id, burrow);
+    public void addBurrowToLocationMap(Location location, Burrow burrow){
+        map_location_to_burrow.put(location, burrow);
+        locations_of_burrows.add(location);
+
     }
 
     public Burrow getBurrow(Location location){
-        return map_id_to_burrow.get(map_location_to_id.get(location));
+        return map_location_to_burrow.get(location);
     }
+
+    public ArrayList<Location> getLocationOfBurrows(){
+        return locations_of_burrows;
+    }
+
 }
 
+// burrow to id, burrow to loaction, location to burrow, id to burrow

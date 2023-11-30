@@ -78,7 +78,7 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            if (!in_hiding) {
+            if (world.getEntities().get(this) != null) {
                 nextMove(world);
                 checkBreed(world);
             }

@@ -27,7 +27,7 @@ public abstract class Herbivore extends Animal {
     public void herbivoreAct(World world) {
 
         // If the herbivore is not currently hiding in e.g. a burrow.
-        if (!in_hiding) {
+        if (world.getEntities().get(this) != null) {
 
             // If the herbivore is standing on a nonblocking tile
             if (world.containsNonBlocking(world.getLocation(this))) {

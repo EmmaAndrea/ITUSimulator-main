@@ -158,6 +158,25 @@ public class GrassTest {
         assertEquals(4, burrowCount);
     }
 
+    @Test
+    public void testRabbit4() throws Exception{
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+
+        for (int i = 0 ; i < 40 ; i ++){
+            Grass grass = new Grass (programRunner.getOriginal_id_generator());
+            grass.spawn(world);
+        }
+        programRunner.runSimulation(11);
+        int rabbits_in_burrows = 0;
+        for (Object entity : world.getEntities().keySet()) {
+            if (world.getEntities().get(entity) == null) {
+                rabbits_in_burrows++;
+            }
+        }
+        assertEquals(4, rabbits_in_burrows);
+    }
+
 
     @AfterEach
     public void endTest(){

@@ -106,6 +106,16 @@ public class ProgramRunner {
         // show the simulation
         p.show();
 
+        for (int i = 0; i < 29; i++) {
+            p.simulate();
+        }
+
+        p.simulate();
+
+        p.simulate();
+
+        p.simulate();
+
         // run the simulation
         for (int i = 0; i < step_count; i++) {
             p.simulate();

@@ -77,6 +77,7 @@ public abstract class Organism extends Entity implements Actor {
      */
     public ArrayList<Location> getSurroundingFreeLocation(World world) {
         // Retrieve current location
+
         Location current_location = world.getLocation(this);
 
         // Makes list of possible spawn locations (locations with no blocking elements).
@@ -114,14 +115,16 @@ public abstract class Organism extends Entity implements Actor {
      * Returns the location of the grass if there is one
      * Otherwise null
      */
-    public Location getGrassLocation(World world){
-        for(Location location: getSurroundingFreeLocation(world)){
-            if(world.containsNonBlocking(location)){
-                if ((world.getNonBlocking(location) instanceof Grass)) {
-                    return location;
+    public Location getGrassLocation(World world) {
+        if (getSurroundingFreeLocation(world) == null) {
+            for (Location location : getSurroundingFreeLocation(world)) {
+                if (world.containsNonBlocking(location)) {
+                    if ((world.getNonBlocking(location) instanceof Grass)) {
+                        return location;
+                    }
                 }
             }
-        }
-        return null;
+            return null;
+        } return null;
     }
 }
