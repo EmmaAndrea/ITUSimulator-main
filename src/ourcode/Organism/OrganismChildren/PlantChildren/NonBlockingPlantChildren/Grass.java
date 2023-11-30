@@ -17,22 +17,22 @@ public class Grass extends NonBlockingPlant {
      * The constructor of a new grass.
      */
     public Grass(IDGenerator original_id_generator) {
-        super(original_id_generator, "grass");
-        max_age = 200;
+        super(original_id_generator);
+        type = "grass";
+        max_age = 30;
+        nutritional_value = 4;
     }
 
     /**
      * Controls what grass does when act() is called from the world.
-     * Grass spreads after a given time (lifeCounter).
+     * Grass spreads every fifth step.
      */
-
-
     @Override
-    public void act(World world) {
-        super.act(world);
+    public void plantAct(World world) {
+        super.plantAct(world);
 
         // After a given amount of steps, the grass will spread
-        if (age % 5 == 0) {
+        if (age % 8 == 0) {
             spread(world);
         }
     }
@@ -41,22 +41,24 @@ public class Grass extends NonBlockingPlant {
      * Spawns new grass where there is an available tile.
      */
     public void spread(World world) {
-        // Retrieve current location once
-        Location currentLocation = world.getLocation(this);
+        // Retrieve current location once.
+        Location current_location = world.getLocation(this);
 
-        // Find a suitable location to spread grass
+        // Find a suitable location to spread grass.
         Location spreadLocation = null;
-        for (Location surroundingTile : world.getSurroundingTiles(currentLocation, 1)) {
+        for (Location surroundingTile : world.getSurroundingTiles(current_location, 1)) {
             if (!world.containsNonBlocking(surroundingTile)) {
                 spreadLocation = surroundingTile;
                 break;
             }
         }
 
-        // If a suitable location is found, spread the grass
+        // If a suitable location is found, spread the grass.
         if (spreadLocation != null) {
-            Grass spreadedgrass = new Grass(id_generator); // right now, spread grass has same id as original grass
-            world.setTile(spreadLocation, spreadedgrass);
+            Grass spreaded_grass = new Grass(id_generator);
+            world.setTile(spreadLocation, spreaded_grass);
+            id_generator.addAnimalToIdMap(spreaded_grass.getId(), spreaded_grass);
+            id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
         }
     }
 }

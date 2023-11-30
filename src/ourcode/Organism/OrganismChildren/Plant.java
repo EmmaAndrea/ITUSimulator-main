@@ -11,15 +11,15 @@ import ourcode.Setup.IDGenerator;
  */
 public abstract class Plant extends Organism {
 
-    public Plant(IDGenerator original_id_generator, String type) {
-        super(original_id_generator, type);
+    public Plant(IDGenerator original_id_generator) {
+        super(original_id_generator);
     }
 
     /**
      * @param world providing details of the position on which the actor is currently located and much more.
      */
     @Override
-    public void act(World world) {
-        super.act(world);
+    public void plantAct(World world) {
+        super.plantAct(world);
     }
 }
