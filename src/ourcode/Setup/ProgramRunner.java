@@ -92,7 +92,9 @@ public class ProgramRunner {
 
         int amountOfBurrows = inputReader.getAmount("burrow");
         for (int i = 0; i < amountOfBurrows; i++) {
-
+            burrow = new Burrow(original_id_generator);
+            burrow.spawn(world);
+            world.setCurrentLocation(world.getLocation(burrow));
         }
     }
 
@@ -140,4 +142,3 @@ public class ProgramRunner {
 
     public Burrow getBurrow() { return burrow; }
 }
-

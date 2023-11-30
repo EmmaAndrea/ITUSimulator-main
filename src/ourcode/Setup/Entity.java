@@ -6,9 +6,8 @@ import itumulator.world.World;
 import java.util.Random;
 
 /**
- * The Organism class gives the abstraction of the living. For a world to include many different lifeforms,
- * there has to be a generalization for living creatures.
- * The organism class will help provide the utilities necessary to visualize a certain creature.
+ * The Entity class gives the abstraction of an object in the world. Entities can be uniquely identified by their
+ * 'type' of entity. Entities also have a unique identity to distinguish between entities of same type.
  */
 public abstract class Entity {
     // Type (subclass) of entity.
@@ -30,8 +29,7 @@ public abstract class Entity {
     protected boolean hasBeenKilled;
 
     /**
-     * Constructor for an Organism, the parent class for all life on the world.
-     * Needs an IDGenerator and a type of organism.
+     * Constructor for an Entity, gives them an identity, sets 'age' to 1 and the 'hasBeenKilled' boolean to 'false'
      */
     public Entity(IDGenerator original_id_generator) {
         id_generator = original_id_generator;
