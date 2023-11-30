@@ -1,5 +1,6 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 
+import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
@@ -39,55 +40,46 @@ public class Rabbit extends Herbivore {
     /**
      * Calls herbivoreAct.
      * If it doesn't have a burrow, make a burrow.
+     * Moves closer to burrow
      */
     public void herbivoreAct(World world) {
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
-        // Makes a burrow if rabbit does not already have a burrow.
+        boolean isNight = timeToNight(world) == 0;
+        boolean isCloseToBurrow = burrow != null && distanceTo(world, burrow.getLocation()) <= 1;
+
+        // Prioritize entering the burrow at night if close to it.
+        if (isNight && isCloseToBurrow) {
+            enterBurrow(world, burrow);
+            return;
+        }
+
+        // Handle daytime burrow exit.
+        if (burrow != null && burrow.getResidents().contains(this) && !isNight) {
+            if (world.getCurrentTime() % 20 == 0) {
+                exitBurrow(world);
+                return;
+            }
+        }
+
+        // Create a burrow if old enough and doesn't have one.
         if (age > 5 && !has_burrow) {
             makeBurrow(world);
+            return;
         }
 
-        // If it has a burrow and if it is past midday
-        // and if it takes longer or same time to get to burrow than steps there is to night,
-        // Move closer to burrow.
-        if (burrow != null && timeToNight(world)>4 && distanceTo(world, burrow.getLocation()) >= timeToNight(world)) {
-            // go to burrow
+        // Move closer to the burrow if it's later than midday and far from the burrow.
+        if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
             moveCloser(world, burrow.getLocation());
+            return;
         }
 
-        // If it's night, then the rabbit enters burrow.
-        if (burrow != null && timeToNight(world) == 0) {
-            if (distanceTo(world, burrow.getLocation()) == 1 ) { // not certain if rabbit is 'close' to burrow
-                this.enterBurrow(world, burrow);
-            }
-        }
-        // If a burrow contains given resident and if it is daytime, leave the burrow
-        if (burrow != null) {
-            if (burrow.getResidents().contains(this)) {
-                if (world.getCurrentTime() % 20 == 0) {
-                    exitBurrow(world);
-                }
-            }
-        }
-
-        // Enters a burrow:
-        // If rabbit does not have a burrow.
-        if (burrow == null) {
-            // If there is a non-blocking at location.
-            if (world.containsNonBlocking(world.getLocation(this))) {
-
-                // If said non-blocking is a burrow.
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
-
-                    // If it is night.
-                    if (timeToNight(world) == 0) {
-
-                        // Gets burrow
-                        enterBurrow(world, id_generator.getBurrow(world.getLocation(world.getNonBlocking(world.getLocation(this)))));
-                    }
-                }
+        // If the rabbit doesn't have a burrow, try finding and entering another burrow.
+        if (burrow == null && isNight) {
+            Location currentLocation = world.getLocation(this);
+            if (world.containsNonBlocking(currentLocation) && world.getNonBlocking(currentLocation) instanceof Burrow) {
+                enterBurrow(world, id_generator.getBurrow(currentLocation));
             }
         }
     }
