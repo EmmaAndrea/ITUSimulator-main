@@ -27,7 +27,7 @@ public class Rabbit extends Herbivore {
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "rabbit";
-        max_hunger = 100; // changed from 10 due to testing
+        max_hunger = 10;
         nutritional_value = 4;
         max_age = 100;
         has_burrow = false;
