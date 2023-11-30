@@ -1,20 +1,18 @@
 package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
+import itumulator.world.Location;
 import itumulator.world.World;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BurrowTest {
-    public ProgramRunner programRunner;
+    public final ProgramRunner programRunner;
     public World world;
 
     public BurrowTest() {
@@ -32,43 +30,55 @@ public class BurrowTest {
     }
 
     /**
-     * This test will provide an instance of a burrow based off of the requirements in 'K1-3a' from 'Tema 1'
+     * This test demonstrates the usage of the constructor
      */
     @Test
     public void testConstructor() throws Exception {
-        programRunner.create("./data/t1-3a.txt");
-        World world = programRunner.getWorld();
-        programRunner.runSimulation(1);
-
-        int burrowCount = 0;
-        for (Object entity : world.getEntities().keySet()) {
-            if (entity instanceof Burrow) {
-                burrowCount++;
-            }
-        }
-
-        assertTrue(burrowCount >= 1 && burrowCount <= 5, "amount of burrow should be between 1 and 5, but was" + burrowCount);
-    }
-    /*
-    @Test
-    public void testRabbitStandingOnBurrow() throws Exception {
-        World world = new World(2);
+        // creates a world with size of 1
+        World world = new World(5);
+        // creates a new id to create a burrow
         IDGenerator id = new IDGenerator();
 
-        Rabbit rabbit = new Rabbit(id);
-        Burrow burrow = new Burrow(id);
+        Burrow burrow0 = new Burrow(id);
         Burrow burrow1 = new Burrow(id);
         Burrow burrow2 = new Burrow(id);
-        Burrow burrow3 = new Burrow(id);
 
+        world.add(burrow0);
+        world.add(burrow1);
+        world.add(burrow2);
 
-        rabbit.spawn(world);
-        burrow.spawn(world);
-
-        assertEquals(world.getLocation(rabbit), world.getLocation(burrow));
+        assertEquals(world.getEntities().size(), 3);
     }
 
+    /**
+     * the 'testRabbitStandingOnBurrow()' test demonstrates if a rabbit can stand directly on top of a burrow
      */
+    @Test
+    public void testRabbitStandingOnBurrow() throws RuntimeException {
+        // creates a world with size of 1
+        World world = new World(1);
+        // creates a new id to give to a rabbit and a burrow
+        IDGenerator id = new IDGenerator();
+
+        // creates a rabbit
+        Rabbit rabbit = new Rabbit(id);
+        // creates a burrow
+        Burrow burrow = new Burrow(id);
+        // creates a location for the rabbit and burrow to be spawned at
+        Location location = new Location(0,0);
+
+        // adds rabbit to the world
+        world.add(rabbit);
+        // adds burrow to the world
+        world.add(burrow);
+        // places rabbit at location
+        world.setTile(location, rabbit);
+        // places burrow at location
+        world.setTile(location, burrow);
+
+        // checks if rabbits location is equal to burrows location
+        assertEquals(world.getLocation(rabbit), world.getLocation(burrow));
+    }
 
     /**
      * Tests both addResident() method and getResident() method.
@@ -99,5 +109,15 @@ public class BurrowTest {
 
         burrow.spawn(world);
         assertEquals(world.getEntities().size(),  1);
+    }
+
+    @AfterEach
+    public void endTest() {
+        System.out.println("Test Ended");
+    }
+
+    @AfterAll
+    public static void tearDown() {
+        System.out.println("All tests complete");
     }
 }
