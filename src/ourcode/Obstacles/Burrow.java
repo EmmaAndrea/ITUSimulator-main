@@ -18,7 +18,7 @@ public class Burrow extends Obstacle {
     List<Rabbit> residents;
 
     // A location for the burrow such that a rabbit can find a way to it.
-    Location burrow_location;
+
 
     /**
      * The constructor for a Burrow.
@@ -55,13 +55,6 @@ public class Burrow extends Obstacle {
     }
 
      */
-
-    /**
-     * Returns the location of the burrow.
-     */
-    public Location getLocation() {
-        return burrow_location;
-    }
 
     /**
      * Returns the list of residents of the burrow.
