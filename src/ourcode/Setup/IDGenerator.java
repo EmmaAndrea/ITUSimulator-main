@@ -2,9 +2,10 @@ package ourcode.Setup;
 
 import itumulator.world.Location;
 import ourcode.Obstacles.Burrow;
-import ourcode.Organism.Organism;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  * The IDGenerator class generates a unique ID and adds it to the list of IDs.
@@ -52,8 +53,8 @@ public class IDGenerator {
         map_location_to_id.put(location, id);
     }
 
-    public void addAnimalToIdMap(int id, Organism organism) {
-        map_id_to_entity.put(id, organism);
+    public void addEntityToIdMap(int id, Entity entity) {
+        map_id_to_entity.put(id, entity);
     }
 
     public Entity getEntity(Location location) {

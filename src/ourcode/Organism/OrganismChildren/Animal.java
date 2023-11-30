@@ -126,7 +126,7 @@ public abstract class Animal extends Organism {
             // Spawns baby and adds to location and id maps.
             world.setTile(random_location, offspring);
             assert offspring != null; // We promise that a baby exists.
-            id_generator.addAnimalToIdMap(offspring.getId(), offspring);
+            id_generator.addEntityToIdMap(offspring.getId(), offspring);
             id_generator.addLocationToIdMap(random_location, offspring.getId());
         }
     }

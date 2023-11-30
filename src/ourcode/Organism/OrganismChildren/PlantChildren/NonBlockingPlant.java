@@ -32,7 +32,7 @@ public abstract class NonBlockingPlant extends Plant implements NonBlocking {
         }
         world.setTile(location, this);
 
-        id_generator.addAnimalToIdMap(id, this);
+        id_generator.addEntityToIdMap(id, this);
         id_generator.addLocationToIdMap(world.getLocation(this), id);
         // add plant to id list with entities location.
     }

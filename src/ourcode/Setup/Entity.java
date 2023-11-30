@@ -1,12 +1,8 @@
 package ourcode.Setup;
 
-import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Setup.IDGenerator;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
-import java.util.ArrayList;
 import java.util.Random;
 
 /**
@@ -57,7 +53,7 @@ public abstract class Entity {
         world.setTile(location, this); // If it's empty, spawn organism into this location.
 
         id_generator.addLocationToIdMap(location, id);
-        id_generator.addAnimalToIdMap(id, this);
+        id_generator.addEntityToIdMap(id, this);
     }
 
     /**
