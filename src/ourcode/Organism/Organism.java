@@ -36,6 +36,7 @@ public abstract class Organism implements Actor {
     protected boolean hasBeenKilled;
 
 
+
     /**
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.

@@ -6,6 +6,9 @@ import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Represents a Rabbit entity in the simulated world.
  * Rabbits are a type of Herbivore.
@@ -57,10 +60,8 @@ public class Rabbit extends Herbivore {
 
         // Handle daytime burrow exit.
         if (burrow != null && burrow.getResidents().contains(this) && !isNight) {
-            if (world.getCurrentTime() % 20 == 0) {
                 exitBurrow(world);
                 return;
-            }
         }
 
         // Create a burrow if old enough and doesn't have one.
@@ -80,6 +81,7 @@ public class Rabbit extends Herbivore {
             Location currentLocation = world.getLocation(this);
             if (world.containsNonBlocking(currentLocation) && world.getNonBlocking(currentLocation) instanceof Burrow) {
                 enterBurrow(world, id_generator.getBurrow(currentLocation));
+
             }
         }
     }
@@ -126,6 +128,7 @@ public class Rabbit extends Herbivore {
 
         // Adds rabbit to the list of residents of the particular burrow.
         burrow.addResident(this);
+        in_hiding = true;
     }
 
     /**

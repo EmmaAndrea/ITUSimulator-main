@@ -15,7 +15,8 @@ import ourcode.Setup.IDGenerator;
 public abstract class Animal extends Organism {
     public int hunger;
     public int max_hunger;
-    public int days_since_last_birth;
+    public int steps_since_last_birth;
+    protected boolean in_hiding;
 
     /**
      * The constructor of an Animal.
@@ -24,7 +25,8 @@ public abstract class Animal extends Organism {
         super(original_id_generator); // life_counter = 1;
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
-        days_since_last_birth = 0;
+        steps_since_last_birth = 0;
+        in_hiding = false;
     }
 
     /**
@@ -69,10 +71,11 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            nextMove(world);
-            checkBreed(world);
-            herbivoreAct(world);
-
+            if (!in_hiding) {
+                nextMove(world);
+                checkBreed(world);
+                herbivoreAct(world);
+            }
             //predatorAct coming soon
         } else {
             return false;
