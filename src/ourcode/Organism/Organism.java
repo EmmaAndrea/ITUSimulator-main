@@ -103,7 +103,6 @@ public abstract class Organism implements Actor {
      * An act method for animals. The animals increase their age by 1 for each act by calling the 'ageIncrease()' method
      */
 
-
     public boolean animalAct(World world) {
         return true;
     }
@@ -165,6 +164,18 @@ public abstract class Organism implements Actor {
         int random_index = random.nextInt(0, possible_spawn_locations.size());
 
         return possible_spawn_locations.get(random_index);
+    }
+
+    /**
+     * Returns 0 if it is currently night.
+     * Else, returns how many steps until it is night.
+     */
+    public int timeToNight(World world){
+        if (world.getCurrentTime() % 20 >= 10){
+            return 0;
+        } else {
+            return 10 - world.getCurrentTime() % 20;
+        }
     }
 
 }

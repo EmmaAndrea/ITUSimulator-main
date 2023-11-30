@@ -32,7 +32,7 @@ public class Grass extends NonBlockingPlant {
         super.plantAct(world);
 
         // After a given amount of steps, the grass will spread
-        if (age % 5 == 0) {
+        if (age % 8 == 0) {
             spread(world);
         }
     }

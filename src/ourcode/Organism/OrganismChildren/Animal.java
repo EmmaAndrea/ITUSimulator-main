@@ -59,8 +59,13 @@ public abstract class Animal extends Organism {
     @Override
     public boolean animalAct(World world) {
 
-        hunger++;
-        days_since_last_birth++;
+        // Adds hunger if it is not sleeping/hiding.
+        if (!in_hiding) {
+            hunger++;
+        }
+
+        // Adds one to the counter of how many days since it gave birth to an offspring.
+        steps_since_last_birth++;
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
@@ -141,9 +146,9 @@ public abstract class Animal extends Organism {
                             if (!world.getEmptySurroundingTiles().isEmpty()) {
 
                                 // If they haven't bred in 10 steps.
-                                if (days_since_last_birth >= 5) {
+                                if (steps_since_last_birth >= 5) {
                                     breed(world, this);
-                                    days_since_last_birth = 0;
+                                    steps_since_last_birth = 0;
                                     break;
                                 }
                             }

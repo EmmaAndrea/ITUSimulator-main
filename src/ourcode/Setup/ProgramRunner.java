@@ -54,7 +54,7 @@ public class ProgramRunner {
         int size = inputReader.readWorldSize();
 
         // standard
-        int delay = 1000; // the delay between every step of the simulation (in ms)
+        int delay = 2000; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
         //create world

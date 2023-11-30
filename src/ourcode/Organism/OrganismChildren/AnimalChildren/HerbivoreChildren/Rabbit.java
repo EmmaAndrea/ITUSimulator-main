@@ -70,7 +70,7 @@ public class Rabbit extends Herbivore {
         }
 
         // Move closer to the burrow if it's later than midday and far from the burrow.
-        if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow) {
+        if (burrow != null && timeToNight(world) > 4 && !isCloseToBurrow && !burrow.getResidents().contains(this)) {
             moveCloser(world, burrow.getLocation());
             return;
         }
@@ -119,38 +119,29 @@ public class Rabbit extends Herbivore {
 
             // Sets its personal burrow to be the burrow it enters.
             this.burrow = burrow;
-
-            // "Enters" burrow; removes - not deletes - from world.
-            world.remove(this);
-        } else {
-            world.remove(this);
         }
+
+        // "Enters" burrow; removes - not deletes - from world.
+        world.remove(this);
 
         // Adds rabbit to the list of residents of the particular burrow.
         burrow.addResident(this);
     }
 
     /**
-     * Currently magically transports rabbit to its burrow.
-     * We should fix it so that it is incremental by step.
-     */
-    public void goToBed(World world) {
-            world.move(this, burrow.getLocation()); // give statements for locating threats
-            world.remove(this);
-    }
-
-    /**
      * Puts a rabbit at the location where the burrow is located
      */
     public void exitBurrow(World world) {
-        world.setTile(burrow.getLocation(), this);
-    }
+        // Adds all empty surrounding tiles to a list intended.
+        List<Location> empty_surrounding_location = new ArrayList<>(world.getEmptySurroundingTiles(burrow.getLocation()));
 
-    public int timeToNight(World world){
-        if (world.getCurrentTime()%20 > 10){
-            return 0;
-        } else {
-            return 10 - world.getCurrentTime()%20;
+        // put rabbits from burrow on empty tiles
+        for (int i = 0; i < empty_surrounding_location.size() ; i++) {
+            world.setTile(empty_surrounding_location.get(i), burrow.getResidents().get(i));
         }
-    }
+
+        // Rabbit is now inside burrow.
+        in_hiding = false;
+
+    } // rabbits jump up at same time in same place
 }
