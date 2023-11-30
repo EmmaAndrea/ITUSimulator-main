@@ -74,9 +74,7 @@ public class TestBurrow {
      * Tests both addResident() method and getResident() method.
      */
     @Test
-    public void testResident() throws Exception {
-        Program p = new Program(1, 800, 200);
-        World world = p.getWorld();
+    public void testResidents() {
         IDGenerator id = new IDGenerator();
         Burrow burrow = new Burrow(id);
         Rabbit rabbit = new Rabbit(id);
@@ -93,7 +91,7 @@ public class TestBurrow {
      * Tests the spawn() method for a burrow.
      */
     @Test
-    public void testBurrowSpawn() throws Exception {
+    public void testBurrowSpawn() {
         Program p = new Program(2, 800, 200);
         World world = p.getWorld();
         IDGenerator id = new IDGenerator();
