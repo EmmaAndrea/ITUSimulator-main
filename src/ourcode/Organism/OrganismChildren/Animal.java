@@ -28,7 +28,6 @@ public abstract class Animal extends Organism {
     protected int steps_since_last_birth; // Steps since the animal last gave birth.
     protected boolean in_hiding; // Indicates whether the animal is in hiding.
     Gender gender; // Gender of the animal.
-    protected int grass_eaten; // Tracks the amount of grass the animal has eaten.
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
     protected boolean being_hunted;
     protected boolean wounded;
@@ -46,7 +45,6 @@ public abstract class Animal extends Organism {
         steps_since_last_birth = 0;
         in_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
-        grass_eaten = 0;
         being_hunted = false;
         wounded = false;
     }
@@ -81,7 +79,7 @@ public abstract class Animal extends Organism {
         // Deletes the eaten organism from the world.
         world.delete(world.getNonBlocking(world.getLocation(this)));
 
-        grass_eaten++;
+        wounded = false;
     }
 
     /**
@@ -255,7 +253,7 @@ public abstract class Animal extends Organism {
     public void nextMove(World world) {
         // check for food nearby
         if (!findFoodOrSafety(world)) {
-            // if there is no grass, move randomly, if there is space
+            // If no food or danger is found, move randomly.
             if (getRandomMoveLocation(world) != null) {
                 world.move(this, getRandomMoveLocation(world));
             }
@@ -407,12 +405,7 @@ public abstract class Animal extends Organism {
             }
         }
 
-        // If no consumable food is found, move to a random location.
-        Location randomLocation = getRandomMoveLocation(world);
-        if (randomLocation != null) {
-            moveCloser(world, randomLocation);
-        }
-
+        // If no food or danger is found, return false.
         return false;
     }
 

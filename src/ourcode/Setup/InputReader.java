@@ -59,7 +59,9 @@ public class InputReader {
                 int max = Integer.parseInt(min_max[1]);
                 Random random = new Random();
                 amount = random.nextInt(max - min + 1) + min; // random from 0 to max-min+1, then + min
-            } else {
+            } if ()
+
+            else {
                 amount = Integer.parseInt(parts[1]);
             }
 

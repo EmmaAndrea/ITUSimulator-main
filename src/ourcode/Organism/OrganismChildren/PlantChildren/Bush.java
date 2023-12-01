@@ -9,22 +9,23 @@ import java.awt.*;
 
 public class Bush extends Plant implements DynamicDisplayInformationProvider {
     protected int berries;
-    public Bush(IDGenerator idGenerator){
+    public Bush(IDGenerator idGenerator) {
         super(idGenerator);
+        type = "berry";
         berries = 0;
         nutritional_value = 3;
         max_age = 100000;
     }
 
-    public void grow(){
+    public void grow() {
         berries =+ 3;
     }
 
-    public int getBerries(){
+    public int getBerries() {
         return berries;
     }
 
-    public void eatBerries(){
+    public void eatBerries() {
         berries =-3;
     }
 

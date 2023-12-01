@@ -15,6 +15,9 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         super(idGenerator);
         trophic_level = 4;
         territory = null;
+        type = "bear";
+        max_age = 190;
+        max_hunger = 30;
 
     }
 

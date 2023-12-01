@@ -4,7 +4,10 @@ import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
 import java.io.File;
@@ -100,6 +103,15 @@ public class ProgramRunner {
      */
     public void spawnEntity(World world, String entityType, int amount) {
         switch (entityType) {
+            case "berry":
+                spawnEntities(world, amount, () -> new Bush(original_id_generator));
+                break;
+            case "wolf":
+                spawnEntities(world, amount, () -> new Wolf(original_id_generator));
+                break;
+            case "bear":
+                spawnEntities(world, amount, () -> new Bear(original_id_generator));
+                break;
             case "rabbit":
                 spawnEntities(world, amount, () -> new Rabbit(original_id_generator));
                 break;
