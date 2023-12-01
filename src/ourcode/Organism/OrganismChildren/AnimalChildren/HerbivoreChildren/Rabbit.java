@@ -1,11 +1,15 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
+import ourcode.Obstacles.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -16,10 +20,11 @@ import java.util.Random;
  * The behavior of a Rabbit in the simulated world can be defined in the {@code act} method.
  */
 
-public class Rabbit extends Herbivore {
+public class Rabbit extends Herbivore implements DynamicDisplayInformationProvider {
 
     ArrayList <Burrow> my_burrows;
     boolean has_burrow;
+    Gender gender;
 
     /**
      * Has max_hunger, that dictates how hungry it can be
@@ -30,8 +35,11 @@ public class Rabbit extends Herbivore {
         max_hunger = 10;
         nutritional_value = 4;
         max_age = 100;
+
+        // Specifics for rabbit.
         has_burrow = false;
         my_burrows = new ArrayList<>();
+        Gender gender = new Random().nextBoolean() ? Gender.Male : Gender.Female; // Randomly male or female.
     }
 
     /**
@@ -226,5 +234,18 @@ public class Rabbit extends Herbivore {
 
     public Burrow getBurrow() {
         return my_burrows.get(1);
+    }
+
+    /**
+     * Graphics of the rabbit.
+     * Becomes an old rabbit after 20 steps.
+     */
+    @Override
+    public DisplayInformation getInformation() {
+        if (age >= 20) {
+            return new DisplayInformation(Color.black, "rabbit-large");
+        } else {
+            return new DisplayInformation(Color.black, "rabbit-small");
+        }
     }
 }

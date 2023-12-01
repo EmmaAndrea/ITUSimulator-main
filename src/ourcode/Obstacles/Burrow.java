@@ -1,10 +1,12 @@
 package ourcode.Obstacles;
 
-import itumulator.world.Location;
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,7 +15,7 @@ import java.util.List;
  *  or remove
  */
 
-public class Burrow extends Obstacle {
+public class Burrow extends Obstacle implements DynamicDisplayInformationProvider {
     // List of rabbits which are currently inside the burrow.
     List<Rabbit> residents;
 
@@ -47,19 +49,17 @@ public class Burrow extends Obstacle {
     }
 
     /**
-     * Returns the ID of a burrow.
-     */
-    /*
-    public int getId() {
-        return burrow_id;
-    }
-
-     */
-
-    /**
      * Returns the list of residents of the burrow.
      */
     public List<Rabbit> getResidents() {
         return residents;
+    }
+
+    /**
+     * Graphics of the burrow
+     */
+    @Override
+    public DisplayInformation getInformation() {
+        return new DisplayInformation(Color.red, "hole");
     }
 }

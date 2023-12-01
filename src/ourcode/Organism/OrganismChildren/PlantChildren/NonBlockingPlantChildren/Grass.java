@@ -1,9 +1,13 @@
 package ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren;
 
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.World;
 import itumulator.world.Location;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlant;
 import ourcode.Setup.IDGenerator;
+
+import java.awt.*;
 
 /**
  * Represents a Grass entity in a simulated world.
@@ -11,7 +15,7 @@ import ourcode.Setup.IDGenerator;
  * When the act() is invoked, grass checks its life counter and decides whether to spread or not.
  * Spreading involves creating new Grass objects in adjacent available tiles.
  */
-public class Grass extends NonBlockingPlant {
+public class Grass extends NonBlockingPlant implements DynamicDisplayInformationProvider {
 
     /**
      * The constructor of a new grass.
@@ -60,5 +64,13 @@ public class Grass extends NonBlockingPlant {
             id_generator.addEntityToIdMap(spreaded_grass.getId(), spreaded_grass);
             id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
         }
+    }
+
+    /**
+     * Graphics of the grass.
+     */
+    @Override
+    public DisplayInformation getInformation() {
+        return new DisplayInformation(Color.green, "grass");
     }
 }
