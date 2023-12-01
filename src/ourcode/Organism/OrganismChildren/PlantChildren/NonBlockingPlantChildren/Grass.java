@@ -24,7 +24,7 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
         super(original_id_generator);
         type = "grass";
         max_age = 30;
-        nutritional_value = 4;
+        nutritional_value = 3;
     }
 
     /**
@@ -63,6 +63,7 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
             world.setTile(spreadLocation, spreaded_grass);
             id_generator.addEntityToIdMap(spreaded_grass.getId(), spreaded_grass);
             id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
+            id_generator.addGrassToLocationMap(spreadLocation, spreaded_grass);
         }
     }
 
@@ -72,5 +73,11 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
     @Override
     public DisplayInformation getInformation() {
         return new DisplayInformation(Color.green, "grass");
+    }
+
+    @Override
+    public void spawn(World world) {
+        super.spawn(world);
+        id_generator.addGrassToLocationMap(world.getLocation(this), this);
     }
 }

@@ -116,15 +116,14 @@ public abstract class Organism extends Entity implements Actor {
      * Otherwise null
      */
     public Location getGrassLocation(World world) {
-        if (getSurroundingFreeLocation(world) == null) {
+        if (getSurroundingFreeLocation(world) != null) {
             for (Location location : getSurroundingFreeLocation(world)) {
                 if (world.containsNonBlocking(location)) {
                     if ((world.getNonBlocking(location) instanceof Grass)) {
                         return location;
                     }
                 }
-            }
-            return null;
+            } return null;
         } return null;
     }
 }
