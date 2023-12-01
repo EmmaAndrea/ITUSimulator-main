@@ -229,10 +229,6 @@ public abstract class Animal extends Organism {
         }
     }
 
-    public void moveAway() {
-
-    }
-
     /**
      * Returns the sum of steps needed to align x + y coordinates with current world location to a desired location.
      * Useful for finding out how far away something is.

@@ -90,16 +90,15 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                 if (!my_burrows.isEmpty()) {
                     if (isCloseToBurrow) {
                         try {
-                            enterBurrow(world, my_burrows.get(0));
+                            enterBurrow(world);
                         } catch (Exception e) {
                             System.out.println(e.getMessage());
                         }
-                        return;
                         // otherwise move closer
                     } else {
                         moveCloser(world, world.getLocation(my_burrows.get(0)));
-                        return;
                     }
+                    return;
                 }
 
                 // if it is night and rabbit doesn't have burrow
@@ -122,7 +121,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             // Move closer to the burrow if it's later than midday and far from the burrow.
             if (!my_burrows.isEmpty() && timeToNight(world) > 4 && !isCloseToBurrow) {
                 moveCloser(world, world.getLocation(my_burrows.get(0)));
-                return;
             }
         }
     }
@@ -159,7 +157,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
      * Adds them to the lists of residents of the particular burrow.
      * If the rabbit didn't beforehand have a personal burrow, it sets this burrow as the personal burrow.
      */
-    public void enterBurrow(World world, Burrow newburrow) {
+    public void enterBurrow(World world) {
         // If it has not been assigned a burrow.
         if (my_burrows.isEmpty()) {
 
@@ -188,7 +186,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         world.remove(this);
 
         in_hiding = true;
-        return;
     }
 
     /**
