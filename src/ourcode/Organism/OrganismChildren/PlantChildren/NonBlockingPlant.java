@@ -5,6 +5,7 @@ import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import ourcode.Organism.OrganismChildren.Plant;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 /**

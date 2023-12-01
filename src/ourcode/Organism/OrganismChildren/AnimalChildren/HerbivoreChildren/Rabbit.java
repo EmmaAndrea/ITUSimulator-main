@@ -6,6 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -55,100 +56,79 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
-
-        for (Object object : world.getEntities().keySet()){
-            if (object instanceof Burrow){
-                System.out.println(world.getEntities().get(object));
-            }
-        }
-
-        // If the rabbit has died, then stop method.
-        if (!world.contains(this)) {
-            return;
-        }
+        if(!in_hiding) nextMove(world);
 
         boolean isCloseToBurrow = false;
 
         boolean isNight = timeToNight(world) == 0;
-        if(!my_burrows.isEmpty()) {
-            if (!in_hiding && distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1){
-                isCloseToBurrow = true;
-            }
-        }
 
-        // Handle daytime burrow exit.
-        if (in_hiding && my_burrows != null && !isNight) {
-            exitBurrow(world);
-            return;
-        }
-
-        // if not in burrow
-        if (!in_hiding) {
-            // if it is night
-            if (isNight) {
-                // Enter the burrow if close to it.
-                if (!my_burrows.isEmpty()) {
-                    if (isCloseToBurrow) {
-                        try {
-                            enterBurrow(world);
-                        } catch (Exception e) {
-                            System.out.println(e.getMessage());
-                        }
-                        // otherwise move closer
-                    } else {
-                        moveCloser(world, world.getLocation(my_burrows.get(0)));
-                    }
-                    return;
-                }
-
-                // if it is night and rabbit doesn't have burrow
-                if (my_burrows.isEmpty()) {
-                   for(Location location : id_generator.getLocationOfBurrows()){
-                       if (location == world.getLocation(this)){
-                           my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
-                       }
-                   }
-
-                }
-            }
-
-            // Create a burrow if old enough and doesn't have one.
-            if (age > 5 && my_burrows.isEmpty()) {
-                makeBurrow(world);
+        // get a burrow
+        if (my_burrows.isEmpty()){
+            acquireBurrow(world);
+            if (my_burrows.isEmpty()){
+                nextMove(world);
                 return;
             }
-
-            // Move closer to the burrow if it's later than midday and far from the burrow.
-            if (!my_burrows.isEmpty() && timeToNight(world) > 4 && !isCloseToBurrow) {
-                moveCloser(world, world.getLocation(my_burrows.get(0)));
-            }
         }
+
+        // if it is not in its burrow
+        if (!in_hiding) {
+            if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
+                isCloseToBurrow = true;
+
+            }
+            if (isNight) {
+                if (isCloseToBurrow) {
+                    enterBurrow(world);
+                    return;
+
+                } else moveCloser(world, world.getLocation(my_burrows.get(0)));
+
+            } else if (timeToNight(world) < 5) moveCloser(world, world.getLocation(my_burrows.get(0)));
+
+            // if it is in the burrow
+        } else if (!isNight) exitBurrow(world);
+
     }
 
     /**
      * Make burrow from location where the rabbit currently is.
      */
-
-    public void makeBurrow(World world) {
+    public void acquireBurrow(World world) {
         // Removes whatever nonblocking it’s standing on if there is one.
-        if (world.containsNonBlocking(world.getLocation(this))) {
-            // Remove the nonblocking tile from id_generators lists
-            world.delete(world.getNonBlocking(world.getLocation(this)));
+        if (age > 5 ){
+            if (world.containsNonBlocking(world.getLocation(this))) {
+                // Remove the nonblocking tile from id_generators lists
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass){
+                    world.delete(world.getNonBlocking(world.getLocation(this)));
+                    // Instantiates new burrow and sets the tile with current location.
+                    Burrow newburrow = new Burrow(id_generator);
+                    world.setTile(world.getLocation(this), newburrow);
+
+                    // Rabbit now has a personal burrow.
+                    my_burrows.add(newburrow);
+
+                    // Set rabbit’s boolean has_burrow to be true.
+                    has_burrow = true;
+
+                    // Add to maps to keep track of where things are.
+                    id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
+                    id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
+
+                    nextMove(world);
+                } else {
+                    my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                    has_burrow = true;
+                }
+            }
+        } else {
+            if (world.containsNonBlocking(world.getLocation(this))){
+                if(world.getNonBlocking(world.getLocation(this)) instanceof Burrow){
+                    my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                    has_burrow = true;
+                }
+            }
         }
-
-        // Instantiates new burrow and sets the tile with current location.
-        Burrow newburrow = new Burrow(id_generator);
-        world.setTile(world.getLocation(this), newburrow);
-
-        // Rabbit now has a personal burrow.
-        my_burrows.add(newburrow);
-
-        // Set rabbit’s boolean has_burrow to be true.
-        has_burrow = true;
-
-        // Add to maps to keep track of where things are.
-        id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
-        id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
     }
 
     /**
@@ -165,26 +145,14 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             my_burrows.add(id_generator.getBurrow(world.getLocation(this)));
 
             has_burrow = true;
-            // "Enters" burrow; removes - not deletes - from world.
-
-            // Adds rabbit to the list of residents of the particular burrow.
-
-            // Rabbit is now inside of burrow.
-
-        } else {
-
-            // "Enters" burrow; removes - not deletes - from world.
-
-            // Adds rabbit to the list of residents of the particular burrow.
-
-            // Rabbit is now inside of burrow.
-
         }
+        // add burrow to list of residents of burrow
+        my_burrows.get(0).addResident(this);
 
-        if(my_burrows.get(0) == null) my_burrows.get(1).addResident(this);
-        if(my_burrows.get(0) != null) my_burrows.get(0).addResident(this);
+        // remove rabbit from map
         world.remove(this);
 
+        // goes into hiding
         in_hiding = true;
     }
 
@@ -226,7 +194,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         return hunger;
     }
 
-    public Burrow getBurrow() {
+    public Burrow acquireBurrow() {
         return my_burrows.get(1);
     }
 

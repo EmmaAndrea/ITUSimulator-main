@@ -4,7 +4,9 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Gender;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
@@ -23,6 +25,8 @@ public abstract class Animal extends Organism {
     protected boolean in_hiding;
     Gender gender;
 
+    int grass_eaten;
+
     /**
      * The constructor of an Animal.
      */
@@ -33,13 +37,14 @@ public abstract class Animal extends Organism {
         steps_since_last_birth = 0;
         in_hiding = false;
         Gender gender = new Random().nextBoolean() ? Gender.Male : Gender.Female; // Randomly male or female.
+        grass_eaten = 0;
     }
 
     /**
      * Returns the nutritional value of the organism of the current location.
      */
     public int getStandingOnNutritionalValue(World world) {
-        Entity entity = id_generator.getEntity(world.getLocation(world.getNonBlocking(world.getLocation(this))));
+        Entity entity = id_generator.getGrass(world.getLocation(this));
 
         if (entity instanceof Organism organism) {
             return organism.getNutritionalValue();
@@ -59,6 +64,8 @@ public abstract class Animal extends Organism {
 
         // Deletes the eaten organism from the world.
         world.delete(world.getNonBlocking(world.getLocation(this)));
+
+        grass_eaten++;
     }
 
     /**
@@ -83,15 +90,20 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            if (world.getEntities().get(this) != null) {
-                nextMove(world);
-                checkBreed(world);
+            if (this instanceof Herbivore) {
+                herbivoreAct(world);
+                if(!in_hiding){
+                    checkBreed(world);
+                }
+            } else {
+                // predatorAct coming soon
+                if(!in_hiding){
+                    checkBreed(world);
+                    nextMove(world);
+                }
             }
-            herbivoreAct(world);
-            //predatorAct coming soon
-        } else {
-            return false;
-        }
+        } else return false;
+
         return true;
     }
 

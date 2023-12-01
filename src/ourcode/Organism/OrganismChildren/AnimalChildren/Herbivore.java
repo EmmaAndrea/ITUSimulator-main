@@ -27,7 +27,7 @@ public abstract class Herbivore extends Animal {
     public void herbivoreAct(World world) {
 
         // If the herbivore is not currently hiding in e.g. a burrow.
-        if (world.getEntities().get(this) != null) {
+        if (!in_hiding) {
 
             // If the herbivore is standing on a nonblocking tile
             if (world.containsNonBlocking(world.getLocation(this))) {
@@ -38,6 +38,7 @@ public abstract class Herbivore extends Animal {
                     // If the herbivore is hungrier than how full the grass will make it.
                     if (hunger >= getStandingOnNutritionalValue(world)) {
                         eat(world);
+
                     }
                 }
             }
@@ -53,11 +54,16 @@ public abstract class Herbivore extends Animal {
     public void nextMove(World world){
         // Moves to grass, if there is grass nearby.
         if (getGrassLocation(world) != null) {
-            world.move(this, getGrassLocation(world));
-
+            if (getGrassLocation(world) != world.getLocation(this)) {
+                world.move(this, getGrassLocation(world));
+            } else if (getRandomMoveLocation(world) != null) {
+                world.move(this, getRandomMoveLocation(world));
+                return;
+            }
             // if there is no grass, move randomly
-        } else if (getRandomMoveLocation(world) != null){
+        }  else if (getRandomMoveLocation(world) != null){
             world.move(this, getRandomMoveLocation(world));
+            return;
         }
     }
 }
