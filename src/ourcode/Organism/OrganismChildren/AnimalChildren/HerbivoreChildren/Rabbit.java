@@ -15,18 +15,19 @@ import java.util.Random;
 
 /**
  * Represents a Rabbit entity in the simulated world.
- * Rabbits are a type of Herbivore.
- * Each Rabbit has a unique identifier and a maximum hunger level as well as a life_counter.
- * The behavior of a Rabbit in the simulated world can be defined in the {@code act} method.
+ * Rabbits are a type of Herbivore, characterized by their interactions with burrows.
+ * They have unique behaviors like seeking burrows for shelter and foraging for food.
  */
-
 public class Rabbit extends Herbivore implements DynamicDisplayInformationProvider {
 
     ArrayList <Burrow> my_burrows;
-    boolean has_burrow;
+    boolean has_burrow; // Indicates whether the rabbit has a burrow.
 
     /**
-     * Has max_hunger, that dictates how hungry it can be
+     * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
+     * sets up its relationship with burrows.
+     *
+     * @param original_id_generator The IDGenerator instance that provides the unique identifier for the rabbit.
      */
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
@@ -48,9 +49,10 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     }
 
     /**
-     * Calls herbivoreAct.
-     * If it doesn't have a burrow, make a burrow.
-     * Moves closer to burrow
+     * Executes the specific actions for a rabbit in the simulation. This includes finding or creating a burrow,
+     * moving towards or into the burrow, and other herbivore behaviors.
+     *
+     * @param world The simulation world in which the rabbit exists.
      */
     public void herbivoreAct(World world) {
         // Gets older and hungrier and dies if too old or hungry.
@@ -74,14 +76,19 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
                 isCloseToBurrow = true;
 
-            } if (isNight) {
+            }
+            if (isNight) {
 
                 if (isCloseToBurrow) {
                     enterBurrow(world);
 
-                } else moveCloser(world, world.getLocation(my_burrows.get(0))); return;
+                } else moveCloser(world, world.getLocation(my_burrows.get(0)));
+                return;
 
-            } else if (timeToNight(world) < 5) moveCloser(world, world.getLocation(my_burrows.get(0))); return;
+            } else if (timeToNight(world) < 5) {
+                moveCloser(world, world.getLocation(my_burrows.get(0)));
+                return;
+            } else nextMove(world);
 
             // if it is in the burrow
         } else if (!isNight) exitBurrow(world);
@@ -91,7 +98,10 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     }
 
     /**
-     * Make burrow from location where the rabbit currently is.
+     * Attempts to acquire a burrow for the rabbit. If the rabbit is standing on a grass tile, it creates a new burrow;
+     * otherwise, it claims an existing burrow at its location.
+     *
+     * @param world The simulation world where the burrow acquisition occurs.
      */
     public void acquireBurrow(World world) {
         // Removes whatever nonblocking it’s standing on if there is one.
@@ -101,25 +111,27 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                 if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
                     world.delete(world.getNonBlocking(world.getLocation(this)));
                     // Instantiates new burrow and sets the tile with current location.
-                    Burrow newburrow = new Burrow(id_generator);
-                    world.setTile(world.getLocation(this), newburrow);
-
-                    // Rabbit now has a personal burrow.
-                    my_burrows.add(newburrow);
-
-                    // Set rabbit’s boolean has_burrow to be true.
-                    has_burrow = true;
-
-                    // Add to maps to keep track of where things are.
-                    id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
-                    id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
-
-                    nextMove(world);
                 } else {
-                    my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
-                    has_burrow = true;
+                my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                has_burrow = true;
+                return;
                 }
             }
+            Burrow newburrow = new Burrow(id_generator);
+            world.setTile(world.getLocation(this), newburrow);
+
+            // Rabbit now has a personal burrow.
+            my_burrows.add(newburrow);
+
+            // Set rabbit’s boolean has_burrow to be true.
+            has_burrow = true;
+
+            // Add to maps to keep track of where things are.
+            id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
+            id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
+
+            nextMove(world);
+
         } else {
             if (world.containsNonBlocking(world.getLocation(this))) {
                 if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
@@ -131,10 +143,9 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     }
 
     /**
-     * Puts a rabbit inside a burrow.
-     * 'Removes' them from the world.
-     * Adds them to the lists of residents of the particular burrow.
-     * If the rabbit didn't beforehand have a personal burrow, it sets this burrow as the personal burrow.
+     * The rabbit enters a burrow, removing itself from the visible world and adding itself to the burrow's list of residents.
+     *
+     * @param world The simulation world where the burrow is located.
      */
     public void enterBurrow(World world) {
         // If it has not been assigned a burrow.
@@ -156,7 +167,9 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     }
 
     /**
-     * Puts a rabbit at the location where the burrow is located
+     * The rabbit exits its burrow and reappears in the simulation world at a location near the burrow.
+     *
+     * @param world The simulation world where the burrow is located.
      */
     public void exitBurrow(World world) {
         // Retrieve current location
@@ -189,17 +202,32 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // rabbits jump up at same time in same place
     }
 
+    /**
+     * Retrieves the current hunger level of the rabbit. This can be used to determine the rabbit's need for food
+     * and possibly influence its behavior in the simulation, such as seeking food sources.
+     *
+     * @return The current hunger level of the rabbit.
+     */
     public int getHunger() {
         return hunger;
     }
 
+    /**
+     * Acquires a reference to the rabbit's second burrow, if it exists. This method assumes that the rabbit
+     * might have more than one burrow and returns the second one in its list. It's used in scenarios where
+     * the rabbit might need to choose between multiple burrows.
+     *
+     * @return The second Burrow in the rabbit's list of burrows, if it exists; otherwise, it may throw an exception
+     * or return null, depending on how the list is managed.
+     */
     public Burrow acquireBurrow() {
         return my_burrows.get(1);
     }
 
     /**
-     * Graphics of the rabbit.
-     * Becomes an old rabbit after 20 steps.
+     * Provides the visual representation of the rabbit in the simulation. Changes appearance based on the rabbit's age.
+     *
+     * @return DisplayInformation containing the color and icon representation of the rabbit.
      */
     @Override
     public DisplayInformation getInformation() {

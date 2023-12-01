@@ -18,22 +18,24 @@ import static ourcode.Organism.Gender.Female;
 import static ourcode.Organism.Gender.Male;
 
 /**
- * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
- *  class and has the fields hunger and max hunger.
- *  The animal class controls the movement of an animal
- *  the eat method is here, which gets the correct nutritional value of the organism being eaten
+ * Represents an abstract animal in a simulation environment. This class extends the Organism class,
+ * adding specific attributes and behaviors pertinent to animals, such as hunger management, movement,
+ * and breeding mechanisms. It serves as a base for different animal types within the simulation.
  */
 public abstract class Animal extends Organism {
-    public int hunger;
-    public int max_hunger;
-    public int steps_since_last_birth;
-    protected boolean in_hiding;
-    Gender gender;
+    public int hunger; // Current hunger level of the animal.
+    public int max_hunger; // Maximum hunger level before the animal dies.
+    public int steps_since_last_birth; // Steps since the animal last gave birth.
+    protected boolean in_hiding; // Indicates whether the animal is in hiding.
+    Gender gender; // Gender of the animal.
+    int grass_eaten; // Tracks the amount of grass the animal has eaten.
 
-    int grass_eaten;
 
     /**
-     * The constructor of an Animal.
+     * Constructs a new Animal with a unique identifier.
+     * Initializes hunger levels, breeding steps, hiding state, and randomly assigns gender.
+     *
+     * @param original_id_generator The IDGenerator instance that provides the unique identifier for the animal.
      */
     public Animal(IDGenerator original_id_generator) {
         super(original_id_generator); // life_counter = 1;
@@ -46,7 +48,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Returns the nutritional value of the organism of the current location.
+     * Calculates and returns the nutritional value of the organism the animal is currently standing on.
+     *
+     * @param world The world in which the animal exists.
+     * @return The nutritional value of the organism at the current location.
      */
     public int getStandingOnNutritionalValue(World world) {
         Entity entity = id_generator.getGrass(world.getLocation(this));
@@ -60,8 +65,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * A method for giving animals the ability to eat. They decrease their 'hunger' by a certain amount of 'nutritional value'
-     *  and the object the animal is standing on will be 'eaten' by calling the 'delete()' method from the World class
+     * Enables the animal to eat, reducing its hunger based on the nutritional value of the organism consumed.
+     * The consumed organism is removed from the world.
+     *
+     * @param world The world in which the animal and its food source exist.
      */
     public void eat(World world) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
@@ -74,12 +81,11 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Calls the act method from Organism.
-     * Increases hunger by 1.
-     * Dies, if max hunger is reached.
-     * Moves, if possible.
-     * Breeds, if circumstances are met.
-     * Calls herbivoreAct().
+     * Performs the action sequence for an animal during a simulation step. This includes increasing hunger,
+     * checking for survival, moving, breeding, and performing species-specific actions.
+     *
+     * @param world The simulation world in which the animal exists.
+     * @return true if the animal survives this step, false otherwise.
      */
 
     @Override
@@ -114,16 +120,19 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * explain here why we chose to have an herbivoreAct method
+     * Defines specific actions for herbivores in the simulation. This method should be overridden
+     * by herbivore subclasses to implement specific behaviors like grazing or avoiding predators.
+     *
+     * @param world The simulation world in which the herbivore exists.
      */
     public void herbivoreAct(World world) {
-
     }
 
     /**
-     * Makes a baby of the animal in the parameter.
-     * Creates a new instance of that type of animal.
-     * Spawns at a random possible location.
+     * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
+     * Creates and spawns a new entity of the same type as this animal.
+     *
+     * @param world The simulation world in which breeding occurs.
      */
     public void breed(World world) {
         if (checkBreed(world)) {
@@ -132,7 +141,11 @@ public abstract class Animal extends Organism {
     }
 
     /**
+     * Spawns a new entity of the specified type in the simulation world.
+     * Handles creation and initialization of different entity types like Rabbit, Grass, or Burrow.
      *
+     * @param world The simulation world where the new entity will be spawned.
+     * @param entityType The type of entity to spawn.
      */
     public void spawnEntity(World world, String entityType) {
         switch (entityType) {
@@ -154,13 +167,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Checks if the circumstances for breeding are met: if it's:
-     * female;
-     * in breeding age;
-     * nearby a potential mate;
-     * the opposite gender of the potential mate;
-     * the same type as the potential mate;
-     * available to breed, considering the surrounding space.
+     * Checks whether the conditions for breeding are met, such as gender compatibility, age, and proximity to a potential mate.
+     *
+     * @param world The simulation world where breeding might occur.
+     * @return true if the animal can breed, false otherwise.
      */
 
     public boolean checkBreed(World world) {
@@ -214,15 +224,18 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Animal dies of hunger if it is hungrier than its max hunger.
-     * If the animal dies from hunger, method returns false.
+     * Determines whether the animal survives based on its current hunger level.
+     *
+     * @return true if the animal's hunger is below the maximum threshold, false if it dies of hunger.
      */
     public boolean checkHunger() {
         return hunger <= max_hunger;
     }
 
     /**
-     * Moves to new tile, if there is a free surrounding tile.
+     * Determines and executes the animal's next move in the simulation world, considering available free tiles.
+     *
+     * @param world The simulation world where the animal moves.
      */
     public void nextMove(World world) {
 
@@ -233,9 +246,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * If animal needs to go to specific location
-     * Checks if the x coordinate is different, and then moves closer
-     * If not, it checks if the y coordinate is different, and then moves closer
+     * Moves the animal closer to a target location, considering available paths and obstacles.
+     *
+     * @param world The simulation world where the movement occurs.
+     * @param target_location The target location towards which the animal moves.
      */
     public void moveCloser(World world, Location target_location) {
         Location current_location = world.getLocation(this);
@@ -269,9 +283,12 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Returns the sum of steps needed to align x + y coordinates with current world location to a desired location.
-     * Useful for finding out how far away something is.
-     * E.g. if it's closer to being night than how long it will take for a rabbit to go to burrow/
+     * Calculates the distance from the animal's current location to a specified location in the world.
+     * This method is useful for navigation and decision-making processes, like finding food or avoiding predators.
+     *
+     * @param world The simulation world where the distance is calculated.
+     * @param location The location to which the distance is calculated.
+     * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
         Location currentLocation = world.getLocation(this);
@@ -285,7 +302,9 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Returns the gender of an animal.
+     * Retrieves the gender of the animal, which is used in various behavioral and breeding logic.
+     *
+     * @return The gender of the animal, either Male or Female.
      */
     public Gender getGender() {
         return gender;

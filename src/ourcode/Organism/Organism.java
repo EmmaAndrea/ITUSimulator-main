@@ -11,9 +11,9 @@ import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * The Organism class gives the abstraction of the living. For a world to include many different lifeforms,
- * there has to be a generalization for living creatures.
- * The organism class will help provide the utilities necessary to visualize a certain creature.
+ * Represents a generic organism in a simulation environment.
+ * This abstract class serves as a base for all life forms in the simulated world,
+ * providing common properties and behaviors that are shared across different types of organisms.
  */
 public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
@@ -51,7 +51,10 @@ public abstract class Organism extends Entity implements Actor {
     }
 
     /**
-     * An act method for animals. The animals increase their age by 1 for each act by calling the 'ageIncrease()' method
+     * Represents the action an animal takes during a simulation step.
+     * This method should be overridden by subclasses to define specific animal behaviors.
+     * Used to control whether all animals have acted, such that classes don't conflict.
+     * @return true if the animal successfully completes its action, false otherwise.
      */
     public boolean animalAct(World world) {
         return true;
@@ -107,9 +110,7 @@ public abstract class Organism extends Entity implements Actor {
         Random random = new Random();
         if (getSurroundingFreeLocation(world) != null) {
             int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
-
             return getSurroundingFreeLocation(world).get(random_index);
-
         } else return null;
     }
 

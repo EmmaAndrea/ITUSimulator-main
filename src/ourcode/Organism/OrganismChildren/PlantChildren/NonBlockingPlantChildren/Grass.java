@@ -11,14 +11,16 @@ import java.awt.*;
 
 /**
  * Represents a Grass entity in a simulated world.
- * Grass is a type of NonBlockingPlant that has the ability to spread under certain conditions.
- * When the act() is invoked, grass checks its life counter and decides whether to spread or not.
- * Spreading involves creating new Grass objects in adjacent available tiles.
+ * Grass is a type of NonBlockingPlant that can spread to adjacent tiles under certain conditions,
+ * contributing to the dynamic environment of the simulation.
  */
 public class Grass extends NonBlockingPlant implements DynamicDisplayInformationProvider {
 
     /**
-     * The constructor of a new grass.
+     * Constructs a new Grass entity with a unique identifier and initializes its properties.
+     * Sets the type as 'grass', defines its maximum age and nutritional value.
+     *
+     * @param original_id_generator The IDGenerator instance providing the unique identifier for the grass.
      */
     public Grass(IDGenerator original_id_generator) {
         super(original_id_generator);
@@ -28,8 +30,10 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
     }
 
     /**
-     * Controls what grass does when act() is called from the world.
-     * Grass spreads every fifth step.
+     * Defines the behavior of grass in each simulation step. This includes aging and potentially spreading
+     * to adjacent tiles every predefined number of steps.
+     *
+     * @param world The simulation world in which the grass exists.
      */
     @Override
     public void plantAct(World world) {
@@ -42,7 +46,10 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
     }
 
     /**
-     * Spawns new grass where there is an available tile.
+     * Spreads the grass to an adjacent available tile. This method is called as part of the plant's lifecycle,
+     * allowing the grass to expand its presence in the simulation world.
+     *
+     * @param world The simulation world where the grass spreading occurs.
      */
     public void spread(World world) {
         // Retrieve current location once.
@@ -68,13 +75,26 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
     }
 
     /**
-     * Graphics of the grass.
+     * Provides the visual representation of the grass in the simulation. The appearance changes based on the grass's age,
+     * differentiating between young and mature grass.
+     *
+     * @return DisplayInformation containing the color and icon representation of the grass.
      */
     @Override
     public DisplayInformation getInformation() {
-        return new DisplayInformation(Color.green, "grass");
+        if (age >= 8) {
+            return new DisplayInformation(Color.green, "grass");
+        } else {
+            return new DisplayInformation(Color.green, "grass-young");
+        }
     }
 
+    /**
+     * Handles the spawning of the grass entity in the simulation world. Adds the grass to various maps
+     * for tracking purposes using the ID generator.
+     *
+     * @param world The simulation world where the grass is spawned.
+     */
     @Override
     public void spawn(World world) {
         super.spawn(world);
