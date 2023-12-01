@@ -19,6 +19,8 @@ public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
+    protected int trophic_level;
+
     /**
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.
@@ -136,5 +138,9 @@ public abstract class Organism extends Entity implements Actor {
                 }
             } return null;
         } return null;
+    }
+
+    public int getTraphicLevel(){
+        return this.trophic_level;
     }
 }

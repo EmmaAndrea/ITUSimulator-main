@@ -47,6 +47,8 @@ public abstract class Animal extends Organism {
         in_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         grass_eaten = 0;
+        being_hunted = false;
+        wounded = false;
     }
 
     /**
@@ -103,22 +105,15 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            if (this instanceof Herbivore) {
-                herbivoreAct(world);
-
-                if (world.getEntities().get(this) != null) {
-                    breed(world);
-                }
-            } else {
-                // predatorAct coming soon
-                if (!in_hiding) {
-                    //checkBreed(world);
-                    nextMove(world);
-                }
+            if(!in_hiding) nextMove(world);
+            herbivoreAct(world);
+            omnivoreAct(world);
+            carnivoreAct(world);
+            if (!in_hiding) {
+                breed(world);
             }
+            return true;
         } else return false;
-
-        return true;
     }
 
     /**
@@ -128,6 +123,24 @@ public abstract class Animal extends Organism {
      * @param world The simulation world in which the herbivore exists.
      */
     public void herbivoreAct(World world) {
+    }
+
+    /**
+     * Defines specific actions for carnivore in the simulation. This method should be overridden
+     * by carnivore subclasses to implement specific behaviors like hunting or pack movements.
+     *
+     * @param world The simulation world in which the carnivore exists.
+     */
+    public void carnivoreAct(World world) {
+    }
+
+    /**
+     * Defines specific actions for herbivores in the simulation. This method should be overridden
+     * by herbivore subclasses to implement specific behaviors like hunting or eating berries.
+     *
+     * @param world The simulation world in which the omnivore exists.
+     */
+    public void omnivoreAct(World world) {
     }
 
     /**
@@ -240,10 +253,12 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the animal moves.
      */
     public void nextMove(World world) {
-
-        // Moves to new location, if the surrounding tiles aren't all full
-        if (getRandomMoveLocation(world) != null) {
-            world.move(this, getRandomMoveLocation(world));
+        // check for food nearby
+        if (!findFoodOrSafety(world)) {
+            // if there is no grass, move randomly, if there is space
+            if (getRandomMoveLocation(world) != null) {
+                world.move(this, getRandomMoveLocation(world));
+            }
         }
     }
 
@@ -284,6 +299,37 @@ public abstract class Animal extends Organism {
         }
     }
 
+    public void moveAway(World world, Location danger_location) {
+        Location current_location = world.getLocation(this);
+
+        // Instantiate variables for finding out which direction to move.
+        int dx = 0;
+        int dy = 0;
+
+        // Check what direction we need to move.
+        if (danger_location.getX() > current_location.getX()) dx = -1;
+        if (danger_location.getX() < current_location.getX()) dx = 1;
+        if (danger_location.getY() > current_location.getY()) dy = -1;
+        if (danger_location.getY() < current_location.getY()) dy = 1;
+
+        // Move in the X direction first, if needed.
+        if (dx != 0) {
+            Location new_location = new Location(current_location.getX() + dx, current_location.getY());
+            if (world.isTileEmpty(new_location)) {
+                world.move(this, new_location);
+                return;
+            }
+        }
+
+        // If moving in the X direction is not needed, move in the Y direction.
+        if (dy != 0) {
+            Location new_location = new Location(current_location.getX(), current_location.getY() + dy);
+            if (world.isTileEmpty(new_location)) {
+                world.move(this, new_location);
+            }
+        }
+    }
+
     /**
      * Calculates the distance from the animal's current location to a specified location in the world.
      * This method is useful for navigation and decision-making processes, like finding food or avoiding predators.
@@ -304,11 +350,82 @@ public abstract class Animal extends Organism {
     }
 
     /**
+     * Attempts to find food or safety for the animal in the simulation world.
+     * The method first checks for blocking organisms in the surrounding tiles. If it encounters an organism
+     * with a higher trophic level (indicating a predator), it moves away from that organism. If it finds
+     * an organism that is a viable food source (as listed in consumable_foods), it moves closer to that organism.
+     * If no food or threats are found, it checks for non-blocking organisms like grass and moves closer if
+     * food is found. Otherwise, the animal moves to a random location.
+     *
+     * @param world The simulation world in which the animal is trying to find food or safety.
+     * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
+     */
+    public boolean findFoodOrSafety(World world) {
+
+        System.out.println("starts finding food");
+        // Get surrounding tiles to iterate through them.
+        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
+
+        // First, check for blocking organisms.
+        // Though, if there is an animal of higher trophic level, move away from this animal.
+        for (Location location : surrounding_tiles) {
+
+            // If the tile at given location isn't empty.
+            if (!world.isTileEmpty(location)) {
+
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Organism organism) {
+
+                    // If the organism has a higher trophic level than itself.
+                    if (organism.getTrophicLevel() > trophic_level) {
+                        moveAway(world, location);
+                        being_hunted = true;
+                        return true;
+                    } else if (consumable_foods.contains(organism.getType())) {
+                        moveCloser(world, location);
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // Next, check for non-blocking organisms like grass.
+        for (Location location : surrounding_tiles) {
+            if (world.containsNonBlocking(location)) {
+                Object object = world.getNonBlocking(location);
+                if (object instanceof Organism organism) {
+                    if (consumable_foods.contains(organism.getType())) {
+                        moveCloser(world, location);
+                        System.out.println("moves toward grass");
+                        return true;
+                    }
+                }
+            }
+        }
+
+        // If no consumable food is found, move to a random location.
+        Location randomLocation = getRandomMoveLocation(world);
+        if (randomLocation != null) {
+            moveCloser(world, randomLocation);
+        }
+
+        return false;
+    }
+
+
+    /**
      * Retrieves the gender of the animal, which is used in various behavioral and breeding logic.
      *
      * @return The gender of the animal, either Male or Female.
      */
     public Gender getGender() {
         return gender;
+    }
+
+    public void becomeWounded(){
+        wounded = true;
     }
 }

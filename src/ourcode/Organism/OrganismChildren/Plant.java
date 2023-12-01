@@ -19,6 +19,7 @@ public abstract class Plant extends Organism {
      */
     public Plant(IDGenerator original_id_generator) {
         super(original_id_generator);
+        this.trophic_level = 1;
     }
 
     /**
