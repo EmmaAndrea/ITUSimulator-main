@@ -11,6 +11,7 @@ import java.awt.*;
 public class Bear extends Carnivore implements DynamicDisplayInformationProvider {
 
     protected Location territory;
+
     public Bear(IDGenerator idGenerator) {
         super(idGenerator);
         trophic_level = 4;
@@ -18,7 +19,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         type = "bear";
         max_age = 190;
         max_hunger = 30;
-
+        territory = null;
     }
 
     @Override
@@ -30,5 +31,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         }
     }
 
-
+    public void setTerritory(Location territory) {
+        this.territory = territory;
+    }
 }

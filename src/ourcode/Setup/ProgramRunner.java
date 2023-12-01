@@ -29,6 +29,8 @@ public class ProgramRunner {
 
     private Burrow burrow;
 
+    private InputReader inputReader;
+
     // constructor for ProgramRunner
     public ProgramRunner() {
         // constructor code
@@ -54,7 +56,7 @@ public class ProgramRunner {
         File file = new File(file_name);
 
         // read file with input-reader
-        InputReader inputReader = new InputReader(file.getAbsolutePath());
+        inputReader = new InputReader(file.getAbsolutePath());
 
         // get world size
         int size = inputReader.readWorldSize();
@@ -90,9 +92,28 @@ public class ProgramRunner {
         for (int i = 0; i < amount; i++) {
             Entity entity = factory.create();
             entity.spawn(world);
+            if(entity instanceof Bear){
+                setBearTerritoy(entity, i);
+            }
         }
     }
 
+    public void spawnBear(World world, int amount, EntityFactory factory) {
+        for (int i = 0; i < amount; i++) {
+            Entity entity = factory.create();
+            entity.spawn(world);
+            setBearTerritoy(entity, i+1);
+            System.out.println("");
+        }
+    }
+
+    public void setBearTerritoy(Entity entity, int i){
+        String beartype = "bear"+i;
+        if (inputReader.getMap_of_bear_territories().containsKey(beartype)){
+            Bear bear = (Bear) entity;
+            bear.setTerritory(inputReader.getTerritory(beartype));
+        }
+    }
     /**
      * Spawns an entity based on its type via a switch case. This method determines the type of entity to be
      * spawned and calls the appropriate factory method to create and spawn the specified number of entities in the world.
@@ -110,7 +131,7 @@ public class ProgramRunner {
                 spawnEntities(world, amount, () -> new Wolf(original_id_generator));
                 break;
             case "bear":
-                spawnEntities(world, amount, () -> new Bear(original_id_generator));
+                spawnBear(world, amount, () -> new Bear(original_id_generator));
                 break;
             case "rabbit":
                 spawnEntities(world, amount, () -> new Rabbit(original_id_generator));
