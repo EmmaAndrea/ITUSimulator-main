@@ -209,6 +209,74 @@ public class RabbitTest {
         assertTrue(postSimulationRabbitCount == initialRabbitCount, "Rabbits should not breed themselves.");
     }
 
+    /**
+     * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
+     * Checks that entities contains exactly four entities,
+     * Checks a rabbit is in entities
+     */
+    @org.testng.annotations.Test
+    public void testRabbit1() throws Exception{
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
+        assertEquals(world.getEntities().size(), 4);
+        assertTrue(world.getEntities().containsKey(programRunner.getRabbit()));
+    }
+
+    /**
+     * Creates a world based on file "t1-2fg", such that some rabbits and grass are spawned.
+     * Spawns one specific rabbit which we track
+     * Before the program runs, we check the rabbit is in entities
+     * After the program runs a
+     */
+    @org.testng.annotations.Test
+    public void testRabbit2() throws Exception{
+        programRunner.create("./data/t1-2cde.txt");
+        world = programRunner.getWorld();
+        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator());
+        rabbit1.spawn(world);
+        assertTrue(world.getEntities().containsKey(rabbit1));
+        programRunner.runSimulation(101);
+        assertFalse(world.getEntities().containsKey(rabbit1));
+    }
+
+    /**
+     * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
+     * Checks that they each make burrows at age 6,
+     */
+    @org.testng.annotations.Test
+    public void testRabbit3() throws Exception{
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(6);
+        int burrowCount = 0;
+        for (Object entity : world.getEntities().keySet()) {
+            if (entity instanceof Burrow) {
+                burrowCount++;
+            }
+        }
+        assertEquals(4, burrowCount);
+    }
+
+    @org.testng.annotations.Test
+    public void testRabbit4() throws Exception{
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+
+        for (int i = 0 ; i < 40 ; i ++){
+            Grass grass = new Grass (programRunner.getOriginal_id_generator());
+            grass.spawn(world);
+        }
+        programRunner.runSimulation(11);
+        int rabbits_in_burrows = 0;
+        for (Object entity : world.getEntities().keySet()) {
+            if (world.getEntities().get(entity) == null) {
+                rabbits_in_burrows++;
+            }
+        }
+        assertEquals(4, rabbits_in_burrows);
+    }
+
     @AfterEach
     public void endTest() {
         System.out.println("Test Ended");
