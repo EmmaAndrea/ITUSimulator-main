@@ -11,6 +11,7 @@ import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -39,6 +40,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Specifics for rabbit.
         has_burrow = false;
         my_burrows = new ArrayList<>();
+        consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
     }
 
     /**

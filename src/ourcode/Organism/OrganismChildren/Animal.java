@@ -5,7 +5,6 @@ import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
@@ -13,6 +12,7 @@ import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.Set;
 
 import static ourcode.Organism.Gender.Female;
 import static ourcode.Organism.Gender.Male;
@@ -23,13 +23,15 @@ import static ourcode.Organism.Gender.Male;
  * and breeding mechanisms. It serves as a base for different animal types within the simulation.
  */
 public abstract class Animal extends Organism {
-    public int hunger; // Current hunger level of the animal.
-    public int max_hunger; // Maximum hunger level before the animal dies.
-    public int steps_since_last_birth; // Steps since the animal last gave birth.
+    protected int hunger; // Current hunger level of the animal.
+    protected int max_hunger; // Maximum hunger level before the animal dies.
+    protected int steps_since_last_birth; // Steps since the animal last gave birth.
     protected boolean in_hiding; // Indicates whether the animal is in hiding.
     Gender gender; // Gender of the animal.
-    int grass_eaten; // Tracks the amount of grass the animal has eaten.
-
+    protected int grass_eaten; // Tracks the amount of grass the animal has eaten.
+    protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
+    protected boolean being_hunted;
+    protected boolean wounded;
 
     /**
      * Constructs a new Animal with a unique identifier.
