@@ -1,6 +1,5 @@
 package ourcode.Test.Theme1;
 
-import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.*;
@@ -10,6 +9,7 @@ import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class BurrowTest {
     public final ProgramRunner programRunner;
@@ -76,8 +76,11 @@ public class BurrowTest {
         // places burrow at location
         world.setTile(location, burrow);
 
-        // checks if rabbits location is equal to burrows location
-        assertEquals(world.getLocation(rabbit), world.getLocation(burrow));
+        // checks if rabbits location is equal to burrows location when a burrow is made
+        assertSame(world.getLocation(rabbit), world.getLocation(burrow),
+                "a rabbit should be located on top of a burrow when a burrow and rabbit is made," +
+                         " but the rabbits location is: " + world.getLocation(rabbit) +
+                         " while the burrows location is: " + world.getLocation(burrow));
     }
 
     /**
@@ -85,16 +88,22 @@ public class BurrowTest {
      */
     @Test
     public void testResidents() {
+        // generates a new id for a burrow and rabbits
         IDGenerator id = new IDGenerator();
+        // declares a new burrow
         Burrow burrow = new Burrow(id);
+        // declares a new rabbit
         Rabbit rabbit = new Rabbit(id);
+        // declares another new rabbit
         Rabbit rabbit1 = new Rabbit(id);
 
+        // adds the 'first' rabbit to the list of residents in the burrow
         burrow.addResident(rabbit);
+        // adds the 'second' rabbit to the list of residents in the burrow
         burrow.addResident(rabbit1);
 
+        // checks if rabbits are in fact added to the list of residents in burrow
         assertEquals(burrow.getResidents().size(), 2);
-
     }
 
     /**
@@ -102,13 +111,19 @@ public class BurrowTest {
      */
     @Test
     public void testBurrowSpawn() {
-        Program p = new Program(2, 800, 200);
-        World world = p.getWorld();
+        // declares a new world with size of 2
+        World world = new World(2);
+        // generates a new id for a burrow
         IDGenerator id = new IDGenerator();
+        // declares a new burrow
         Burrow burrow = new Burrow(id);
 
+        // spawns a burrow to the world
         burrow.spawn(world);
-        assertEquals(world.getEntities().size(),  1);
+
+        // checks if the burrow has been spawned to the world
+        assertSame(world.getEntities().size(), 1,
+                "the amount of entities in the world should be 1 but is " + world.getEntities().size());
     }
 
     @AfterEach

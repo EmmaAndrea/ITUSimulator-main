@@ -35,7 +35,7 @@ public class Burrow extends Obstacle implements DynamicDisplayInformationProvide
     }
 
     /**
-     * calls
+     * used for spawning a burrow to the world by calling the spawn method from Obstacles
      */
     public void spawn(World world) {
         super.spawn(world);
