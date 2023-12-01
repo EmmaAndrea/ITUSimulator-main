@@ -1,6 +1,5 @@
 package ourcode.Setup;
 
-import itumulator.executable.DisplayInformation;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
@@ -8,7 +7,6 @@ import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
-import java.awt.*;
 import java.io.File;
 
 /**
@@ -62,41 +60,44 @@ public class ProgramRunner {
         p = new Program(size, display_size, delay); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
 
-        //design world
-        DisplayInformation rabbit_color = new DisplayInformation(Color.black);
-        p.setDisplayInformation(Rabbit.class, rabbit_color);
-        DisplayInformation grass_color = new DisplayInformation(Color.green);
-        p.setDisplayInformation(Grass.class, grass_color);
-        DisplayInformation burrow_color = new DisplayInformation(Color.red);
-        p.setDisplayInformation(Burrow.class, burrow_color);
+        // Reads the input file.
+        inputReader.readSpawns();
 
-        // run inputReader
-        inputReader.readSpawns(); // interprets the input file
-
-        // fix this part with a switch case (when iterating over spawn_map
-        // spawns rabbits
-
-        int amountOfRabbits = inputReader.getAmount("rabbit");
-        for (int i = 0; i < amountOfRabbits; i++) {
-            rabbit = new Rabbit(original_id_generator);
-            rabbit.spawn(world);
-        }
-
-        // spawns grass
-        int amountOfGrass = inputReader.getAmount("grass");
-        for (int i = 0; i < amountOfGrass; i++) {
-            grass = new Grass(original_id_generator);
-            grass.spawn(world);
-            world.setCurrentLocation(world.getLocation(grass));
-        }
-
-        int amountOfBurrows = inputReader.getAmount("burrow");
-        for (int i = 0; i < amountOfBurrows; i++) {
-            burrow = new Burrow(original_id_generator);
-            burrow.spawn(world);
-            world.setCurrentLocation(world.getLocation(burrow));
+        // Spawns entities according to the input file.
+        for (String type : inputReader.map_of_spawns.keySet()) {
+            spawnEntity(world, type, inputReader.getAmount(type));
         }
     }
+
+    /**
+     * Spawns as many of the given entity as stated by amount.
+     */
+    public void spawnEntities(World world, int amount, EntityFactory factory) {
+        for (int i = 0; i < amount; i++) {
+            Entity entity = factory.create();
+            entity.spawn(world);
+        }
+    }
+
+    /**
+     * Spawns an entity based on its type via a switch case.
+     */
+    public void spawnEntity(World world, String entityType, int amount) {
+        switch (entityType) {
+            case "rabbit":
+                spawnEntities(world, amount, () -> new Rabbit(original_id_generator));
+                break;
+            case "grass":
+                spawnEntities(world, amount, () -> new Grass(original_id_generator));
+                break;
+            case "burrow":
+                spawnEntities(world, amount, () -> new Burrow(original_id_generator));
+                break;
+            default:
+                System.out.println("Unknown entity type: " + entityType);
+        }
+    }
+
 
     /**
      * Runs the simulation for a specified number of steps.
