@@ -97,7 +97,7 @@ public abstract class Animal extends Organism {
         if (checkHunger()) {
             if (this instanceof Herbivore) {
                 herbivoreAct(world);
-                System.out.println("Made it past herbivoreAct");
+
                 if (world.getEntities().get(this) != null) {
                     breed(world);
                 }
@@ -170,11 +170,12 @@ public abstract class Animal extends Organism {
             // If animal is in breeding age.
             if (age >= max_age * 0.15 && age <= max_age * 0.85) {
 
-                if (steps_since_last_birth >= 14) {
+                // If it's not too much time since they last gave birthed.
+                if (steps_since_last_birth >= 12) {
 
                     // Get nearby locations to check for surrounding potential mates.
                     ArrayList<Location> surrounding_locations = new ArrayList<>();
-                    for (Location location : world.getSurroundingTiles(world.getLocation(this), 2)){
+                    for (Location location : world.getSurroundingTiles(world.getLocation(this), 1)){
 
                         // If the location in question is not empty.
                         if (!world.isTileEmpty(location)) {
@@ -185,11 +186,8 @@ public abstract class Animal extends Organism {
                         for (Object object : world.getEntities().keySet()) {
                             if (surrounding_locations.contains(world.getEntities().get(object))) {
 
-
-                                if (object instanceof Animal) {
-
-                                    // Cast the object to Animal class.
-                                    Animal animal = (Animal) object;
+                                // Casts object to Animal with variable name 'animal'.
+                                if (object instanceof Animal animal) {
 
                                     // Check if that animal has the same type as this.
                                     if (animal.getType().equals(type)) {

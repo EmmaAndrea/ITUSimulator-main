@@ -31,7 +31,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     public Rabbit(IDGenerator original_id_generator) {
         super(original_id_generator);
         type = "rabbit";
-        max_hunger = 10;
+        max_hunger = 18;
         nutritional_value = 4;
         max_age = 100;
 
@@ -56,8 +56,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
-        if (!in_hiding) nextMove(world);
-
         boolean isCloseToBurrow = false;
 
         boolean isNight = timeToNight(world) == 0;
@@ -76,18 +74,19 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
                 isCloseToBurrow = true;
 
-            }
-            if (isNight) {
+            } if (isNight) {
+
                 if (isCloseToBurrow) {
                     enterBurrow(world);
 
+                } else moveCloser(world, world.getLocation(my_burrows.get(0))); return;
 
-                } else moveCloser(world, world.getLocation(my_burrows.get(0)));
-
-            } else if (timeToNight(world) < 5) moveCloser(world, world.getLocation(my_burrows.get(0)));
+            } else if (timeToNight(world) < 5) moveCloser(world, world.getLocation(my_burrows.get(0))); return;
 
             // if it is in the burrow
         } else if (!isNight) exitBurrow(world);
+
+        if (!in_hiding) nextMove(world);
 
     }
 

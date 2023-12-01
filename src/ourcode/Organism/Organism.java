@@ -107,7 +107,7 @@ public abstract class Organism extends Entity implements Actor {
         Random random = new Random();
         if (getSurroundingFreeLocation(world) != null) {
             int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
-            
+
             return getSurroundingFreeLocation(world).get(random_index);
 
         } else return null;
@@ -128,9 +128,5 @@ public abstract class Organism extends Entity implements Actor {
                 }
             } return null;
         } return null;
-    }
-
-    public String getType(){
-        return type;
     }
 }

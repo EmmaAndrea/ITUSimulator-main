@@ -53,7 +53,7 @@ public class ProgramRunner {
         int size = inputReader.readWorldSize();
 
         // standard
-        int delay = 500; // the delay between every step of the simulation (in ms)
+        int delay = 300; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
         //create world
@@ -64,12 +64,12 @@ public class ProgramRunner {
         inputReader.readSpawns();
 
         // Spawns entities according to the input file.
-        //for (String type : inputReader.map_of_spawns.keySet()) {
-        //    spawnEntity(world, type, inputReader.getAmount(type));
-        //}
+        for (String type : inputReader.map_of_spawns.keySet()) {
+            spawnEntity(world, type, inputReader.getAmount(type));
+        }
 
-        spawnEntity(world, "rabbit", 20);
-        spawnEntity(world, "grass", 50);
+        //spawnEntity(world, "rabbit", 20);
+        //spawnEntity(world, "grass", 50);
     }
 
     /**
