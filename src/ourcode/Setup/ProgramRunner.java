@@ -20,6 +20,12 @@ public class ProgramRunner {
 
     private IDGenerator original_id_generator;
 
+    private Grass grass;
+
+    private Rabbit rabbit;
+
+    private Burrow burrow;
+
     // constructor for ProgramRunner
     public ProgramRunner() {
         // constructor code
@@ -164,5 +170,17 @@ public class ProgramRunner {
      */
     public IDGenerator getOriginal_id_generator() {
         return original_id_generator;
+    }
+
+    public Grass getGrass() {
+        return grass;
+    }
+
+    public Burrow getBurrow() {
+        return burrow;
+    }
+
+    public Rabbit getRabbit() {
+        return rabbit;
     }
 }
