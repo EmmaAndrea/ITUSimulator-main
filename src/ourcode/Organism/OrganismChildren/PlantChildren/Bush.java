@@ -1,14 +1,19 @@
 package ourcode.Organism.OrganismChildren.PlantChildren;
 
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import ourcode.Organism.OrganismChildren.Plant;
 import ourcode.Setup.IDGenerator;
 
-public class Bush extends Plant {
+import java.awt.*;
+
+public class Bush extends Plant implements DynamicDisplayInformationProvider {
     protected int berries;
     public Bush(IDGenerator idGenerator){
         super(idGenerator);
         berries = 0;
         nutritional_value = 3;
+        max_age = 100000;
     }
 
     public void grow(){
@@ -21,5 +26,14 @@ public class Bush extends Plant {
 
     public void eatBerries(){
         berries =-3;
+    }
+
+    @Override
+    public DisplayInformation getInformation() {
+        if (age >= 15) {
+            return new DisplayInformation(Color.cyan, "bush");
+        } else {
+            return new DisplayInformation(Color.cyan, "bush-berries");
+        }
     }
 }

@@ -1,12 +1,14 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 
-import ourcode.Organism.OrganismChildren.Animal;
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
 import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-public class Wolf extends Carnivore {
+public class Wolf extends Carnivore implements DynamicDisplayInformationProvider {
 
     protected ArrayList<Wolf> pack;
     public Wolf(IDGenerator idGenerator) {

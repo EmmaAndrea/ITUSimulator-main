@@ -299,6 +299,7 @@ public abstract class Animal extends Organism {
         }
     }
 
+
     public void moveAway(World world, Location danger_location) {
         Location current_location = world.getLocation(this);
 
