@@ -132,6 +132,28 @@ public abstract class Animal extends Organism {
     }
 
     /**
+     *
+     */
+    public void spawnEntity(World world, String entityType) {
+        switch (entityType) {
+            case "rabbit":
+                Rabbit rabbit = new Rabbit(id_generator);
+                rabbit.spawn(world);
+                break;
+            case "grass":
+                Grass grass = new Grass(id_generator);
+                grass.spawn(world);
+                break;
+            case "burrow":
+                Burrow burrow = new Burrow(id_generator);
+                burrow.spawn(world);
+                break;
+            default:
+                System.out.println("Unknown entity type: " + entityType);
+        }
+    }
+
+    /**
      * Checks if the circumstances for breeding are met: if it's:
      * female;
      * in breeding age;
@@ -262,5 +284,12 @@ public abstract class Animal extends Organism {
 
         // Return the sum of x and y steps
         return step_x + step_y;
+    }
+
+    /**
+     * Returns the gender of an animal.
+     */
+    public Gender getGender() {
+        return gender;
     }
 }

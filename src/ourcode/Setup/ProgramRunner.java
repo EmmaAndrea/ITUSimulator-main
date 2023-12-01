@@ -64,9 +64,12 @@ public class ProgramRunner {
         inputReader.readSpawns();
 
         // Spawns entities according to the input file.
-        for (String type : inputReader.map_of_spawns.keySet()) {
-            spawnEntity(world, type, inputReader.getAmount(type));
-        }
+        //for (String type : inputReader.map_of_spawns.keySet()) {
+        //    spawnEntity(world, type, inputReader.getAmount(type));
+        //}
+
+        spawnEntity(world, "rabbit", 20);
+        spawnEntity(world, "grass", 50);
     }
 
     /**

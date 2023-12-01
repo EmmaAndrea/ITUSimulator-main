@@ -80,7 +80,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             if (isNight) {
                 if (isCloseToBurrow) {
                     enterBurrow(world);
-                    return;
+
 
                 } else moveCloser(world, world.getLocation(my_burrows.get(0)));
 

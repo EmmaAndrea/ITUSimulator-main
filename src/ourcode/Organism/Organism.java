@@ -105,9 +105,12 @@ public abstract class Organism extends Entity implements Actor {
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
         Random random = new Random();
-        int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+        if (getSurroundingFreeLocation(world) != null) {
+            int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+            
+            return getSurroundingFreeLocation(world).get(random_index);
 
-        return getSurroundingFreeLocation(world).get(random_index);
+        } else return null;
     }
 
     /**
@@ -125,5 +128,9 @@ public abstract class Organism extends Entity implements Actor {
                 }
             } return null;
         } return null;
+    }
+
+    public String getType(){
+        return type;
     }
 }
