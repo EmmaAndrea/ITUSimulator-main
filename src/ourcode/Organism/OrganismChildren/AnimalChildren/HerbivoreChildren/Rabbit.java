@@ -56,7 +56,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
-        if(!in_hiding) nextMove(world);
+        if (!in_hiding) nextMove(world);
 
         boolean isCloseToBurrow = false;
 
@@ -99,7 +99,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         if (age > 5 ){
             if (world.containsNonBlocking(world.getLocation(this))) {
                 // Remove the nonblocking tile from id_generators lists
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass){
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
                     world.delete(world.getNonBlocking(world.getLocation(this)));
                     // Instantiates new burrow and sets the tile with current location.
                     Burrow newburrow = new Burrow(id_generator);
@@ -122,8 +122,8 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                 }
             }
         } else {
-            if (world.containsNonBlocking(world.getLocation(this))){
-                if(world.getNonBlocking(world.getLocation(this)) instanceof Burrow){
+            if (world.containsNonBlocking(world.getLocation(this))) {
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
                     my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
                     has_burrow = true;
                 }
@@ -204,7 +204,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 20) {
+        if (age >= 15) {
             return new DisplayInformation(Color.black, "rabbit-large");
         } else {
             return new DisplayInformation(Color.black, "rabbit-small");

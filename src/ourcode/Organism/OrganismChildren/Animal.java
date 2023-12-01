@@ -2,7 +2,8 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Obstacles.Gender;
+import ourcode.Obstacles.Burrow;
+import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -10,7 +11,11 @@ import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
+import java.util.ArrayList;
 import java.util.Random;
+
+import static ourcode.Organism.Gender.Female;
+import static ourcode.Organism.Gender.Male;
 
 /**
  * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
@@ -36,7 +41,7 @@ public abstract class Animal extends Organism {
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
         in_hiding = false;
-        Gender gender = new Random().nextBoolean() ? Gender.Male : Gender.Female; // Randomly male or female.
+        gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         grass_eaten = 0;
     }
 
@@ -92,13 +97,14 @@ public abstract class Animal extends Organism {
         if (checkHunger()) {
             if (this instanceof Herbivore) {
                 herbivoreAct(world);
-                if(!in_hiding){
-                    checkBreed(world);
+                System.out.println("Made it past herbivoreAct");
+                if (world.getEntities().get(this) != null) {
+                    breed(world);
                 }
             } else {
                 // predatorAct coming soon
-                if(!in_hiding){
-                    checkBreed(world);
+                if (!in_hiding) {
+                    //checkBreed(world);
                     nextMove(world);
                 }
             }
@@ -119,64 +125,62 @@ public abstract class Animal extends Organism {
      * Creates a new instance of that type of animal.
      * Spawns at a random possible location.
      */
-    public void breed(World world, Animal animal) {
-        // Retrieve current location
-        Location random_location = getRandomMoveLocation(world);
-
-        // Checks if there is a possible spawn location.
-        if (random_location != null) {
-
-            // Finds which type of animal to make baby of.
-            Animal offspring = null;
-            String animal_type = animal.getType();
-            switch (animal_type) {
-                case "rabbit":
-                    offspring = new Rabbit(id_generator);
-                    break;
-                case "wolf":
-                    //baby = new Wolf(id_generator);
-                    break;
-                default:
-                    //baby = new Bear(id_generator);
-            }
-
-            // Spawns baby and adds to location and id maps.
-            world.setTile(random_location, offspring);
-            assert offspring != null; // We promise that a baby exists.
-            id_generator.addEntityToIdMap(offspring.getId(), offspring);
-            id_generator.addLocationToIdMap(random_location, offspring.getId());
+    public void breed(World world) {
+        if (checkBreed(world)) {
+            spawnEntity(world, type);
         }
     }
 
     /**
-     * Checks if the circumstances for breeding are met:
-     * If there is a nearby same animal type;
-     * If animal is older than 20;
-     * If there is space for one more animal.
-     * ERROR: SOMETIMES BREEDS ITSELF
+     * Checks if the circumstances for breeding are met: if it's:
+     * female;
+     * in breeding age;
+     * nearby a potential mate;
+     * the opposite gender of the potential mate;
+     * the same type as the potential mate;
+     * available to breed, considering the surrounding space.
      */
-    public void checkBreed(World world) {
-        // eventually check if the mating animal is of opposite gender
-        // eventually check if mating animal also fulfills criteria.
 
-        // If there is another one of its type in the surrounding tiles.
-        for (Location location : world.getSurroundingTiles(world.getLocation(this), 1)) {
-            if (location != world.getLocation(this)) { // this part is redundant as get surrounding doesn't include center
+    public boolean checkBreed(World world) {
+        // Only females can give birth.
+        if (gender == Female) {
 
-                if (id_generator.getEntity(location) != null && id_generator.getEntity(location).getType().equals(type)) {
+            // If animal is in breeding age.
+            if (age >= max_age * 0.15 && age <= max_age * 0.85) {
 
-                    // If the animal is in breeding age (older than 10% and younger than 90% of its age).
-                    if (age >= max_age * 0.1) {
-                        if (age <= max_age * 0.9) {
+                if (steps_since_last_birth >= 14) {
 
-                            // If there is space for one more animal.
-                            if (!world.getEmptySurroundingTiles().isEmpty()) {
+                    // Get nearby locations to check for surrounding potential mates.
+                    ArrayList<Location> surrounding_locations = new ArrayList<>();
+                    for (Location location : world.getSurroundingTiles(world.getLocation(this), 2)){
 
-                                // If they haven't bred in 10 steps.
-                                if (steps_since_last_birth >= 5) {
-                                    breed(world, this);
-                                    steps_since_last_birth = 0;
-                                    break;
+                        // If the location in question is not empty.
+                        if (!world.isTileEmpty(location)) {
+                            surrounding_locations.add(location);
+                        }
+
+                        // Get the animal that is on the tiles.
+                        for (Object object : world.getEntities().keySet()) {
+                            if (surrounding_locations.contains(world.getEntities().get(object))) {
+
+
+                                if (object instanceof Animal) {
+
+                                    // Cast the object to Animal class.
+                                    Animal animal = (Animal) object;
+
+                                    // Check if that animal has the same type as this.
+                                    if (animal.getType().equals(type)) {
+
+                                        // If they have opposite genders.
+                                        if (animal.getGender() == Male) {
+
+                                            // If there is room to breed.
+                                            if (world.getEmptySurroundingTiles(world.getLocation(this)) != null) {
+                                                return true;
+                                            }
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -184,6 +188,9 @@ public abstract class Animal extends Organism {
                 }
             }
         }
+
+        // If any of these are false, return false.
+        return false;
     }
 
     /**

@@ -139,15 +139,15 @@ public class ProgramRunner {
         return original_id_generator.getEntity(p.getWorld().getCurrentLocation());
     }
 
-    public IDGenerator getOriginal_id_generator(){
+    public IDGenerator getOriginal_id_generator() {
         return original_id_generator;
     }
 
-    public Grass getGrass(){
+    public Grass getGrass() {
         return grass;
     }
 
-    public Rabbit getRabbit(){
+    public Rabbit getRabbit() {
         return rabbit;
     }
 

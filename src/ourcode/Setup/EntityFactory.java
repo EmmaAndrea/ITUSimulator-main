@@ -1,6 +1,6 @@
 package ourcode.Setup;
 
 @FunctionalInterface
-interface EntityFactory {
+public interface EntityFactory {
     Entity create();
 }

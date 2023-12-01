@@ -1,4 +1,4 @@
-package ourcode.Obstacles;
+package ourcode.Organism;
 
 public enum Gender {
     Male, Female

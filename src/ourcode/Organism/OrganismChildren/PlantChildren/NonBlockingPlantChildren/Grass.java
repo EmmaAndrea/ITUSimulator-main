@@ -24,7 +24,7 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
         super(original_id_generator);
         type = "grass";
         max_age = 30;
-        nutritional_value = 3;
+        nutritional_value = 4;
     }
 
     /**
