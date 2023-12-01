@@ -5,7 +5,6 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
-import ourcode.Obstacles.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
 import ourcode.Setup.IDGenerator;
 
@@ -24,7 +23,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
 
     ArrayList <Burrow> my_burrows;
     boolean has_burrow;
-    Gender gender;
 
     /**
      * Has max_hunger, that dictates how hungry it can be
@@ -39,7 +37,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Specifics for rabbit.
         has_burrow = false;
         my_burrows = new ArrayList<>();
-        Gender gender = new Random().nextBoolean() ? Gender.Male : Gender.Female; // Randomly male or female.
     }
 
     /**

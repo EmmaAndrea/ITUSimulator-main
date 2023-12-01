@@ -2,10 +2,13 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
+
+import java.util.Random;
 
 /**
  * The Animal class gives the abstraction of an Animal. An animal inherits from the Organism
@@ -18,6 +21,7 @@ public abstract class Animal extends Organism {
     public int max_hunger;
     public int steps_since_last_birth;
     protected boolean in_hiding;
+    Gender gender;
 
     /**
      * The constructor of an Animal.
@@ -28,6 +32,7 @@ public abstract class Animal extends Organism {
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
         in_hiding = false;
+        Gender gender = new Random().nextBoolean() ? Gender.Male : Gender.Female; // Randomly male or female.
     }
 
     /**
