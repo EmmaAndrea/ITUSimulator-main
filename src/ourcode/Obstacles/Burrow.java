@@ -66,10 +66,6 @@ public class Burrow extends Obstacle implements DynamicDisplayInformationProvide
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 9) {
-            return new DisplayInformation(Color.red, "hole");
-        } else {
-            return new DisplayInformation(Color.red, "hole-small");
-        }
+        return new DisplayInformation(Color.red, "hole");
     }
 }
