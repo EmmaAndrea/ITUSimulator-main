@@ -92,5 +92,4 @@ public abstract class Entity {
             return 10 - world.getCurrentTime() % 20;
         }
     }
-
 }
