@@ -14,27 +14,23 @@ public class Wolf extends Carnivore {
         this.trophic_level = 3;
     }
 
-    public void attack(Animal animal){
-        animal.becomeWounded();
-    }
-
-    public void createPack(){
+    public void createPack() {
         pack = new ArrayList<>();
     }
 
-    public ArrayList<Wolf> getPack(){
+    public ArrayList<Wolf> getPack() {
         return pack;
     }
 
-    public void addWolfToPack(Wolf wolf){
+    public void addWolfToPack(Wolf wolf) {
         pack.add(wolf);
     }
 
-    public void removeWolfFromPack(Wolf wolf){
+    public void removeWolfFromPack(Wolf wolf) {
         pack.remove(wolf);
     }
 
-    public void overtakePack(Wolf oldwolf){
+    public void overtakePack(Wolf oldwolf) {
         pack = new ArrayList<>();
         pack.addAll(oldwolf.getPack());
     }
