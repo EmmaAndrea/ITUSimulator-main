@@ -146,7 +146,7 @@ public abstract class Animal extends Organism {
      * Spawns a new entity of the specified type in the simulation world.
      * Handles creation and initialization of different entity types like Rabbit, Grass, or Burrow.
      *
-     * @param world The simulation world where the new entity will be spawned.
+     * @param world      The simulation world where the new entity will be spawned.
      * @param entityType The type of entity to spawn.
      */
     public void spawnEntity(World world, String entityType) {
@@ -187,7 +187,7 @@ public abstract class Animal extends Organism {
 
                     // Get nearby locations to check for surrounding potential mates.
                     ArrayList<Location> surrounding_locations = new ArrayList<>();
-                    for (Location location : world.getSurroundingTiles(world.getLocation(this), 1)){
+                    for (Location location : world.getSurroundingTiles(world.getLocation(this), 1)) {
 
                         // If the location in question is not empty.
                         if (!world.isTileEmpty(location)) {
@@ -250,7 +250,7 @@ public abstract class Animal extends Organism {
     /**
      * Moves the animal closer to a target location, considering available paths and obstacles.
      *
-     * @param world The simulation world where the movement occurs.
+     * @param world           The simulation world where the movement occurs.
      * @param target_location The target location towards which the animal moves.
      */
     public void moveCloser(World world, Location target_location) {
@@ -288,7 +288,7 @@ public abstract class Animal extends Organism {
      * Calculates the distance from the animal's current location to a specified location in the world.
      * This method is useful for navigation and decision-making processes, like finding food or avoiding predators.
      *
-     * @param world The simulation world where the distance is calculated.
+     * @param world    The simulation world where the distance is calculated.
      * @param location The location to which the distance is calculated.
      * @return The number of simulation steps required to reach the specified location.
      */

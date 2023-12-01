@@ -108,8 +108,11 @@ public abstract class Organism extends Entity implements Actor {
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
         Random random = new Random();
+        //
         if (getSurroundingFreeLocation(world) != null) {
+            //
             int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+            //
             return getSurroundingFreeLocation(world).get(random_index);
         } else return null;
     }
@@ -120,9 +123,13 @@ public abstract class Organism extends Entity implements Actor {
      * Otherwise null
      */
     public Location getGrassLocation(World world) {
+        //
         if (getSurroundingFreeLocation(world) != null) {
+            //
             for (Location location : getSurroundingFreeLocation(world)) {
+                //
                 if (world.containsNonBlocking(location)) {
+                    //
                     if ((world.getNonBlocking(location) instanceof Grass)) {
                         return location;
                     }

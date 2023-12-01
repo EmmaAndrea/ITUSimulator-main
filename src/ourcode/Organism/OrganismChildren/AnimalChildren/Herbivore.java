@@ -50,13 +50,18 @@ public abstract class Herbivore extends Animal {
      * overrides method for other animals
      * @param world dependent on world
      */
-    @Override
-    public void nextMove(World world){
+   /*
+    public void nextMove(World world) {
+
         // Moves to grass, if there is grass nearby.
         if (getGrassLocation(world) != null) {
+            //
             if (getGrassLocation(world) != world.getLocation(this)) {
+                //
                 world.move(this, getGrassLocation(world));
+                //
             } else if (getRandomMoveLocation(world) != null) {
+                //
                 world.move(this, getRandomMoveLocation(world));
                 return;
             }
