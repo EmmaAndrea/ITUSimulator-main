@@ -101,25 +101,27 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                 if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
                     world.delete(world.getNonBlocking(world.getLocation(this)));
                     // Instantiates new burrow and sets the tile with current location.
-                    Burrow newburrow = new Burrow(id_generator);
-                    world.setTile(world.getLocation(this), newburrow);
-
-                    // Rabbit now has a personal burrow.
-                    my_burrows.add(newburrow);
-
-                    // Set rabbit’s boolean has_burrow to be true.
-                    has_burrow = true;
-
-                    // Add to maps to keep track of where things are.
-                    id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
-                    id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
-
-                    nextMove(world);
                 } else {
-                    my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
-                    has_burrow = true;
+                my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                has_burrow = true;
+                return;
                 }
             }
+            Burrow newburrow = new Burrow(id_generator);
+            world.setTile(world.getLocation(this), newburrow);
+
+            // Rabbit now has a personal burrow.
+            my_burrows.add(newburrow);
+
+            // Set rabbit’s boolean has_burrow to be true.
+            has_burrow = true;
+
+            // Add to maps to keep track of where things are.
+            id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
+            id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
+
+            nextMove(world);
+
         } else {
             if (world.containsNonBlocking(world.getLocation(this))) {
                 if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
