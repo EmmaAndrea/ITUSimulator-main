@@ -25,12 +25,24 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear"));
     }
 
+    /**
+     * Graphics for old, young and wounded bear.
+     * @return the display information for the bear in its current state.
+     */
     @Override
     public DisplayInformation getInformation() {
         if (age >= 11) {
-            return new DisplayInformation(Color.cyan, "bear-large");
+            if (wounded) {
+                return new DisplayInformation(Color.cyan, "bear-large-wounded");
+            } else {
+                return new DisplayInformation(Color.cyan, "bear-large");
+            }
         } else {
-            return new DisplayInformation(Color.cyan, "bear-small");
+            if (wounded) {
+                return new DisplayInformation(Color.cyan, "bear-small-wounded");
+            } else {
+                return new DisplayInformation(Color.cyan, "bear-small");
+            }
         }
     }
 

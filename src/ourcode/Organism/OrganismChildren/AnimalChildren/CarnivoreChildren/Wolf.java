@@ -80,12 +80,24 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         trophic_level=i;
     }
 
+    /**
+     * Graphics for old, young and wounded wolf.
+     * @return the display information for the wolf in its current state.
+     */
     @Override
     public DisplayInformation getInformation() {
         if (age >= 12) {
-            return new DisplayInformation(Color.cyan, "wolf-large");
+            if (wounded) {
+                return new DisplayInformation(Color.cyan, "wolf-large-wounded");
+            } else {
+                return new DisplayInformation(Color.cyan, "wolf-large");
+            }
         } else {
-            return new DisplayInformation(Color.cyan, "wolf-small");
+            if (wounded) {
+                return new DisplayInformation(Color.cyan, "wolf-small-wounded");
+            } else {
+                return new DisplayInformation(Color.cyan, "wolf-small");
+            }
         }
     }
 }

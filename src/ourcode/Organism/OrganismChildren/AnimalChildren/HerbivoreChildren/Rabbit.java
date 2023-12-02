@@ -204,8 +204,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         world.setTile(possible_spawn_locations.get(random_index), this);
         // Rabbit is now outside of burrow.
         in_hiding = false;
-
-        // rabbits jump up at same time in same place
     }
 
     /**
