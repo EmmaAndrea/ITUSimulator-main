@@ -7,6 +7,8 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bear extends Carnivore implements DynamicDisplayInformationProvider {
 
@@ -18,7 +20,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         type = "bear";
         max_age = 190;
         max_hunger = 30;
-
+        consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear"));
     }
 
     @Override
@@ -29,6 +31,4 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
             return new DisplayInformation(Color.cyan, "bear-small");
         }
     }
-
-
 }
