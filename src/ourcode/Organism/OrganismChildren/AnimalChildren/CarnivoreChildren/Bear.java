@@ -13,6 +13,7 @@ import java.util.List;
 public class Bear extends Carnivore implements DynamicDisplayInformationProvider {
 
     protected Location territory;
+
     public Bear(IDGenerator idGenerator) {
         super(idGenerator);
         trophic_level = 4;
@@ -20,6 +21,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         type = "bear";
         max_age = 190;
         max_hunger = 30;
+
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear"));
     }
 
@@ -30,5 +32,9 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         } else {
             return new DisplayInformation(Color.cyan, "bear-small");
         }
+    }
+
+    public void setTerritory(Location territory) {
+        this.territory = territory;
     }
 }
