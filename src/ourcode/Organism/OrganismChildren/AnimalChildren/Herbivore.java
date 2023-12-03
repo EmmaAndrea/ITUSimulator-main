@@ -38,8 +38,7 @@ public abstract class Herbivore extends Animal {
 
                     // If the herbivore is hungrier than how full the grass will make it.
                     if (hunger >= getStandingOnNutritionalValue(world)) {
-                        eat(world);
-
+                        eat(world, world.getNonBlocking(world.getLocation(this)));
                     }
                 }
             }

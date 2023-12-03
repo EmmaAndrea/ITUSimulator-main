@@ -2,11 +2,13 @@ package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
+import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Wolf extends Carnivore implements DynamicDisplayInformationProvider {
 
@@ -19,6 +21,20 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         max_age = 130;
         max_hunger = 21;
         has_pack = false;
+        consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf"));
+    }
+
+    @Override
+    public void carnivoreAct(World world) {
+        super.carnivoreAct(world);
+        if(timeToNight(world) > 7 && timeToNight(world) < 3) {
+            in_hiding = true;
+            sleeping = true;
+            return;
+        } else
+        sleeping = false;
+        if(timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
+        nextMove(world);
     }
 
     public void createPack() {
@@ -32,9 +48,9 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     }
 
     public void addWolfToPack(Wolf thewolf) {
-        if (!thewolf.isHas_pack()) {
+        if (!thewolf.getHasPack()) {
             pack.add(thewolf);
-            thewolf.setHas_pack();
+            thewolf.setHasPack();
             if (pack.size() == 5) {
                 for (Wolf wolf : pack) {
                     wolf.setTrophicLevel(5);
@@ -54,26 +70,32 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         return getwolf;
     }
 
-    public boolean isHas_pack() {
+    public boolean getHasPack() {
         return has_pack;
     }
 
-    public void setHas_pack() {
+    public void setHasPack() {
         has_pack = true;
     }
 
+    public void setHasNotPack() {
+        has_pack = false;
+    }
+
     public void removeWolfFromPack(Wolf thewolf) {
-        pack.remove(thewolf);
         if(pack.size() == 4){
             for (Wolf wolf : pack){
                 wolf.setTrophicLevel(3);
             }
         }
+        pack.remove(thewolf);
+        thewolf.setHasNotPack();
     }
 
     public void overtakePack(Wolf oldwolf) {
         pack = new ArrayList<>();
         pack.addAll(oldwolf.getPack());
+        has_pack = true;
     }
 
     public void setTrophicLevel(int i){

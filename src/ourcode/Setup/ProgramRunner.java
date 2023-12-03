@@ -62,7 +62,7 @@ public class ProgramRunner {
         int size = inputReader.readWorldSize();
 
         // standard
-        int delay = 2000; // the delay between every step of the simulation (in ms)
+        int delay = 1000; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
         //create world
@@ -77,8 +77,8 @@ public class ProgramRunner {
             spawnEntity(world, type, inputReader.getAmount(type));
         }
 
-        //spawnEntity(world, "rabbit", 20);
-        //spawnEntity(world, "grass", 50);
+        //spawnEntity(world, "rabbit", 10);
+        //spawnEntity(world, "grass", 30);
     }
 
     /**
@@ -93,19 +93,21 @@ public class ProgramRunner {
             Entity entity = factory.create();
             entity.spawn(world);
             if(entity instanceof Bear){
-                setBearTerritoy(entity, i);
+                setBearTerritoy(entity, i+1);
             }
         }
     }
 
+    /*
     public void spawnBear(World world, int amount, EntityFactory factory) {
         for (int i = 0; i < amount; i++) {
             Entity entity = factory.create();
             entity.spawn(world);
             setBearTerritoy(entity, i+1);
-            System.out.println("");
         }
     }
+
+     */
 
     public void setBearTerritoy(Entity entity, int i){
         String beartype = "bear"+i;
@@ -131,7 +133,7 @@ public class ProgramRunner {
                 spawnEntities(world, amount, () -> new Wolf(original_id_generator));
                 break;
             case "bear":
-                spawnBear(world, amount, () -> new Bear(original_id_generator));
+                spawnEntities(world, amount, () -> new Bear(original_id_generator));
                 break;
             case "rabbit":
                 spawnEntities(world, amount, () -> new Rabbit(original_id_generator));

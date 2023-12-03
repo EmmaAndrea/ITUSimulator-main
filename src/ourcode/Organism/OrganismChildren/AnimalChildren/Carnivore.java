@@ -10,12 +10,15 @@ import ourcode.Setup.IDGenerator;
  * sustenance.
  */
 public abstract class Carnivore extends Animal {
+    protected boolean sleeping;
+
     /**
      * the constructor of a Carnivore, will call 'super()' from the Animal class.
      * @param original_id_generator
      */
     public Carnivore(IDGenerator original_id_generator) {
         super(original_id_generator);
+        sleeping = false;
     }
 
     /**
@@ -31,11 +34,15 @@ public abstract class Carnivore extends Animal {
      */
     @Override
     public void carnivoreAct(World world) {
-
     }
 
+    @Override
     protected void attack(World world, Animal animal){
-        if(wounded == false) animal.becomeWounded();
-        else world.delete(animal);
+        if(animal.getTrophicLevel() > 2) {
+            if (!wounded) animal.becomeWounded();
+            else if (hunger >= animal.getNutritionalValue()) eat(world, animal);
+            return;
+        }
+        if (hunger >= animal.getNutritionalValue()) eat(world, animal);
     }
 }

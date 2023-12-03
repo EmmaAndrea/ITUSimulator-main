@@ -101,7 +101,7 @@ public class RabbitTest {
         int initialHungerLevel = rabbit.getHunger();
 
         // Simulate rabbit eating grass
-        rabbit.eat(world);
+        rabbit.eat(world, grass);
 
         // Check hunger level after eating
         int postFeedingHungerLevel = rabbit.getHunger();
@@ -126,7 +126,7 @@ public class RabbitTest {
         rabbit.spawn(world);
 
         // Simulate rabbit eating grass
-        rabbit.eat(world);
+        rabbit.eat(world, grass);
 
         // Assert that hunger level has decreased
         assertThrows(Exception.class, () -> assertNull(world.getNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten."));

@@ -87,7 +87,11 @@ public class InputReader {
 
                 map_of_spawns.put("bear", totalBearAmount);
             } else {
-                map_of_spawns.put(type, amount);
+                if(map_of_spawns.containsKey(type)){
+                    int total = map_of_spawns.get(type) + amount;
+                    map_of_spawns.remove(type);
+                    map_of_spawns.put(type, total);
+                } else map_of_spawns.put(type, amount);
             }
         }
     }
