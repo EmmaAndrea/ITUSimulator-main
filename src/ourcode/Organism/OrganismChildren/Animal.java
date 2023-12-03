@@ -72,14 +72,20 @@ public abstract class Animal extends Organism {
      *
      * @param world The world in which the animal and its food source exist.
      */
-    public void eat(World world) {
+    public void eat(World world, Object object) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
-        hunger -= getStandingOnNutritionalValue(world);
+        if (object instanceof Grass grass) {
+            hunger -= getStandingOnNutritionalValue(world);
 
-        // Deletes the eaten organism from the world.
-        world.delete(world.getNonBlocking(world.getLocation(this)));
+            // Deletes the eaten organism from the world.
+            world.delete(world.getNonBlocking(world.getLocation(this)));
 
-        wounded = false;
+            if (object instanceof Animal animal) {
+                hunger -= animal.getNutritionalValue();
+                world.delete(animal);
+            }
+            wounded = false;
+        }
     }
 
     /**
@@ -130,6 +136,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world in which the carnivore exists.
      */
     public void carnivoreAct(World world) {
+
     }
 
     /**
@@ -376,15 +383,16 @@ public abstract class Animal extends Organism {
                 Object object = world.getTile(location);
 
                 // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Organism organism) {
+                if (object instanceof Animal animal) {
 
                     // If the organism has a higher trophic level than itself.
-                    if (organism.getTrophicLevel() > trophic_level) {
+                    if (animal.getTrophicLevel() > trophic_level) {
                         moveAway(world, location);
                         being_hunted = true;
                         return true;
-                    } else if (consumable_foods.contains(organism.getType())) {
-                        moveCloser(world, location);
+                    } else if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
+                        attack(world, animal);
+                        System.out.println(type);
                         return true;
                     }
                 }
@@ -421,5 +429,9 @@ public abstract class Animal extends Organism {
 
     public void becomeWounded(){
         wounded = true;
+    }
+
+    protected void attack(World world, Animal animal){
+
     }
 }

@@ -31,11 +31,17 @@ public abstract class Carnivore extends Animal {
      */
     @Override
     public void carnivoreAct(World world) {
-
+        nextMove(world);
+        nextMove(world);
     }
 
+    @Override
     protected void attack(World world, Animal animal){
-        if(wounded == false) animal.becomeWounded();
-        else world.delete(animal);
+        if(animal.getTrophicLevel() > 2) {
+            if (!wounded) animal.becomeWounded();
+            else eat(world, animal);
+            return;
+        }
+        eat(world, animal);
     }
 }
