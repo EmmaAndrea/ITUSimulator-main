@@ -8,17 +8,18 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class WolfTest {
-    public final ProgramRunner programRunner;
+    public ProgramRunner programRunner;
     public World world;
 
     public WolfTest() { programRunner = new ProgramRunner(); }
 
     @BeforeAll
     public static void setUp() {
-        System.out.println("Testing for Wolfs");
+        System.out.println("Testing for Wolves");
     }
 
     @BeforeEach
@@ -33,11 +34,11 @@ public class WolfTest {
     @Test
     public void testWolfDeclaration() throws Exception {
         programRunner.create("./data/t2-1ab.txt");
-        world = programRunner.getWorld();
 
         programRunner.runSimulation(1);
 
-        assertSame(world.getEntities().size(), 1,
+        world = programRunner.getWorld();
+        assertEquals(world.getEntities().size(), 1,
                 "the amount of entities in the world should be 1 but is " + world.getEntities().size());
     }
 
@@ -56,7 +57,7 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        assertSame(wolf1.getPack().size(), 2,
+        assertEquals(wolf1.getPack().size(), 2,
                 "The size of the wolf pack list should be 2, but it is: " + wolf1.getPack().size());
     }
 
@@ -77,7 +78,7 @@ public class WolfTest {
 
         wolf1.removeWolfFromPack(wolf2);
 
-        assertSame(wolf1.getPack().size(), 1,
+        assertEquals(wolf1.getPack().size(), 1,
                 "The size of the pack after removing a wolf should be 1, but is: " + wolf1.getPack().size());
 
 

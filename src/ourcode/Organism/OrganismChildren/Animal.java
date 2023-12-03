@@ -82,10 +82,10 @@ public abstract class Animal extends Organism {
 
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
-            System.out.println("ate" + grass.getType());
+            System.out.println(this.getType() + "ate" + grass.getType());
         } if (object instanceof Animal animal) {
                 hunger -= animal.getNutritionalValue();
-                System.out.println("ate" + animal.getType());
+                System.out.println(this.getType() + "ate" + animal.getType());
                 world.delete(animal);
             }
             wounded = false;

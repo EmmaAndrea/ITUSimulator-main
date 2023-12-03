@@ -77,8 +77,8 @@ public class ProgramRunner {
             spawnEntity(world, type, inputReader.getAmount(type));
         }
 
-        spawnEntity(world, "rabbit", 10);
-        //spawnEntity(world, "grass", 50);
+        //spawnEntity(world, "rabbit", 10);
+        //spawnEntity(world, "grass", 30);
     }
 
     /**
