@@ -5,7 +5,10 @@ import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
@@ -79,13 +82,14 @@ public abstract class Animal extends Organism {
 
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
-
-            if (object instanceof Animal animal) {
+            System.out.println("ate" + grass.getType());
+        } if (object instanceof Animal animal) {
                 hunger -= animal.getNutritionalValue();
+                System.out.println("ate" + animal.getType());
                 world.delete(animal);
             }
             wounded = false;
-        }
+
     }
 
     /**
@@ -109,10 +113,10 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            if(!in_hiding) nextMove(world);
             herbivoreAct(world);
             omnivoreAct(world);
             carnivoreAct(world);
+
             if (!in_hiding) {
                 breed(world);
             }
@@ -169,6 +173,12 @@ public abstract class Animal extends Organism {
      */
     public void spawnEntity(World world, String entityType) {
         switch (entityType) {
+            case "bear":
+                Bear bear = new Bear(id_generator);
+                bear.spawn(world);
+            case "wolf":
+                Wolf wolf = new Wolf(id_generator);
+                wolf.spawn(world);
             case "rabbit":
                 Rabbit rabbit = new Rabbit(id_generator);
                 rabbit.spawn(world);
@@ -368,7 +378,6 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
 
-        System.out.println("starts finding food");
         // Get surrounding tiles to iterate through them.
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
@@ -406,7 +415,18 @@ public abstract class Animal extends Organism {
                 if (object instanceof Organism organism) {
                     if (consumable_foods.contains(organism.getType())) {
                         moveCloser(world, location);
-                        System.out.println("moves toward grass");
+
+                        return true;
+                    }
+                }
+            } else if (!world.isTileEmpty(location)){
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Bush bush) {
+                    if (consumable_foods.contains("bush")) {
+                        bush.eatBerries();
                         return true;
                     }
                 }
