@@ -51,7 +51,7 @@ public class ProgramRunner {
         // read file with input-reader
         input_reader = new InputReader(file.getAbsolutePath());
 
-        int size = input_reader.readWorldSize();
+        int size = 20; //input_reader.readWorldSize();
         int delay = 1000; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
@@ -69,7 +69,7 @@ public class ProgramRunner {
 
         alpha = new Wolf(id_generator);
         packnumber = 0;
-        //spawnEntity(world, "rabbit", 10);
+        spawnEntity(world, "rabbit", 10);
         //spawnEntity(world, "grass", 30);
     }
 

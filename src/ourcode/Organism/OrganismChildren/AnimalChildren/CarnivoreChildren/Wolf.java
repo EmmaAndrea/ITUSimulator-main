@@ -33,10 +33,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     public void carnivoreAct(World world) {
         super.carnivoreAct(world);
         if (pack != null) System.out.println("My pack: " + pack.size());
+
         if(timeToNight(world) > 7 && timeToNight(world) < 3) {
             in_hiding = true;
             sleeping = true;
-            return;
         } else {
             sleeping = false;
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");

@@ -230,22 +230,22 @@ public abstract class Animal extends Organism {
                         }
 
                         // Get the animal that is on the tiles.
-                        for (Object object : world.getEntities().keySet()) {
-                            if (surrounding_locations.contains(world.getEntities().get(object))) {
+                        for (Location checklocation : surrounding_locations) {
+                            Object object = world.getTile(checklocation);
 
-                                // Casts object to Animal with variable name 'animal'.
-                                if (object instanceof Animal animal) {
+                            // Casts object to Animal with variable name 'animal'.
+                            if (object instanceof Animal animal) {
 
-                                    // Check if that animal has the same type as this.
-                                    if (animal.getType().equals(type)) {
+                                // Check if that animal has the same type as this.
+                                if (animal.getType().equals(type)) {
 
-                                        // If they have opposite genders.
-                                        if (animal.getGender() == Male) {
+                                    // If they have opposite genders.
+                                    if (animal.getGender() == Male) {
 
-                                            // If there is room to breed.
-                                            if (world.getEmptySurroundingTiles(world.getLocation(this)) != null) {
-                                                return true;
-                                            }
+                                        // If there is room to breed.
+                                        if (world.getEmptySurroundingTiles(world.getLocation(this)) != null) {
+                                            return true;
+
                                         }
                                     }
                                 }
@@ -255,7 +255,6 @@ public abstract class Animal extends Organism {
                 }
             }
         }
-
         // If any of these are false, return false.
         return false;
     }
@@ -338,17 +337,23 @@ public abstract class Animal extends Organism {
         // Move in the X direction first, if needed.
         if (dx != 0) {
             Location new_location = new Location(current_location.getX() + dx, current_location.getY());
-            if (world.isTileEmpty(new_location)) {
-                world.move(this, new_location);
-                return;
+            int new_coordinate = current_location.getX() + dx;
+            if(world.getSize() > new_coordinate && new_coordinate >= 0){
+                if (world.isTileEmpty(new_location)) {
+                    world.move(this, new_location);
+                    return;
+                }
             }
         }
 
         // If moving in the X direction is not needed, move in the Y direction.
         if (dy != 0) {
             Location new_location = new Location(current_location.getX(), current_location.getY() + dy);
-            if (world.isTileEmpty(new_location)) {
-                world.move(this, new_location);
+            int new_coordinate = current_location.getY() + dy;
+            if(world.getSize() > new_coordinate && new_coordinate >= 0) {
+                if (world.isTileEmpty(new_location)) {
+                    world.move(this, new_location);
+                }
             }
         }
     }
