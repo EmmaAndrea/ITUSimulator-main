@@ -21,7 +21,7 @@ public class ProgramRunner {
     // fields
     private Program p;
 
-    private IDGenerator original_id_generator;
+    private IDGenerator id_generator;
 
     private Grass grass;
 
@@ -29,7 +29,7 @@ public class ProgramRunner {
 
     private Burrow burrow;
 
-    private InputReader inputReader;
+    private InputReader input_reader;
 
     private Wolf alpha;
 
@@ -44,36 +44,27 @@ public class ProgramRunner {
      */
     public void create(String file_name) throws Exception {
         // create IDGenerator
-        original_id_generator = new IDGenerator();
-
-        // create scanner
-        // Scanner scanner = new Scanner(System.in);
-
-        // get the file
-        // later: String fileName = scanner.nextLine();
+        id_generator = new IDGenerator();
 
         File file = new File(file_name);
 
         // read file with input-reader
-        inputReader = new InputReader(file.getAbsolutePath());
+        input_reader = new InputReader(file.getAbsolutePath());
 
-        // get world size
-        int size = inputReader.readWorldSize();
-
-        // standard
+        int size = input_reader.readWorldSize();
         int delay = 1000; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
-        //create world
+        // create world
         p = new Program(size, display_size, delay); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.
-        inputReader.readSpawns();
+        input_reader.readSpawns();
 
         // Spawns entities according to the input file.
-        for (String type : inputReader.map_of_spawns.keySet()) {
-            spawnEntity(world, type, inputReader.getAmount(type));
+        for (String type : input_reader.map_of_spawns.keySet()) {
+            spawnEntity(world, type, input_reader.getAmount(type));
         }
 
         alpha = new Wolf(id_generator);
@@ -110,9 +101,9 @@ public class ProgramRunner {
      */
     public void setBearTerritory(Entity entity, int i) {
         String beartype = "bear"+i;
-        if (inputReader.getMap_of_bear_territories().containsKey(beartype)){
+        if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
             Bear bear = (Bear) entity;
-            bear.setTerritory(inputReader.getTerritory(beartype));
+            bear.setTerritory(input_reader.getTerritory(beartype));
         }
     }
 
@@ -160,22 +151,22 @@ public class ProgramRunner {
     public void spawnEntity(World world, String entityType, int amount) {
         switch (entityType) {
             case "berry":
-                spawnEntities(world, amount, () -> new Bush(original_id_generator));
+                spawnEntities(world, amount, () -> new Bush(id_generator));
                 break;
             case "wolf":
-                spawnEntities(world, amount, () -> new Wolf(original_id_generator));
+                spawnEntities(world, amount, () -> new Wolf(id_generator));
                 break;
             case "bear":
-                spawnEntities(world, amount, () -> new Bear(original_id_generator));
+                spawnEntities(world, amount, () -> new Bear(id_generator));
                 break;
             case "rabbit":
-                spawnEntities(world, amount, () -> new Rabbit(original_id_generator));
+                spawnEntities(world, amount, () -> new Rabbit(id_generator));
                 break;
             case "grass":
-                spawnEntities(world, amount, () -> new Grass(original_id_generator));
+                spawnEntities(world, amount, () -> new Grass(id_generator));
                 break;
             case "burrow":
-                spawnEntities(world, amount, () -> new Burrow(original_id_generator));
+                spawnEntities(world, amount, () -> new Burrow(id_generator));
                 break;
             default:
                 System.out.println("Unknown entity type: " + entityType);
@@ -189,7 +180,7 @@ public class ProgramRunner {
      *
      * @param step_count The number of steps to run the simulation for.
      */
-    public void runSimulation (int step_count){
+    public void runSimulation (int step_count) {
         // show the simulation
         p.show();
 
@@ -227,7 +218,7 @@ public class ProgramRunner {
      * @return The Organism entity at the current location, if present.
      */
     public Entity getOrganism(){
-        return original_id_generator.getEntity(p.getWorld().getCurrentLocation());
+        return id_generator.getEntity(p.getWorld().getCurrentLocation());
     }
 
     /**
@@ -237,7 +228,7 @@ public class ProgramRunner {
      * @return The IDGenerator instance used by this ProgramRunner.
      */
     public IDGenerator getOriginal_id_generator() {
-        return original_id_generator;
+        return id_generator;
     }
 
     public Grass getGrass() {

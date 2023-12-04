@@ -86,16 +86,18 @@ public class InputReader {
 
                 // Parses and stores territory information if available
                 if (parts.length > 2) {
-                    String[] territoryParts = parts[2].split(",");
-                    int x = Integer.parseInt(territoryParts[0].replaceAll("\\D", ""));
-                    int y = Integer.parseInt(territoryParts[1].replaceAll("\\D", ""));
+                    // String[] territoryParts = parts[2].split(",");
+                    // int x = Integer.parseInt(territoryParts[0].replaceAll("\\D", ""));
+                    int x = Integer.parseInt(String.valueOf(parts[2].charAt(1)));
+                    // int y = Integer.parseInt(territoryParts[1].replaceAll("\\D", ""));
+                    int y= Integer.parseInt(String.valueOf(parts[2].charAt(3)));
                     Location territory = new Location(x, y);
                     map_of_bear_territories.put(bearType, territory);
                 }
                 map_of_spawns.remove("bear");
                 map_of_spawns.put("bear", totalBearAmount);
             } else {
-                if(map_of_spawns.containsKey(type)){
+                if (map_of_spawns.containsKey(type)) {
                     int total = map_of_spawns.get(type) + amount;
                     map_of_spawns.remove(type);
                     map_of_spawns.put(type, total);
