@@ -56,25 +56,26 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void omnivoreAct(World world) {
         //trophic_level = 4;
+        if (territory == null) {
+            territory = world.getLocation(this);
+        }
+
         if (time(world) == 12) {
             is_sleeping = true;
             System.out.println("bear asleep");
             in_hiding = true;
-        } else if (time(world) == 18) {
+        } else if (world.getCurrentTime() == 3) {
             is_sleeping = false;
             in_hiding = false;
         }
 
-        if (gender == Gender.Male && age > 19 && mate == null) {
-            findMate(world);
-        }
 
         if (!is_sleeping) {
-            if (territory == null) {
-                territory = world.getLocation(this);
+            if (gender == Gender.Male && age > 19 && mate == null) {
+                findMate(world);
             }
 
-            if (!findFoodOrSafety(world)) {
+            if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
                 if (world.getLocation(this).equals(territory)) {
                     if (getRandomMoveLocation(world) != null) {
                         world.move(this, getRandomMoveLocation(world));
@@ -110,10 +111,12 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         for(Location location: world.getSurroundingTiles(world.getLocation(this), 7)){
             if (world.getTile(location) instanceof Bear potential_mate){
                 if (potential_mate.getGender() == Gender.Female){
-                    for(int i = 0 ; i < distanceTo(world, location) ; i++) {
+                    for(int i = 0 ; i < 3 ; i++) {
                         moveCloser(world, location);
                     }
                     setMate(potential_mate);
+                    potential_mate.setMate(this);
+                    System.out.println("got mate");
                 }
             }
         }
@@ -123,16 +126,23 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
     public boolean checkBreed(World world){
         if (gender == Gender.Female) {
             if (mate != null) {
-                System.out.println("tries to breed");
-                return distanceTo(world, world.getLocation(mate)) < 2;
+                if(world.getEntities().containsKey(mate)) {
+                    System.out.println("tries to breed");
+                    if (distanceTo(world, world.getLocation(mate)) < 2) {
+                        return true;
+                    } else {
+                        moveCloser(world, world.getLocation(mate));
+                        return false;
+                    }
+                }
             }
         }
         return false;
     }
 
-    public void setMate(Bear bear){
-        mate = bear;
-        territory = bear.getTerritory();
+    public void setMate(Bear potential_mate){
+        mate = potential_mate;
+        territory = potential_mate.getTerritory();
     }
 
     public Location getTerritory(){

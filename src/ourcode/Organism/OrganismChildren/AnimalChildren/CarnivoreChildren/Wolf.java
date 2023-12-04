@@ -85,7 +85,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     }
     
     public void createCave(World world, IDGenerator id_generator) {
-        if (!has_cave) {
+        if (!has_cave && has_pack) {
             Cave cave = new Cave(id_generator);
             if (!world.containsNonBlocking(world.getLocation(this))) {
                 world.setTile(world.getLocation(this), cave);

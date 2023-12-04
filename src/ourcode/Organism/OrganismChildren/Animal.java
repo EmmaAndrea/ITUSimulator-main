@@ -165,6 +165,9 @@ public abstract class Animal extends Organism {
      * @param world The simulation world in which breeding occurs.
      */
     public void breed(World world) {
+        if (this.getType().equals("bear") && world.getCurrentTime() > 19){
+            System.out.println("bear");
+        }
         if (checkBreed(world)) {
             spawnEntity(world, type);
         }

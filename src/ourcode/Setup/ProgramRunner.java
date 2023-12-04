@@ -52,7 +52,7 @@ public class ProgramRunner {
         input_reader = new InputReader(file.getAbsolutePath());
 
         int size = 20; //input_reader.readWorldSize();
-        int delay = 1000; // the delay between every step of the simulation (in ms)
+        int delay = 100; // the delay between every step of the simulation (in ms)
         int display_size = 800; // screen resolution (i px)
 
         // create world
