@@ -2,9 +2,12 @@ package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
+import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -65,11 +68,12 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (!is_sleeping && !in_hiding) {
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
 
-            if (!has_cave || age > 8) {
-                createCave(world, id_generator);
-            } else {
-                nextMove(world);
+            if (!has_cave && age > 8) {
+                if (alpha) createCave(world, id_generator);
             }
+            if (!alpha) {
+                moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
+            } else nextMove(world);
         }
     }
 
@@ -83,17 +87,36 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         alpha = true;
         my_alpha = this;
     }
-    
-    public void createCave(World world, IDGenerator id_generator) {
-        if (!has_cave && has_pack) {
-            Cave cave = new Cave(id_generator);
-            if (!world.containsNonBlocking(world.getLocation(this))) {
-                world.setTile(world.getLocation(this), cave);
 
-                for (Wolf wolf : pack) {
-                    wolf.setCave(cave);
-                }
-            }
+    /**
+     * Creates a cave in the world at the current location if certain conditions are met.
+     * If the object has a pack (has_pack is true) and doesn't already have a cave (has_cave is false),
+     * this method will attempt to create a new Cave. If the current location in the world contains
+     * Grass, the grass will be removed.
+     * A new cave is then created and set at this location. 
+     * Finally, if a cave is created, all wolves in the pack are assigned this cave.
+     *
+     * @param world         The world in which the cave is to be created.
+     * @param id_generator  An IDGenerator instance for generating unique IDs for the new cave.
+     */
+    public void createCave(World world, IDGenerator id_generator) {
+        if (!has_pack || has_cave) {
+            return;
+        }
+
+        Location location = world.getLocation(this);
+        Object tile = world.containsNonBlocking(location) ? world.getNonBlocking(location) : null;
+
+        if (tile instanceof Grass) {
+            world.delete(tile);
+        }
+
+        Cave cave = new Cave(id_generator);
+        world.setTile(location, cave);
+        has_cave = true;
+
+        for (Wolf wolf : pack) {
+            wolf.setCave(cave);
         }
     }
 
