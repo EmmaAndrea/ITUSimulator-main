@@ -48,6 +48,7 @@ public abstract class Organism extends Entity implements Actor {
                 plantAct(world);
             } else {
                 //delete the animal if animalAct returns false
+                System.out.println(type + " died");
                 if (this instanceof Wolf wolf) wolf.deleteMe(world);
                 else world.delete(this);
             }

@@ -70,7 +70,7 @@ public class ProgramRunner {
         alpha = new Wolf(id_generator);
         packnumber = 0;
         spawnEntity(world, "rabbit", 10);
-        //spawnEntity(world, "grass", 30);
+        spawnEntity(world, "bear", 8);
     }
 
     /**

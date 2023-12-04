@@ -31,7 +31,7 @@ public abstract class Animal extends Organism {
     protected int max_hunger; // Maximum hunger level before the animal dies.
     protected int steps_since_last_birth; // Steps since the animal last gave birth.
     protected boolean in_hiding; // Indicates whether the animal is in hiding.
-    Gender gender; // Gender of the animal.
+    protected Gender gender; // Gender of the animal.
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
     protected boolean being_hunted;
     protected boolean wounded;
@@ -82,10 +82,10 @@ public abstract class Animal extends Organism {
             hunger -= 2;
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
-            System.out.println(this.getType() + this.getTrophicLevel() + "ate" + grass.getType());
+            System.out.println(this.getType() + this.getTrophicLevel() + " ate " + grass.getType());
         } if (object instanceof Animal animal) {
                 hunger -= animal.getNutritionalValue();
-                System.out.println(this.getType() + this.getTrophicLevel() + "ate" + animal.getType() + animal.getTrophicLevel());
+                System.out.println(this.getType() + this.getTrophicLevel() + " ate " + animal.getType() + animal.getTrophicLevel());
                 if (animal instanceof Wolf wolf) {
                     if (this instanceof Wolf thiswolf) {
                         thiswolf.overtakePack(wolf);
@@ -388,10 +388,6 @@ public abstract class Animal extends Organism {
      * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
      */
     public boolean findFoodOrSafety(World world) {
-
-        if (type.equals("bear")) {
-            System.out.println("bear");
-        }
         // Get surrounding tiles to iterate through them.
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
@@ -446,12 +442,11 @@ public abstract class Animal extends Organism {
                         if (world.containsNonBlocking(world.getLocation(this))) {
                             if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
                                 if (hunger >= 2) {
-                                    System.out.println("trying to eat grass");
                                     eat(world, grass);
+                                    return true;
                                 }
                             }
                         }
-                        return true;
                     }
                 }
             } else if (!world.isTileEmpty(location)){
@@ -462,7 +457,8 @@ public abstract class Animal extends Organism {
                 if (object instanceof Bush bush) {
                     if (consumable_foods.contains("bush")) {
                         bush.eatBerries();
-                        return true;
+                        System.out.println(type + " ate berries");
+                        return false;
                     }
                 }
             }

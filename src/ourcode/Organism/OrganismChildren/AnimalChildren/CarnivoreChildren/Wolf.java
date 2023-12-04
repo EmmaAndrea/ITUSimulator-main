@@ -226,7 +226,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (my_alpha == this) {
             pack.clear();
             has_pack = false;
-        } if (has_pack) {
+        } else if (has_pack) {
             my_alpha.removeWolfFromPack(this);
         }
         world.delete(this);

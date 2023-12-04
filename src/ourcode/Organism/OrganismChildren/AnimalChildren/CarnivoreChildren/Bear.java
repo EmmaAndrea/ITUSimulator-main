@@ -16,6 +16,8 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
 
     protected Location territory;
 
+    protected Bear mate;
+
     public Bear(IDGenerator idGenerator) {
         super(idGenerator);
         trophic_level = 4;
@@ -59,6 +61,10 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
             in_hiding = false;
         }
 
+        if (gender == Gender.Male && age > 19 && mate == null) {
+            findMate(world);
+        }
+
         if (!is_sleeping) {
             if (territory == null) {
                 territory = world.getLocation(this);
@@ -93,5 +99,39 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public int getTrophicLevel() {
         return trophic_level;
+    }
+
+    public void findMate(World world){
+
+        for(Location location: world.getSurroundingTiles(world.getLocation(this), 7)){
+            if (world.getTile(location) instanceof Bear potential_mate){
+                if (potential_mate.getGender() == Gender.Female){
+                    for(int i = 0 ; i < distanceTo(world, location) ; i++) {
+                        moveCloser(world, location);
+                    }
+                    setMate(potential_mate);
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean checkBreed(World world){
+        if (gender == Gender.Female) {
+            if (mate != null) {
+                System.out.println("tries to breed");
+                return distanceTo(world, world.getLocation(mate)) < 2;
+            }
+        }
+        return false;
+    }
+
+    public void setMate(Bear bear){
+        mate = bear;
+        territory = bear.getTerritory();
+    }
+
+    public Location getTerritory(){
+        return territory;
     }
 }
