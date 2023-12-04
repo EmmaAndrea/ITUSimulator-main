@@ -36,9 +36,9 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
 
         if(timeToNight(world) > 7 && timeToNight(world) < 3) {
             in_hiding = true;
-            sleeping = true;
+            is_sleeping = true;
         } else {
-            sleeping = false;
+            is_sleeping = false;
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
             nextMove(world);
         }
