@@ -116,6 +116,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
             alpha = true;
             removeWolfFromPack(oldwolf);
             oldwolf.setHasNotPack();
+            oldwolf.setAlpha(this);
         }
     }
 
@@ -161,5 +162,9 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public int getTrophicLevel(){
         return trophic_level;
+    }
+
+    public void setAlpha(Wolf wolf){
+        my_alpha = wolf;
     }
 }
