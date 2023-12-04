@@ -98,8 +98,8 @@ public class WolfTest {
 
         wolf3.overtakePack(wolf1);
 
-        assertSame(wolf1.getMy_alpha(), wolf3,
-                "wolf2's alpha should be wolf3, but it is: " + wolf1.getMy_alpha());
+        assertSame(wolf1.getMyAlpha(), wolf3,
+                "wolf2's alpha should be wolf3, but it is: " + wolf1.getMyAlpha());
     }
 
 }

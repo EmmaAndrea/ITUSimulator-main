@@ -189,7 +189,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      *
      * @return The alpha wolf of the pack.
      */
-    public Wolf getMy_alpha() { return my_alpha; }
+    public Wolf getMyAlpha() { return my_alpha; }
 
 
     /**
