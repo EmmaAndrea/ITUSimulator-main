@@ -58,10 +58,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         super.carnivoreAct(world);
         if (pack != null) System.out.println("My pack: " + pack.size());
 
-        if (timeToNight(world) == 7) {
+        if (world.getCurrentTime() == 3) {
             in_hiding = true;
             is_sleeping = true;
-        } else if (timeToNight(world) == 3) {
+        } else if (world.getCurrentTime() == 7) {
             is_sleeping = false;
             in_hiding = false;
         }
@@ -77,6 +77,15 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
     }
 
+    @Override
+    public void attack(World world, Animal animal) {
+        if(alpha){
+            for(Wolf wolf : pack){
+                if (wolf != this) wolf.attack(world, animal);
+            }
+        }
+        super.attack(world, animal);
+    }
     /**
      * Creates a new pack with this wolf as the alpha. Initializes the pack and sets pack-related properties.
      */

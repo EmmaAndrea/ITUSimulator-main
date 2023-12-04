@@ -67,8 +67,6 @@ public class ProgramRunner {
 
         alpha = new Wolf(id_generator);
         pack_number = 0;
-        spawnEntity(world, "rabbit", 10);
-        spawnEntity(world, "bear", 8);
     }
 
     /**
@@ -121,7 +119,7 @@ public class ProgramRunner {
                 alpha = wolf;
             }
             if (i > 0){
-                wolf.addWolfToPack(alpha);
+                alpha.addWolfToPack(wolf);
             }
         } else if (input_reader.getMap_of_wolf_packs().size() > 1) {
             packsize = input_reader.getMap_of_wolf_packs().get(pack_number);
