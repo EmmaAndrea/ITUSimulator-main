@@ -153,4 +153,9 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
         world.delete(this);
     }
+
+    @Override
+    public int getTrophicLevel(){
+        return trophic_level;
+    }
 }

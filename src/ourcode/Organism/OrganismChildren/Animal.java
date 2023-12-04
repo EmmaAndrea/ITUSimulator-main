@@ -401,7 +401,7 @@ public abstract class Animal extends Organism {
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
                     if(animal instanceof Wolf wolf){
-                        if (wolf.getPack() != null && wolf.getPack().contains(animal)){
+                        if (wolf.getPack() != null && wolf.getPack().contains(this)){
                             System.out.println("found pack");
                             break;
                         } else if (animal.getTrophicLevel() > trophic_level) {
