@@ -68,10 +68,10 @@ public class WolfTest {
     @Test
     public void testRemovingWolfFromPack() {
         world = new World(3);
-        IDGenerator id = new IDGenerator();
+        IDGenerator idGenerator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id);
-        Wolf wolf2 = new Wolf(id);
+        Wolf wolf1 = new Wolf(idGenerator);
+        Wolf wolf2 = new Wolf(idGenerator);
 
         wolf1.createPack();
         wolf1.addWolfToPack(wolf1);
@@ -83,4 +83,23 @@ public class WolfTest {
 
 
     }
+
+    @Test
+    public void testOvertakePack() {
+        world = new World(3);
+        IDGenerator idGenerator = new IDGenerator();
+
+        Wolf wolf1 = new Wolf(idGenerator);
+        Wolf wolf2 = new Wolf(idGenerator);
+        Wolf wolf3 = new Wolf(idGenerator);
+
+        wolf1.createPack();
+        wolf1.addWolfToPack(wolf2);
+
+        wolf3.overtakePack(wolf1);
+
+        assertSame(wolf1.getMy_alpha(), wolf3,
+                "wolf2's alpha should be wolf3, but it is: " + wolf1.getMy_alpha());
+    }
+
 }

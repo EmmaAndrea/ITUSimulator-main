@@ -120,13 +120,12 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         trophic_level=i;
     }
 
-    public void setAlpha(Wolf alpha) {
-        my_alpha = alpha;
-    }
     /**
      * Graphics for old, young and wounded wolf.
      * @return the display information for the wolf in its current state.
      */
+
+    public Wolf getMy_alpha() { return my_alpha; }
     @Override
     public DisplayInformation getInformation() {
         if (is_sleeping) {
