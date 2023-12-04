@@ -73,6 +73,19 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         alpha = true;
         my_alpha = this;
     }
+    
+    public void createCave(World world, IDGenerator id_generator) {
+        if (!has_cave) {
+            Cave cave = new Cave(id_generator);
+            if (!world.containsNonBlocking(world.getLocation(this))) {
+                world.setTile(world.getLocation(this), cave);
+
+                for (Wolf wolf : pack) {
+                    wolf.setCave(cave);
+                }
+            }
+        }
+    }
 
     /**
      * Retrieves the pack of wolves to which this wolf belongs.
