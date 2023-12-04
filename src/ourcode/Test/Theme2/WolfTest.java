@@ -9,8 +9,7 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class WolfTest {
     public ProgramRunner programRunner;
@@ -108,4 +107,38 @@ public class WolfTest {
                 "wolf2's alpha should be wolf3, but it is: " + wolf1.getMyAlpha());
     }
 
+    /**
+     * Tests if wolves can create caves.
+     */
+    @Test
+    public void testCreateCave() {
+        world = new World(3);
+        IDGenerator id_generator = new IDGenerator();
+
+        Wolf wolf1 = new Wolf(id_generator);
+        Wolf wolf2 = new Wolf(id_generator);
+
+        wolf1.spawn(world);
+        wolf2.spawn(world);
+        wolf1.createPack();
+        wolf1.addWolfToPack(wolf2);
+
+        wolf1.createCave(world, id_generator);
+
+        boolean isCave = false;
+
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Cave) {
+                isCave = true;
+                break;
+            }
+        }
+
+        assertTrue(isCave, "There should be a cave in the world, but there isn't");
+    }
+
+    @Test
+    public void testWolfBreed() {
+
+    }
 }
