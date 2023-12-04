@@ -3,6 +3,7 @@ package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.World;
+import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
 import ourcode.Setup.IDGenerator;
 
@@ -23,6 +24,9 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     private Wolf my_alpha; // The alpha wolf of the pack.
     private boolean alpha; // Indicates whether this wolf is the alpha of a pack.
 
+    protected Cave my_cave;
+    protected boolean has_cave;
+
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
@@ -37,6 +41,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_pack = false;
         consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf"));
         alpha = false;
+        has_cave = false;
     }
 
     /**
@@ -50,7 +55,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         super.carnivoreAct(world);
         if (pack != null) System.out.println("My pack: " + pack.size());
 
-        if(timeToNight(world) == 7) {
+        if (timeToNight(world) == 7) {
             in_hiding = true;
             is_sleeping = true;
         } else if (timeToNight(world) == 3) {
@@ -59,7 +64,12 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
         if (!is_sleeping && !in_hiding) {
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
-            nextMove(world);
+
+            if (!has_pack || age > 8) {
+                createCave(world, id_generator);
+            } else {
+                nextMove(world);
+            }
         }
     }
 
@@ -99,13 +109,13 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     /**
      * Adds a wolf to this wolf's pack. Only the alpha wolf can add members to the pack.
      *
-     * @param thewolf The wolf to be added to the pack.
+     * @param new_wolf The wolf to be added to the pack.
      */
-    public void addWolfToPack(Wolf thewolf) {
-        if (!thewolf.getHasPack()) {
-            pack.add(thewolf);
-            thewolf.setAlpha(this);
-            thewolf.setHasPack();
+    public void addWolfToPack(Wolf new_wolf) {
+        if (!new_wolf.getHasPack()) {
+            pack.add(new_wolf);
+            new_wolf.setAlpha(this);
+            new_wolf.setHasPack();
             if (pack.size() == 5) {
                 for (Wolf wolf : pack) {
                     wolf.setTrophicLevel(5);
@@ -203,6 +213,16 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @return The alpha wolf of the pack.
      */
     public Wolf getMyAlpha() { return my_alpha; }
+
+    /**
+     * Assigns a given cave to a wolf.
+     * @param cave The cave which is to be assigned a new wolf.
+     */
+    public void setCave(Cave cave) {
+        my_cave = cave;
+        has_cave = true;
+    }
+
 
 
     /**

@@ -38,7 +38,7 @@ public class Bush extends Plant implements DynamicDisplayInformationProvider {
 
     @Override
     public DisplayInformation getInformation() {
-        if (berries == 0) {
+        if (berries <= 0) {
             return new DisplayInformation(Color.cyan, "bush");
         } else {
             return new DisplayInformation(Color.cyan, "bush-berries");

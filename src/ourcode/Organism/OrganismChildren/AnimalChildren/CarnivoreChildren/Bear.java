@@ -4,8 +4,8 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -36,23 +36,27 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
     public DisplayInformation getInformation() {
         if (age >= 11) {
             if (wounded) {
-                return new DisplayInformation(Color.cyan, "bear-large-wounded");
+                return new DisplayInformation(Color.yellow, "bear-large-wounded");
+            } else if (is_sleeping) {
+                return new DisplayInformation(Color.yellow, "bear-large-sleeping");
             } else {
-                return new DisplayInformation(Color.cyan, "bear-large");
+                return new DisplayInformation(Color.yellow, "bear-large");
             }
         } else {
             if (wounded) {
-                return new DisplayInformation(Color.cyan, "bear-small-wounded");
+                return new DisplayInformation(Color.yellow, "bear-small-wounded");
+            } else if (is_sleeping) {
+                return new DisplayInformation(Color.yellow, "bear-small-sleeping");
             } else {
-                return new DisplayInformation(Color.cyan, "bear-small");
+                return new DisplayInformation(Color.yellow, "bear-small");
             }
         }
     }
 
     @Override
-    public void omnivoreAct(World world){
+    public void omnivoreAct(World world) {
         //trophic_level = 4;
-        if (time(world) == 12){
+        if (time(world) == 12) {
             is_sleeping = true;
             System.out.println("bear asleep");
             in_hiding = true;

@@ -17,7 +17,7 @@ public abstract class Carnivore extends Animal {
 
     /**
      * the constructor of a Carnivore, will call 'super()' from the Animal class.
-     * @param original_id_generator
+     * @param original_id_generator idGenerator that creates the ID for the entity.
      */
     public Carnivore(IDGenerator original_id_generator) {
         super(original_id_generator);
@@ -46,6 +46,7 @@ public abstract class Carnivore extends Animal {
             else if (hunger >= animal.getNutritionalValue()) eat(world, animal);
             return;
         }
+
         if (hunger >= animal.getNutritionalValue()) eat(world, animal);
     }
 
