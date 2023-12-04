@@ -1,8 +1,11 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren;
 
+import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
+
+import java.util.Set;
 
 /**
  * the Carnivore class gives the abstraction of all meat eaters. Animals of this type cannot eat any
@@ -44,5 +47,30 @@ public abstract class Carnivore extends Animal {
             return;
         }
         if (hunger >= animal.getNutritionalValue()) eat(world, animal);
+    }
+
+    public void hunt(World world){
+        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
+
+        // First, check for blocking organisms.
+        // Though, if there is an animal of higher trophic level, move away from this animal.
+        for (Location location : surrounding_tiles) {
+
+            // If the tile at given location isn't empty.
+            if (!world.isTileEmpty(location)) {
+
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Animal animal) {
+                    if (consumable_foods.contains(animal.getType())) {
+                        for (int i = 2; i <= distanceTo(world, location); i++) {
+                            moveCloser(world, location);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

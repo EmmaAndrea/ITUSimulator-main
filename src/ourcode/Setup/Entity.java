@@ -94,6 +94,14 @@ public abstract class Entity {
         }
     }
 
+    public int time(World world){
+        if (world.getCurrentTime() <= 10){
+            return 0;
+        } else {
+            return world.getCurrentTime();
+        }
+    }
+
     public int getTrophicLevel() {
         return trophic_level;
     }

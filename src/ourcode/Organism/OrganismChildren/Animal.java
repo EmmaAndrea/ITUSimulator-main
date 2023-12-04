@@ -79,14 +79,13 @@ public abstract class Animal extends Organism {
     public void eat(World world, Object object) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
         if (object instanceof Grass grass) {
-            hunger -= getStandingOnNutritionalValue(world);
-
+            hunger -= 2;
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
-            System.out.println(this.getType() + "ate" + grass.getType());
+            System.out.println(this.getType() + this.getTrophicLevel() + "ate" + grass.getType());
         } if (object instanceof Animal animal) {
                 hunger -= animal.getNutritionalValue();
-                System.out.println(this.getType() + "ate" + animal.getType());
+                System.out.println(this.getType() + this.getTrophicLevel() + "ate" + animal.getType() + animal.getTrophicLevel());
                 if (animal instanceof Wolf wolf) {
                     if (this instanceof Wolf thiswolf) {
                         thiswolf.overtakePack(wolf);
@@ -390,6 +389,9 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
 
+        if (type.equals("bear")) {
+            System.out.println("bear");
+        }
         // Get surrounding tiles to iterate through them.
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
@@ -414,18 +416,18 @@ public abstract class Animal extends Organism {
                             being_hunted = true;
                             return true;
                         } else if (this instanceof Carnivore carnivore) {
-                            if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
+                            if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
                                 carnivore.attack(world, animal);
                                 return true;
                             }
                         }
                     } else if (animal.getTrophicLevel() > trophic_level) {
-                    moveAway(world, location);
-                    being_hunted = true;
-                    return true;
-                    // If the organism has a higher trophic level than itself.
+                        moveAway(world, location);
+                        being_hunted = true;
+                        return true;
+                        // If the organism has a higher trophic level than itself.
                     } else if (this instanceof Carnivore carnivore) {
-                        if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
+                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
                             carnivore.attack(world, animal);
                             return true;
                         }
@@ -441,7 +443,14 @@ public abstract class Animal extends Organism {
                 if (object instanceof Organism organism) {
                     if (consumable_foods.contains(organism.getType())) {
                         moveCloser(world, location);
-
+                        if (world.containsNonBlocking(world.getLocation(this))) {
+                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                                if (hunger >= 2) {
+                                    System.out.println("trying to eat grass");
+                                    eat(world, grass);
+                                }
+                            }
+                        }
                         return true;
                     }
                 }

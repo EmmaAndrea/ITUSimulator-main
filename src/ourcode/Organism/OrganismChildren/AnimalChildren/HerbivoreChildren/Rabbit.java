@@ -36,6 +36,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         max_hunger = 18;
         nutritional_value = 4;
         max_age = 100;
+        trophic_level = 2;
 
         // Specifics for rabbit.
         has_burrow = false;
@@ -57,6 +58,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
      * @param world The simulation world in which the rabbit exists.
      */
     public void herbivoreAct(World world) {
+        //trophic_level = 4;
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
@@ -81,6 +83,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             if (being_hunted) {
                 if (isCloseToBurrow) {
                     enterBurrow(world);
+                    being_hunted = false;
                 }
             }
             else if (isNight) {
@@ -240,5 +243,10 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         } else {
             return new DisplayInformation(Color.black, "rabbit-small");
         }
+    }
+
+    @Override
+    public int getTrophicLevel() {
+        return trophic_level;
     }
 }

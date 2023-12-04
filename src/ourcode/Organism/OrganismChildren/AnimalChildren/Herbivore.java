@@ -13,7 +13,7 @@ public abstract class Herbivore extends Animal {
 
     public Herbivore(IDGenerator original_id_generator) {
         super(original_id_generator);
-        this.trophic_level = 2;
+        trophic_level = 2;
     }
 
     public void spawn(World world) {
