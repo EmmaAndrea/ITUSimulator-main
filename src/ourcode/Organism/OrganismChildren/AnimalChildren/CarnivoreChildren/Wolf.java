@@ -200,7 +200,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     public DisplayInformation getInformation() {
         if (age >= 12) {
             if (is_sleeping) {
-                return new DisplayInformation(Color.cyan, "wolf-small-sleeping");
+                return new DisplayInformation(Color.cyan, "wolf-large-sleeping");
             } else if (wounded) {
                 return new DisplayInformation(Color.cyan, "wolf-large-wounded");
             } else {
