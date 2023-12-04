@@ -369,14 +369,16 @@ public abstract class Animal extends Organism {
      * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
-        Location currentLocation = world.getLocation(this);
+        if (location != null) {
+            Location currentLocation = world.getLocation(this);
 
-        // Calculate the absolute difference in x and y coordinates
-        int step_x = Math.abs(location.getX() - currentLocation.getX());
-        int step_y = Math.abs(location.getY() - currentLocation.getY());
+            // Calculate the absolute difference in x and y coordinates
+            int step_x = Math.abs(location.getX() - currentLocation.getX());
+            int step_y = Math.abs(location.getY() - currentLocation.getY());
 
-        // Return the sum of x and y steps
-        return step_x + step_y;
+            // Return the sum of x and y steps
+            return step_x + step_y;
+        } return 0;
     }
 
     /**
