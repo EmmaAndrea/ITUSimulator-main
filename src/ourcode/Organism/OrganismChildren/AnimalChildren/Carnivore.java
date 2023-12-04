@@ -40,8 +40,8 @@ public abstract class Carnivore extends Animal {
     }
 
     @Override
-    public void attack(World world, Animal animal){
-        if(animal.getTrophicLevel() > 2) {
+    public void attack(World world, Animal animal) {
+        if (animal.getTrophicLevel() > 2) {
             if (!animal.checkWounded()) animal.becomeWounded();
             else if (hunger >= animal.getNutritionalValue()) eat(world, animal);
             return;
@@ -50,7 +50,11 @@ public abstract class Carnivore extends Animal {
         if (hunger >= animal.getNutritionalValue()) eat(world, animal);
     }
 
-    public void hunt(World world){
+    /**
+     *
+     * @param world
+     */
+    public void hunt(World world) {
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
 
         // First, check for blocking organisms.

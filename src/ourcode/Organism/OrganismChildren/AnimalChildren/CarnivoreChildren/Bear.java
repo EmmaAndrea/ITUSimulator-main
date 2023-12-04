@@ -53,6 +53,10 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         }
     }
 
+    /**
+     *
+     * @param world The simulation world in which the omnivore exists.
+     */
     @Override
     public void omnivoreAct(World world) {
         //trophic_level = 4;
@@ -106,6 +110,10 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         return trophic_level;
     }
 
+    /**
+     *
+     * @param world
+     */
     public void findMate(World world){
 
         for(Location location: world.getSurroundingTiles(world.getLocation(this), 7)){
@@ -122,6 +130,11 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         }
     }
 
+    /**
+     *
+     * @param world The simulation world where breeding might occur.
+     * @return
+     */
     @Override
     public boolean checkBreed(World world){
         if (gender == Gender.Female) {
