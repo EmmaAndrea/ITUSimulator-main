@@ -42,7 +42,7 @@ public class GrassTest {
      * Checks that one grass is in entities
      */
     @Test
-    public void testGrassSpawn() throws Exception{
+    public void testGrassSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         programRunner.runSimulation(1);
@@ -56,7 +56,7 @@ public class GrassTest {
      * Checks the locations are different, and thereby random
      */
     @Test
-    public void testGrassRandomSpawn() throws Exception{
+    public void testGrassRandomSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         Grass grass1 = new Grass(programRunner.getOriginal_id_generator());
@@ -74,7 +74,7 @@ public class GrassTest {
      * Checks entities does not contain grass1, showing that it is deleted and thereby dead.
      */
     @Test
-    public void testGrassDies() throws Exception{
+    public void testGrassDies() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         Grass grass1 = new Grass(programRunner.getOriginal_id_generator());
@@ -90,7 +90,7 @@ public class GrassTest {
      * and didn't crash the program
      */
     @Test
-    public void testRabbitonGrass() throws Exception{
+    public void testRabbitonGrass() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
 

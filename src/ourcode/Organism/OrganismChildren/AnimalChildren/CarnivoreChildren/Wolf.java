@@ -116,7 +116,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
     }
 
-    public void setTrophicLevel(int i){
+    public void setTrophicLevel(int i) {
         trophic_level=i;
     }
 
