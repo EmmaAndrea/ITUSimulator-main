@@ -84,6 +84,11 @@ public class WolfTest {
 
     }
 
+    /**
+     * This test will check the 'OvertakePack()' method from the Wolf class to see if the correct wolf is the new 'alpha'
+     * By checking this method the test will also use 'getMy_alpha()' method
+     * to check if the correct information is displayed
+     */
     @Test
     public void testOvertakePack() {
         world = new World(3);
