@@ -37,9 +37,9 @@ public abstract class Carnivore extends Animal {
     }
 
     @Override
-    protected void attack(World world, Animal animal){
+    public void attack(World world, Animal animal){
         if(animal.getTrophicLevel() > 2) {
-            if (!wounded) animal.becomeWounded();
+            if (!animal.checkWounded()) animal.becomeWounded();
             else if (hunger >= animal.getNutritionalValue()) eat(world, animal);
             return;
         }

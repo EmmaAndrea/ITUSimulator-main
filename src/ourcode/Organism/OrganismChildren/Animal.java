@@ -5,6 +5,7 @@ import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -86,7 +87,13 @@ public abstract class Animal extends Organism {
         } if (object instanceof Animal animal) {
                 hunger -= animal.getNutritionalValue();
                 System.out.println(this.getType() + "ate" + animal.getType());
-                world.delete(animal);
+                if (animal instanceof Wolf wolf) {
+                    if (this instanceof Wolf thiswolf) {
+                        thiswolf.overtakePack(wolf);
+                    }
+                    wolf.deleteMe(world);
+                }
+                else world.delete(animal);
             }
             wounded = false;
 
@@ -393,16 +400,30 @@ public abstract class Animal extends Organism {
 
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
-
+                    if(animal instanceof Wolf wolf){
+                        if (wolf.getPack() != null && wolf.getPack().contains(animal)){
+                            System.out.println("found pack");
+                            break;
+                        } else if (animal.getTrophicLevel() > trophic_level) {
+                            moveAway(world, location);
+                            being_hunted = true;
+                            return true;
+                        } else if (this instanceof Carnivore carnivore) {
+                            if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
+                                carnivore.attack(world, animal);
+                                return true;
+                            }
+                        }
+                    } else if (animal.getTrophicLevel() > trophic_level) {
+                    moveAway(world, location);
+                    being_hunted = true;
+                    return true;
                     // If the organism has a higher trophic level than itself.
-                    if (animal.getTrophicLevel() > trophic_level) {
-                        moveAway(world, location);
-                        being_hunted = true;
-                        return true;
-                    } else if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
-                        attack(world, animal);
-                        System.out.println(type);
-                        return true;
+                    } else if (this instanceof Carnivore carnivore) {
+                        if (trophic_level>2 && consumable_foods.contains(animal.getType())) {
+                            carnivore.attack(world, animal);
+                            return true;
+                        }
                     }
                 }
             }
@@ -449,6 +470,9 @@ public abstract class Animal extends Organism {
 
     public void becomeWounded(){
         wounded = true;
+    }
+    public boolean checkWounded(){
+        return wounded;
     }
 
     protected void attack(World world, Animal animal){

@@ -16,7 +16,8 @@ public class InputReader {
     BufferedReader bufferedReader;
     Map<String, Integer> map_of_spawns;
     private final List<String> lines;
-    private final Map<String, Location> map_of_bear_territories;
+    private Map<String, Location> map_of_bear_territories;
+    private Map<Integer, Integer> map_of_wolf_packs;
 
     /**
      * Constructs an input reader, taking a file path as a parameter.
@@ -29,6 +30,7 @@ public class InputReader {
         map_of_spawns = new HashMap<>();
         lines = new ArrayList<>();
         map_of_bear_territories = new HashMap<>();
+        map_of_wolf_packs = new HashMap<>();
 
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -54,6 +56,7 @@ public class InputReader {
         int bearCount = 0;
         int totalBearAmount = 0;
         Random random = new Random();
+        int packcount = 0;
 
         for (int i = 1; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(" ");
@@ -70,8 +73,13 @@ public class InputReader {
                 amount = Integer.parseInt(parts[1]); // Fixed amount
             }
 
+            if (type.equals("wolf")) {
+                map_of_wolf_packs.put(packcount, amount);
+                packcount++;
+            }
+
             // Processing for bear spawns
-            if ("bear".equals(type)) {
+            if (type.equals("bear")) {
                 bearCount++;
                 String bearType = "bear" + bearCount;
                 totalBearAmount += amount;
@@ -84,7 +92,7 @@ public class InputReader {
                     Location territory = new Location(x, y);
                     map_of_bear_territories.put(bearType, territory);
                 }
-
+                map_of_spawns.remove("bear");
                 map_of_spawns.put("bear", totalBearAmount);
             } else {
                 if(map_of_spawns.containsKey(type)){
@@ -119,6 +127,10 @@ public class InputReader {
      */
     public Location getTerritory(String bear){
         return map_of_bear_territories.get(bear);
+    }
+
+    public Map<Integer, Integer> getMap_of_wolf_packs(){
+        return map_of_wolf_packs;
     }
 }
 

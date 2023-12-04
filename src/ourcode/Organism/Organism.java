@@ -3,6 +3,7 @@ package ourcode.Organism;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
@@ -47,7 +48,8 @@ public abstract class Organism extends Entity implements Actor {
                 plantAct(world);
             } else {
                 //delete the animal if animalAct returns false
-                world.delete(this);
+                if (this instanceof Wolf wolf) wolf.deleteMe(world);
+                else world.delete(this);
             }
         }
     }

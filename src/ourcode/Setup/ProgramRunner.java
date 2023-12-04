@@ -31,10 +31,9 @@ public class ProgramRunner {
 
     private InputReader inputReader;
 
-    // constructor for ProgramRunner
-    public ProgramRunner() {
-        // constructor code
-    }
+    private Wolf alpha;
+
+    private int packnumber;
 
     /**
      * Creates and initializes a simulation based on the specified input file.
@@ -77,6 +76,8 @@ public class ProgramRunner {
             spawnEntity(world, type, inputReader.getAmount(type));
         }
 
+        alpha = new Wolf(id_generator);
+        packnumber = 0;
         //spawnEntity(world, "rabbit", 10);
         //spawnEntity(world, "grass", 30);
     }
@@ -92,28 +93,60 @@ public class ProgramRunner {
         for (int i = 0; i < amount; i++) {
             Entity entity = factory.create();
             entity.spawn(world);
-            if(entity instanceof Bear){
-                setBearTerritoy(entity, i+1);
+
+            if (entity instanceof Bear) {
+                setBearTerritory(entity, i + 1);
+            }
+            if (entity instanceof Wolf) {
+                setPack(entity, i);
             }
         }
     }
 
-    /*
-    public void spawnBear(World world, int amount, EntityFactory factory) {
-        for (int i = 0; i < amount; i++) {
-            Entity entity = factory.create();
-            entity.spawn(world);
-            setBearTerritoy(entity, i+1);
-        }
-    }
-
+    /**
+     * find the correct bear territory and assign it to the bear which has just been spawned
+     * @param entity
+     * @param i
      */
-
-    public void setBearTerritoy(Entity entity, int i){
+    public void setBearTerritory(Entity entity, int i) {
         String beartype = "bear"+i;
         if (inputReader.getMap_of_bear_territories().containsKey(beartype)){
             Bear bear = (Bear) entity;
             bear.setTerritory(inputReader.getTerritory(beartype));
+        }
+    }
+
+    /**
+     * If the wolf is the frst of its pack to be spawned, it becomes the alpha
+     * Else find the correct wolf pack and assign it to the wolf which has just been spawned
+     * @param entity
+     * @param i
+     */
+    public void setPack(Entity entity, int i) {
+        int packsize = 0;
+
+        Wolf wolf = (Wolf) entity;
+        if (input_reader.getMap_of_wolf_packs().size() == 1) {
+            if (i == 0) {
+                wolf.createPack();
+                alpha = wolf;
+            }
+            if (i > 0){
+                wolf.addWolfToPack(alpha);
+            }
+        } else if (input_reader.getMap_of_wolf_packs().size() > 1) {
+            packsize = input_reader.getMap_of_wolf_packs().get(packnumber);
+
+            if (i != 0 && i % packsize == 0) packnumber++;
+
+            packsize = input_reader.getMap_of_wolf_packs().get(packnumber);
+
+            if (i % packsize == 0){
+                wolf.createPack();
+                alpha = wolf;
+            } else {
+                alpha.addWolfToPack(wolf);
+            }
         }
     }
     /**
