@@ -65,7 +65,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (!is_sleeping && !in_hiding) {
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
 
-            if (!has_pack || age > 8) {
+            if (!has_cave || age > 8) {
                 createCave(world, id_generator);
             } else {
                 nextMove(world);
@@ -172,8 +172,8 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param thewolf The wolf to be removed from the pack.
      */
     public void removeWolfFromPack(Wolf thewolf) {
-        if(pack.size() == 4){
-            for (Wolf wolf : pack){
+        if(pack.size() == 4) {
+            for (Wolf wolf : pack) {
                 wolf.setTrophicLevel(3);
             }
         }
@@ -255,7 +255,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      *
      * @param world The simulation world from which the wolf is deleted.
      */
-    public void deleteMe(World world){
+    public void deleteMe(World world) {
         if (my_alpha == this) {
             pack.clear();
             has_pack = false;

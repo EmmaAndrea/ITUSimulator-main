@@ -33,7 +33,7 @@ public class ProgramRunner {
 
     private Wolf alpha;
 
-    private int packnumber;
+    private int pack_number;
 
     /**
      * Creates and initializes a simulation based on the specified input file.
@@ -51,12 +51,10 @@ public class ProgramRunner {
         // read file with input-reader
         input_reader = new InputReader(file.getAbsolutePath());
 
-        int size = 20; //input_reader.readWorldSize();
-        int delay = 100; // the delay between every step of the simulation (in ms)
-        int display_size = 800; // screen resolution (i px)
+        int size = input_reader.readWorldSize();
 
         // create world
-        p = new Program(size, display_size, delay); // creates a new program
+        p = new Program(size, 1000, 500); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.
@@ -68,7 +66,7 @@ public class ProgramRunner {
         }
 
         alpha = new Wolf(id_generator);
-        packnumber = 0;
+        pack_number = 0;
         spawnEntity(world, "rabbit", 10);
         spawnEntity(world, "bear", 8);
     }
@@ -126,11 +124,11 @@ public class ProgramRunner {
                 wolf.addWolfToPack(alpha);
             }
         } else if (input_reader.getMap_of_wolf_packs().size() > 1) {
-            packsize = input_reader.getMap_of_wolf_packs().get(packnumber);
+            packsize = input_reader.getMap_of_wolf_packs().get(pack_number);
 
-            if (i != 0 && i % packsize == 0) packnumber++;
+            if (i != 0 && i % packsize == 0) pack_number++;
 
-            packsize = input_reader.getMap_of_wolf_packs().get(packnumber);
+            packsize = input_reader.getMap_of_wolf_packs().get(pack_number);
 
             if (i % packsize == 0){
                 wolf.createPack();
