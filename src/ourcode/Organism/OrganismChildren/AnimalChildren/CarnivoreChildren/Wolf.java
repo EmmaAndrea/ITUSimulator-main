@@ -35,10 +35,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (pack != null) System.out.println("My pack: " + pack.size());
         if(timeToNight(world) > 7 && timeToNight(world) < 3) {
             in_hiding = true;
-            sleeping = true;
+            is_sleeping = true;
             return;
         } else {
-            sleeping = false;
+            is_sleeping = false;
             if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
             nextMove(world);
         }
@@ -129,8 +129,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 12) {
-            if (wounded) {
+        if (age >= 9) {
+            if (is_sleeping) {
+                return new DisplayInformation(Color.cyan, "wolf-sleeping");
+            } else if (wounded) {
                 return new DisplayInformation(Color.cyan, "wolf-large-wounded");
             } else {
                 return new DisplayInformation(Color.cyan, "wolf-large");

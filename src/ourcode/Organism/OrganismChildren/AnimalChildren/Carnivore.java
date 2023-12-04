@@ -10,7 +10,7 @@ import ourcode.Setup.IDGenerator;
  * sustenance.
  */
 public abstract class Carnivore extends Animal {
-    protected boolean sleeping;
+    protected boolean is_sleeping;
 
     /**
      * the constructor of a Carnivore, will call 'super()' from the Animal class.
@@ -18,7 +18,7 @@ public abstract class Carnivore extends Animal {
      */
     public Carnivore(IDGenerator original_id_generator) {
         super(original_id_generator);
-        sleeping = false;
+        is_sleeping = false;
     }
 
     /**
