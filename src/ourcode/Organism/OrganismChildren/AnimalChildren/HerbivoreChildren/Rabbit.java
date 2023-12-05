@@ -84,6 +84,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                 if (isCloseToBurrow) {
                     enterBurrow(world);
                     being_hunted = false;
+                    return;
                 }
             }
             else if (isNight) {
@@ -100,7 +101,10 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
             } else if (in_hiding) exitBurrow(world);
 
             // if it is in the burrow
-        } else if (!isNight) exitBurrow(world);
+        } else if (!isNight) {
+            exitBurrow(world);
+            return;
+        }
 
         if (!in_hiding) nextMove(world);
     }
