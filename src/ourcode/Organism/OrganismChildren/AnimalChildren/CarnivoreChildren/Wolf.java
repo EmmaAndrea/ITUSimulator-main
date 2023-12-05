@@ -109,7 +109,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
 
     @Override
     public void hunt(World world){
-        if(has_pack){
+        if (has_pack) {
             if (alpha) {
                 for (Wolf wolf : pack) {
                     if (wolf.findFood(world) != null){
@@ -201,6 +201,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      */
     public ArrayList<Wolf> getPack() {
         return pack;
+    }
+
+    public Cave getMy_cave() {
+        return my_cave;
     }
 
     /**
@@ -326,15 +330,15 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param world The world in which the current events are happening.
      */
     public void enterCave(World world) {
-        if (has_cave) {
-            if (my_cave.getResidents().isEmpty()) {
-                if (my_cave == world.getNonBlocking(world.getLocation(this))) {
-                    my_cave.addResident(this);
-                    world.remove(this);
-                    in_hiding = true;
-                }
-            }
-        }
+        my_cave.addResident(this);
+        world.remove(this);
+        in_hiding = true;
+    }
+
+    public void exitCave(World world) {
+        my_cave.removeResident(this);
+        world.setTile(world.getLocation(my_cave), this);
+        in_hiding = false;
     }
 
     /**

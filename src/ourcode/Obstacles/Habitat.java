@@ -37,8 +37,12 @@ public abstract class Habitat extends Obstacle {
      *
      * @param animal The rabbit to be added as a resident of the burrow.
      */
-    public void addResident(Animal animal){
+    public void addResident(Animal animal) {
         residents.add(animal);
+    }
+
+    public void removeResident(Animal animal) {
+        residents.remove(animal);
     }
 
     /**
