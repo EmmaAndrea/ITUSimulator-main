@@ -57,18 +57,23 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void carnivoreAct(World world) {
         super.carnivoreAct(world);
-        if (pack != null) System.out.println("My pack: " + pack.size());
 
-        if (world.getCurrentTime() == 3) {
-            in_hiding = true;
-            is_sleeping = true;
+        Location current_location = world.getLocation(this);
+
+        if (world.getCurrentTime() == 1 && has_cave) {
+            if (world.containsNonBlocking(current_location)) {
+                if (world.getNonBlocking(current_location) == my_cave) {
+                    enterCave(world);
+                } else {
+                    moveCloser(world, world.getLocation(my_cave));
+                }
+            }
+
         } else if (world.getCurrentTime() == 7) {
-            is_sleeping = false;
             in_hiding = false;
         }
-        if (!is_sleeping && !in_hiding) {
-            if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
 
+        if (!in_hiding) {
             if (!has_cave && age > 8) {
                 if (alpha) createCave(world, id_generator);
             }
@@ -169,7 +174,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param id_generator  An IDGenerator instance for generating unique IDs for the new cave.
      */
     public void createCave(World world, IDGenerator id_generator) {
-        if (!has_pack || has_cave) {
+        if (has_cave) {
             return;
         }
 
@@ -264,7 +269,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param thewolf The wolf to be removed from the pack.
      */
     public void removeWolfFromPack(Wolf thewolf) {
-        if(pack.size() == 4) {
+        if (pack.size() == 4) {
             for (Wolf wolf : pack) {
                 wolf.setTrophicLevel(3);
             }
@@ -363,16 +368,21 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param world The simulation world from which the wolf is deleted.
      */
     public void deleteMe(World world) {
-        if (alpha) {
-            for (Wolf wolf : pack){
-                wolf.setAlpha(null);
+        if (my_alpha == this) {
+            removeWolfFromPack(this);
+            world.delete(this);
+
+            if (!pack.isEmpty()) {
+                Wolf next_alpha = pack.get(0);
+
+                for (Wolf wolf : pack) {
+                    wolf.setAlpha(next_alpha);
+                }
             }
-            pack.clear();
-            has_pack = false;
-        } else if (has_pack && my_alpha != null) {
+
+        } else if (has_pack) {
             my_alpha.removeWolfFromPack(this);
         }
-        world.delete(this);
     }
 
     /**
