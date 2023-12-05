@@ -70,8 +70,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
             }
 
         } else if (world.getCurrentTime() == 7) {
-            // exit cave
-            // in_hiding = false;
+            in_hiding = false;
         }
 
         if (!in_hiding) {
