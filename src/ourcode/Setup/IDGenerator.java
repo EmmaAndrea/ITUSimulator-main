@@ -2,9 +2,12 @@ package ourcode.Setup;
 
 import itumulator.world.Location;
 import ourcode.Obstacles.Burrow;
-import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Random;
 
 /**
  * The IDGenerator class generates a unique ID and adds it to the list of IDs.
@@ -16,8 +19,16 @@ public class IDGenerator {
 
     private int ID;
     protected HashMap<Location, Integer> map_location_to_id;
-    protected HashMap<Integer, Organism> map_id_to_organism;
+    protected HashMap<Integer, Entity> map_id_to_entity;
     protected HashMap<Integer, Burrow> map_id_to_burrow;
+
+    protected HashMap<Location, Burrow> map_location_to_burrow;
+
+    protected ArrayList<Location> locations_of_burrows;
+
+    protected HashMap<Location, Grass> map_location_to_grass;
+
+    protected HashMap<Integer, Grass> map_id_to_grass;
 
     /**
      * Instantiates the list of IDs, and hashmaps to obtain id and corresponding organism from location
@@ -25,8 +36,12 @@ public class IDGenerator {
     public IDGenerator() {
         IDs = new HashSet<>();
         map_location_to_id = new HashMap<>();
-        map_id_to_organism = new HashMap<>();
+        map_id_to_entity = new HashMap<>();
+        map_location_to_burrow = new HashMap<>();
         map_id_to_burrow = new HashMap<>();
+        locations_of_burrows = new ArrayList<>();
+        map_id_to_grass = new HashMap<>();
+        map_location_to_grass = new HashMap<>();
     }
 
     /**
@@ -50,22 +65,45 @@ public class IDGenerator {
      */
     public void addLocationToIdMap(Location location, int id) {
         map_location_to_id.put(location, id);
+
     }
 
-    public void addAnimalToIdMap(int id, Organism organism) {
-        map_id_to_organism.put(id, organism);
+    public void addEntityToIdMap(int id, Entity entity) {
+        map_id_to_entity.put(id, entity);
     }
 
-    public Organism getOrganism(Location location) {
-        return map_id_to_organism.get(map_location_to_id.get(location));
+    public void addGrassToIdMap(int id, Grass grass){
+        map_id_to_grass.put(id, grass);
+    }
+    public Entity getEntity(Location location) {
+        return map_id_to_entity.get(map_location_to_id.get(location));
     }
 
-    public void addBurrowToIdMap(int id, Burrow burrow){
-        map_id_to_burrow.put(id, burrow);
+    public void addBurrowToLocationMap(Location location, Burrow burrow){
+        map_location_to_burrow.put(location, burrow);
+        locations_of_burrows.add(location);
+
     }
 
     public Burrow getBurrow(Location location){
-        return map_id_to_burrow.get(map_location_to_id.get(location));
+        return map_location_to_burrow.get(location);
+    }
+
+    public ArrayList<Location> getLocationOfBurrows(){
+        return locations_of_burrows;
+    }
+
+    public void addGrassToLocationMap(Location location, Grass grass){
+        map_location_to_grass.put(location, grass);
+    }
+
+    public Grass getGrass(Location location){
+        return map_location_to_grass.get(location);
+    }
+
+    public Grass getGrass(int id){
+        return map_id_to_grass.get(id);
     }
 }
 
+// burrow to id, burrow to loaction, location to burrow, id to burrow

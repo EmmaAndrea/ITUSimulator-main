@@ -1,66 +1,39 @@
 package ourcode.Obstacles;
 
-import itumulator.world.Location;
-import itumulator.world.NonBlocking;
+import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * The Burrow class represents holes and are also the home of rabbits. The Burrow class can add rabbits to live inside
- *  or remove
+ * Represents a burrow in the simulation, primarily used as a home for rabbits.
+ * This class provides functionalities to manage the rabbits residing in the burrow,
+ * and to display the burrow within the simulation's world.
  */
-
-public class Burrow implements NonBlocking {
-    // List of rabbits which are currently inside the burrow.
-    List<Rabbit> residents;
-
-    // A unique identifier for the burrow.
-    int burrow_id;
-
-    // A location for the burrow such that a rabbit can find a way to it.
-    Location burrow_location;
-
+public class Burrow extends Habitat implements DynamicDisplayInformationProvider {
     /**
-     * The constructor for a Burrow.
-     * Makes and ID.
-     * Sets the tile in the world to burrow.
-     * A burrow has its own location.
+     * Constructs a new Burrow with a unique identifier.
+     * Initializes the list of residents and sets the burrow's type in the simulation world.
+     *
+     * @param id The unique identifier for the burrow, typically provided by an IDGenerator.
      */
-    public Burrow(int burrow_id, World world, Location location) {
-        residents = new ArrayList<>();
-        this.burrow_id = burrow_id;
-        world.setTile(location, this);
-        burrow_location = world.getLocation(this);
+    public Burrow(IDGenerator id) {
+        super(id);
+        type = "burrow";
     }
 
     /**
-     * Adds a given rabbit to the list of residents of the burrow.
+     * Provides display information for the burrow, including its color and representation in the simulation.
+     *
+     * @return DisplayInformation object containing visual details of the burrow.
      */
-    public void addResident(Rabbit rabbit){
-        residents.add(rabbit);
-    }
-
-    /**
-     * Returns the ID of a burrow.
-     */
-    public int getId() {
-        return burrow_id;
-    }
-
-    /**
-     * Returns the location of the burrow.
-     */
-    public Location getLocation() {
-        return burrow_location;
-    }
-
-    /**
-     * Returns the list of residents of the burrow.
-     */
-    public List<Rabbit> getResidents() {
-        return residents;
+    @Override
+    public DisplayInformation getInformation() {
+        return new DisplayInformation(Color.red, "hole");
     }
 }

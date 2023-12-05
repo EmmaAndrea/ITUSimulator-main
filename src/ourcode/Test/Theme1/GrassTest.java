@@ -1,4 +1,4 @@
-package ourcode.Test;
+package ourcode.Test.Theme1;
 
 import itumulator.world.Location;
 import itumulator.world.World;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.testng.annotations.Test;
+import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.ProgramRunner;
@@ -16,14 +17,14 @@ import static org.junit.jupiter.api.Assertions.*;
 /**
  * A class which tests all the requirements of theme 1
  */
-public class Theme1Test {
+public class GrassTest {
     public ProgramRunner programRunner;
     public World world;
 
     /**
      * Creates one program-runner for all the tests to use
      */
-    public Theme1Test(){
+    public GrassTest(){
         programRunner = new ProgramRunner();
     }
     @BeforeAll
@@ -41,7 +42,7 @@ public class Theme1Test {
      * Checks that one grass is in entities
      */
     @Test
-    public void testGrass1() throws Exception{
+    public void testGrassSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         programRunner.runSimulation(1);
@@ -55,7 +56,7 @@ public class Theme1Test {
      * Checks the locations are different, and thereby random
      */
     @Test
-    public void testGrass2() throws Exception{
+    public void testGrassRandomSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         Grass grass1 = new Grass(programRunner.getOriginal_id_generator());
@@ -73,7 +74,7 @@ public class Theme1Test {
      * Checks entities does not contain grass1, showing that it is deleted and thereby dead.
      */
     @Test
-    public void testGrass3() throws Exception{
+    public void testGrassDies() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         Grass grass1 = new Grass(programRunner.getOriginal_id_generator());
@@ -89,7 +90,7 @@ public class Theme1Test {
      * and didn't crash the program
      */
     @Test
-    public void testGrass4() throws Exception{
+    public void testRabbitonGrass() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
 
@@ -106,42 +107,6 @@ public class Theme1Test {
 
         assertEquals(world.getEntities().get(rabbit1), baseLocation);
         assertEquals(grassBeforeRabbit, grassAfterRabbit);
-    }
-
-    /**
-     * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
-     * Checks that entities contains exactly four entities,
-     * Checks a rabbit is in entities
-     */
-    @Test
-    public void testRabbit1() throws Exception{
-        programRunner.create("./data/t1-2fg.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(1);
-        assertEquals(world.getEntities().size(), 4);
-        assertTrue(world.getEntities().containsKey(programRunner.getRabbit()));
-    }
-
-    /**
-     * Creates a world based on file "t1-2fg", such that some rabbits and grass are spawned.
-     * Spawns one specific rabbit which we track
-     * Before the program runs, we check the rabbit is in entities
-     * After the program runs a
-     */
-    @Test
-    public void testRabbit2() throws Exception{
-        programRunner.create("./data/t1-2cde.txt");
-        world = programRunner.getWorld();
-        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator());
-        rabbit1.spawn(world);
-        assertTrue(world.getEntities().containsKey(rabbit1));
-        programRunner.runSimulation(101);
-        assertFalse(world.getEntities().containsKey(rabbit1));
-    }
-
-    @Test
-    public void testRabbit3() throws Exception{
-
     }
 
 

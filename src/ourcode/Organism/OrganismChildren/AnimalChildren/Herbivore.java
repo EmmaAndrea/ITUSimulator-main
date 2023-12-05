@@ -13,6 +13,7 @@ public abstract class Herbivore extends Animal {
 
     public Herbivore(IDGenerator original_id_generator) {
         super(original_id_generator);
+        trophic_level = 2;
     }
 
     public void spawn(World world) {
@@ -37,10 +38,11 @@ public abstract class Herbivore extends Animal {
 
                     // If the herbivore is hungrier than how full the grass will make it.
                     if (hunger >= getStandingOnNutritionalValue(world)) {
-                        eat(world);
+                        eat(world, world.getNonBlocking(world.getLocation(this)));
                     }
                 }
             }
+
         }
     }
 
@@ -49,15 +51,28 @@ public abstract class Herbivore extends Animal {
      * overrides method for other animals
      * @param world dependent on world
      */
-    @Override
-    public void nextMove(World world){
+   /*
+    public void nextMove(World world) {
+
         // Moves to grass, if there is grass nearby.
         if (getGrassLocation(world) != null) {
-            world.move(this, getGrassLocation(world));
-
+            //
+            if (getGrassLocation(world) != world.getLocation(this)) {
+                //
+                world.move(this, getGrassLocation(world));
+                //
+            } else if (getRandomMoveLocation(world) != null) {
+                //
+                world.move(this, getRandomMoveLocation(world));
+                return;
+            }
             // if there is no grass, move randomly
-        } else if (getRandomMoveLocation(world) != null){
+        }  else if (getRandomMoveLocation(world) != null){
             world.move(this, getRandomMoveLocation(world));
+            return;
         }
+
+
     }
+    */
 }

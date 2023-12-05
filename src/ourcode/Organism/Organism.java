@@ -3,80 +3,32 @@ package ourcode.Organism;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Setup.IDGenerator;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
+import ourcode.Setup.Entity;
+import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.Random;
 
 /**
- * The Organism class gives the abstraction of the living. For a world to include many different lifeforms,
- * there has to be a generalization for living creatures.
- * The organism class will help provide the utilities necessary to visualize a certain creature.
+ * Represents a generic organism in a simulation environment.
+ * This abstract class serves as a base for all life forms in the simulated world,
+ * providing common properties and behaviors that are shared across different types of organisms.
  */
-public abstract class Organism implements Actor {
-    // Type (subclass) of organism
-    protected String type;
-
-    // Life counter for the organism. Used for when to die or breed.
-    protected int age;
-
-    // Max age for the organism. Used for when to die.
-    protected int max_age;
-
-    // ID generator useful for distinction between organism.
-    protected IDGenerator id_generator;
-
-    // Represents the generated ID.
-    protected int id;
-
+public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
-    // Boolean to check if an organism has been killed
-    protected boolean hasBeenKilled;
-
-
+    protected int trophic_level;
 
     /**
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.
      */
     public Organism(IDGenerator original_id_generator) {
-        id_generator = original_id_generator;
-        id = id_generator.getID();
-        age = 1;
+        super(original_id_generator);
         nutritional_value = 2;
-        hasBeenKilled = false;
-    }
-
-    /**
-     * Spawns an organism in a random unoccupied location.
-     */
-    public void spawn(World world) {
-        Location location = getRandomLocation(world); // Finds a random location.
-
-        while (!world.isTileEmpty(location)) { // If it's not empty, find a new random location.
-            location = getRandomLocation(world);
-        }
-
-        world.setTile(location, this); // If it's empty, spawn organism into this location.
-
-        id_generator.addLocationToIdMap(location, id);
-        id_generator.addAnimalToIdMap(id, this);
-    }
-
-    /**
-     * Returns a random location.
-     */
-    protected Location getRandomLocation(World world) {
-        Random random = new Random();
-
-        // generates random x and y coordinates
-        int randomX = random.nextInt(world.getSize());
-        int randomY = random.nextInt(world.getSize());
-
-        return new Location(randomX, randomY);
     }
 
     /**
@@ -96,15 +48,19 @@ public abstract class Organism implements Actor {
                 plantAct(world);
             } else {
                 //delete the animal if animalAct returns false
-                world.delete(this);
+                System.out.println(type + " died");
+                if (this instanceof Wolf wolf) wolf.deleteMe(world);
+                else world.delete(this);
             }
         }
     }
 
     /**
-     * An act method for animals. The animals increase their age by 1 for each act by calling the 'ageIncrease()' method
+     * Represents the action an animal takes during a simulation step.
+     * This method should be overridden by subclasses to define specific animal behaviors.
+     * Used to control whether all animals have acted, such that classes don't conflict.
+     * @return true if the animal successfully completes its action, false otherwise.
      */
-
     public boolean animalAct(World world) {
         return true;
     }
@@ -117,24 +73,10 @@ public abstract class Organism implements Actor {
     }
 
     /**
-     * Returns a String describing the type of organism.
-     */
-    public String getType() {
-        return type;
-    }
-
-    /**
      *Returns the nutritional value of the organism, ergo how much hunger it satisfies when eaten.
      */
     public int getNutritionalValue() {
         return nutritional_value;
-    }
-
-    /**
-     * Returns the id number
-     */
-    public int getId() {
-        return id;
     }
 
     /**
@@ -143,6 +85,7 @@ public abstract class Organism implements Actor {
      */
     public ArrayList<Location> getSurroundingFreeLocation(World world) {
         // Retrieve current location
+
         Location current_location = world.getLocation(this);
 
         // Makes list of possible spawn locations (locations with no blocking elements).
@@ -170,9 +113,13 @@ public abstract class Organism implements Actor {
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
         Random random = new Random();
-        int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
-
-        return getSurroundingFreeLocation(world).get(random_index);
+        //
+        if (getSurroundingFreeLocation(world) != null) {
+            //
+            int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+            //
+            return getSurroundingFreeLocation(world).get(random_index);
+        } else return null;
     }
 
     /**
@@ -180,27 +127,23 @@ public abstract class Organism implements Actor {
      * Returns the location of the grass if there is one
      * Otherwise null
      */
-    public Location getGrassLocation(World world){
-        for(Location location: getSurroundingFreeLocation(world)){
-            if(world.containsNonBlocking(location)){
-                if ((world.getNonBlocking(location) instanceof Grass)) {
-                    return location;
+    public Location getGrassLocation(World world) {
+        //
+        if (getSurroundingFreeLocation(world) != null) {
+            //
+            for (Location location : getSurroundingFreeLocation(world)) {
+                //
+                if (world.containsNonBlocking(location)) {
+                    //
+                    if ((world.getNonBlocking(location) instanceof Grass)) {
+                        return location;
+                    }
                 }
-            }
-        }
-        return null;
+            } return null;
+        } return null;
     }
 
-    /**
-     * Returns 0 if it is currently night.
-     * Else, returns how many steps until it is night.
-     */
-    public int timeToNight(World world){
-        if (world.getCurrentTime() % 20 >= 10){
-            return 0;
-        } else {
-            return 10 - world.getCurrentTime() % 20;
-        }
+    public int getTraphicLevel(){
+        return this.trophic_level;
     }
-
 }
