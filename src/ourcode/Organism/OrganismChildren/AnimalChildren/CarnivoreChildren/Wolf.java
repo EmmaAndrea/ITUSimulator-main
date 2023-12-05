@@ -122,7 +122,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (has_pack) {
             if (alpha) {
                 for (Wolf wolf : pack) {
-                    if (wolf.findFood(world) != null){
+                    if (wolf.findFood(world) != null) {
                         attack(world, wolf.findFood(world));
                         return;
                     }
