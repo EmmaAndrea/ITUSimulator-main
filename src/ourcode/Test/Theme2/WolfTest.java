@@ -138,7 +138,62 @@ public class WolfTest {
     }
 
     @Test
-    public void testWolfBreed() {
+    public void testEnterCave() {
+        world = new World(4);
+        IDGenerator id_generator = new IDGenerator();
 
+        Wolf wolf1 = new Wolf(id_generator);
+        Wolf wolf2 = new Wolf(id_generator);
+
+        wolf1.spawn(world);
+        wolf2.spawn(world);
+
+        wolf1.createPack();
+        wolf1.addWolfToPack(wolf2);
+
+        wolf1.createCave(world, id_generator);
+
+        wolf1.enterCave(world);
+        wolf2.enterCave(world);
+
+        assertEquals(wolf1.getMy_cave().getResidents().size(), 2,
+                "the amount of wolfs in the cave should be 2, but there is: "
+                         + wolf1.getMy_cave().getResidents().size());
+
+
+    }
+
+    /**
+     * This test showcases the 'exitCave()' method from the 'Wolf' class. This test cooperates with the 'testEnterCave'
+     * method, since it relies on the fact that a wolf should be able to enter the cave. Please check the
+     * previous method before validating this one.
+     */
+    @Test
+    public void testExitCave() {
+        world = new World(5);
+        IDGenerator id_generator = new IDGenerator();
+
+        Wolf wolf1 = new Wolf(id_generator);
+        Wolf wolf2 = new Wolf(id_generator);
+
+        wolf1.spawn(world);
+        wolf2.spawn(world);
+
+        wolf1.createPack();
+        wolf1.addWolfToPack(wolf2);
+
+        wolf1.createCave(world, id_generator);
+
+        // should add two wolves to the cave's residents, works from previous testing
+        wolf1.enterCave(world);
+        wolf2.enterCave(world);
+
+        wolf1.exitCave(world);
+        wolf1.nextMove(world);
+        wolf2.exitCave(world);
+
+        assertEquals(wolf1.getMy_cave().getResidents().size(), 0,
+                "the amount of wolves in the cave should be 0, but is: "
+                         + wolf1.getMy_cave().getResidents().size());
     }
 }
