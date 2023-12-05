@@ -96,7 +96,7 @@ public class ProgramRunner {
      * @param i
      */
     public void setBearTerritory(Entity entity, int i) {
-        String beartype = "bear"+i;
+        String beartype = "bear" + i;
         if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
             Bear bear = (Bear) entity;
             bear.setTerritory(input_reader.getTerritory(beartype));
@@ -136,6 +136,7 @@ public class ProgramRunner {
             }
         }
     }
+
     /**
      * Spawns an entity based on its type via a switch case. This method determines the type of entity to be
      * spawned and calls the appropriate factory method to create and spawn the specified number of entities in the world.
