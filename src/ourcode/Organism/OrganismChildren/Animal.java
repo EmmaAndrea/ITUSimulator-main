@@ -86,14 +86,21 @@ public abstract class Animal extends Organism {
             hunger -= 2;
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
+            // check
             System.out.println(this.getType() + this.getTrophicLevel() + " ate " + grass.getType());
-        } if (object instanceof Animal animal) {
+        } else if (object instanceof Animal animal) {
+            // takes off hunger by eating
             hunger -= animal.getNutritionalValue();
+            // gives back damage by eating
             if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
+            // check
             System.out.println(this.getType() + this.getTrophicLevel() + " ate " + animal.getType() + animal.getTrophicLevel());
+            // mmakes sure wolf is deleted properly
             if (animal instanceof Wolf wolf) {
                 if (this instanceof Wolf thiswolf) {
                     thiswolf.overtakePack(wolf);
+                    wolf.deleteMe(world);
+                    return;
                 }
                 wolf.deleteMe(world);
             }

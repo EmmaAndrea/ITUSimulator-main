@@ -37,7 +37,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public DisplayInformation getInformation() {
         if (age >= 11) {
-            if (wounded) {
+            if (damage_taken > 0) {
                 return new DisplayInformation(Color.yellow, "bear-large-wounded");
             } else if (is_sleeping) {
                 return new DisplayInformation(Color.yellow, "bear-large-sleeping");
@@ -45,7 +45,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
                 return new DisplayInformation(Color.yellow, "bear-large");
             }
         } else {
-            if (wounded) {
+            if (damage_taken > 0) {
                 return new DisplayInformation(Color.yellow, "bear-small-wounded");
             } else if (is_sleeping) {
                 return new DisplayInformation(Color.yellow, "bear-small-sleeping");

@@ -31,6 +31,8 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     protected Cave my_cave;
     protected boolean has_cave;
 
+    protected boolean pack_hunting;
+
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
@@ -48,6 +50,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_cave = false;
         power = 4;
         max_damage = 12;
+        pack_hunting = false;
     }
 
     /**
@@ -59,75 +62,87 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void carnivoreAct(World world) {
         //System.out.println("wolf " + id + " pack: " + my_alpha.getPack().toString());
-        if(has_pack && my_alpha.getPack() == null) {
+        if (has_pack && my_alpha.getPack() == null) {
             deletePack();
-            System.out.println("delted");
+            System.out.println("deleted");
         }
-        super.carnivoreAct(world);
 
-        Location current_location = world.getLocation(this);
-
-        if (world.getCurrentTime() == 1 && has_cave) {
-            if (world.containsNonBlocking(current_location)) {
-                if (world.getNonBlocking(current_location) == my_cave) {
-                    enterCave(world);
-                } else {
-                    moveCloser(world, world.getLocation(my_cave));
+        if (alpha) {
+            if (hunger < 5) {
+                for(Wolf wolf : pack){
+                    wolf.setPackNotHunting();
                 }
             }
+        }
 
-        } else if (world.getCurrentTime() == 7) {
-            in_hiding = false;
+        Location current_location = world.getLocation(this);
+        if (world.getCurrentTime() == 1 && has_cave && !pack_hunting) {
+            if (distanceTo(world, world.getLocation(my_alpha)) < 2) {
+                enterCave(world);
+            } else {
+                moveCloser(world, world.getLocation(my_cave));
+            }
+        } else if(in_hiding &&world.getCurrentTime()==7) {
+            exitCave(world);
+        } else if(in_hiding && pack_hunting) {
+            exitCave(world);
         }
 
         if (!in_hiding) {
-            if (!has_cave && age > 8) {
-                if (alpha) createCave(world, id_generator);
-            }
-            if (!alpha && my_alpha != null) {
+            if (pack_hunting){
                 if (distanceTo(world, world.getLocation(my_alpha)) > 2) {
-                    moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
+                    moveCloser(world, world.getLocation(my_alpha));
+                } else {
+                    hunt(world);
                 }
-            } else if (hunger > 15) {
-                hunt(world);
             }
-            else nextMove(world);
+            if (alpha) {
+                if (!has_cave && age > 8) {
+                    createCave(world, id_generator);
+                }
+                if (hunger > 8) {
+                    for (Wolf wolf : pack) {
+                        wolf.setPackHunting();
+                    }
+                }
+            }
+            if (!alpha) {
+                if (my_alpha != null) {
+                    if (hunger > 15) {
+                        for (Wolf wolf : my_alpha.getPack()) {
+                            wolf.setPackHunting();
+                        }
+                    } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
+                        moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
+                    }
+                }
+            } else nextMove(world);
         }
+
     }
+
+
+
+
+
 
     @Override
     public void attack(World world, Animal animal) {
-        if(alpha){
-            for (Wolf wolf: pack){
-                //set pack hunt mode
-            }
-        }
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
             super.attack(world, animal);
-
         }
     }
 
     @Override
     public void hunt(World world){
-        if (has_pack) {
-            if (alpha) {
-                for (Wolf wolf : pack) {
-                    if (wolf.findFood(world) != null) {
-                        attack(world, wolf.findFood(world));
-                        return;
-                    }
-                }
-            } else {
-                for (Wolf wolf : my_alpha.getPack()){
-                    if (wolf.findFood(world) != null){
-                        attack(world, wolf.findFood(world));
-                        return;
-                    }
+        if(findFood(world) != null){
+            Animal animal = findFood(world);
+            for(int i = 0; i < distanceTo(world, world.getLocation(animal)) ; i++) {
+                if (world.getEntities().containsKey(animal)){
+                    moveCloser(world, world.getLocation(animal));
                 }
             }
-        } else {
-            super.hunt(world);
+            attack(world, animal);
         }
     }
 
@@ -177,10 +192,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param id_generator  An IDGenerator instance for generating unique IDs for the new cave.
      */
     public void createCave(World world, IDGenerator id_generator) {
-        if (has_cave) {
-            return;
-        }
-
         Location location = world.getLocation(this);
         Object tile = world.containsNonBlocking(location) ? world.getNonBlocking(location) : null;
 
@@ -353,7 +364,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (age >= 12) {
             if (is_sleeping) {
                 return new DisplayInformation(Color.cyan, "wolf-large-sleeping");
-            } else if (wounded) {
+            } else if (damage_taken > 0) {
                 return new DisplayInformation(Color.cyan, "wolf-large-wounded");
             } else {
                 return new DisplayInformation(Color.cyan, "wolf-large");
@@ -361,7 +372,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         } else {
             if (is_sleeping) {
                 return new DisplayInformation(Color.cyan, "wolf-small-sleeping");
-            } else if (wounded) {
+            } else if (damage_taken > 0) {
                 return new DisplayInformation(Color.cyan, "wolf-small-wounded");
             } else {
                 return new DisplayInformation(Color.cyan, "wolf-small");
@@ -419,5 +430,11 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     }
     public int getPower(){
         return power;
+    }
+    public void setPackHunting(){
+        pack_hunting = true;
+    }
+    public void setPackNotHunting(){
+        pack_hunting = false;
     }
 }
