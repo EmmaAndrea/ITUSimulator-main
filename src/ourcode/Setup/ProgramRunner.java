@@ -104,7 +104,7 @@ public class ProgramRunner {
     }
 
     /**
-     * If the wolf is the frst of its pack to be spawned, it becomes the alpha
+     * If the wolf is the first of its pack to be spawned, it becomes the alpha
      * Else find the correct wolf pack and assign it to the wolf which has just been spawned
      * @param entity
      * @param i

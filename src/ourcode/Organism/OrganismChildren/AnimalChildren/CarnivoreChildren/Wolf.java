@@ -316,7 +316,21 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_cave = true;
     }
 
-
+    /**
+     * Enters the cave that the wolf is standing on, if it is empty, and it's their cave.
+     * @param world The world in which the current events are happening.
+     */
+    public void enterCave(World world) {
+        if (has_cave) {
+            if (my_cave.getResidents().isEmpty()) {
+                if (my_cave == world.getNonBlocking(world.getLocation(this))) {
+                    my_cave.addResident(this);
+                    world.remove(this);
+                    in_hiding = true;
+                }
+            }
+        }
+    }
 
     /**
      * Determines the graphic of the wolf based on its current condition and age.

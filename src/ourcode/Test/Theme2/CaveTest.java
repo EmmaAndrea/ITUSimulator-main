@@ -19,9 +19,6 @@ public class CaveTest {
         programRunner = new ProgramRunner();
     }
 
-    /**
-     *
-     */
     @BeforeAll
     public void setUp() {
         System.out.println("Starting test for Cave");
