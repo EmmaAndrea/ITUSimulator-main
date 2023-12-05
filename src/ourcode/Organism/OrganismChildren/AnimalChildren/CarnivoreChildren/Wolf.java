@@ -13,6 +13,7 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -71,12 +72,8 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         } else if (world.getCurrentTime() == 7) {
             in_hiding = false;
         }
-<<<<<<< HEAD
-        if (!is_sleeping && !in_hiding) {
-=======
 
         if (!in_hiding) {
->>>>>>> ed4a653d6ba493bb754b66ca1743ed21b5fc243d
             if (!has_cave && age > 8) {
                 if (alpha) createCave(world, id_generator);
             }
@@ -177,7 +174,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param id_generator  An IDGenerator instance for generating unique IDs for the new cave.
      */
     public void createCave(World world, IDGenerator id_generator) {
-        if (!has_pack || has_cave) {
+        if (has_cave) {
             return;
         }
 
@@ -272,13 +269,14 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param thewolf The wolf to be removed from the pack.
      */
     public void removeWolfFromPack(Wolf thewolf) {
-        if(pack.size() == 4) {
+        if (pack.size() == 4) {
             for (Wolf wolf : pack) {
                 wolf.setTrophicLevel(3);
             }
         }
         pack.remove(thewolf);
         thewolf.setHasNotPack();
+        thewolf.setAlpha(null);
     }
 
     /**
@@ -385,7 +383,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         } else if (has_pack) {
             my_alpha.removeWolfFromPack(this);
         }
-        world.delete(this);
     }
 
     /**
