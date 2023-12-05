@@ -14,7 +14,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.SocketHandler;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -47,6 +46,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf"));
         alpha = false;
         has_cave = false;
+        power = 4;
     }
 
     /**
@@ -417,5 +417,12 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
 
     public void setAlpha(Wolf wolf){
         my_alpha = wolf;
+    }
+
+    public int getDamageTaken() {
+        return damage_taken;
+    }
+    public int getPower(){
+        return power;
     }
 }
