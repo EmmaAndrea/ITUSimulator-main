@@ -77,7 +77,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         }
 
         // if it is not in its burrow
-        if (!in_hiding) {
+        if (!in_hiding && world.getEntities().containsKey(this)) {
             if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
                 isCloseToBurrow = true;
             }
@@ -94,12 +94,11 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
                     enterBurrow(world);
 
                 } else moveCloser(world, world.getLocation(my_burrows.get(0)));
-                return;
 
             } else if (timeToNight(world) < 5) {
                 moveCloser(world, world.getLocation(my_burrows.get(0)));
                 return;
-            } else if (in_hiding) exitBurrow(world);
+            }
 
             // if it is in the burrow
         } else if (!isNight) {

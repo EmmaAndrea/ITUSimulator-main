@@ -34,7 +34,6 @@ public abstract class Animal extends Organism {
     protected Gender gender; // Gender of the animal.
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
     protected boolean being_hunted;
-    protected boolean wounded;
     protected int damage_taken;
     protected int power;
     protected int max_damage;
@@ -53,7 +52,6 @@ public abstract class Animal extends Organism {
         in_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         being_hunted = false;
-        wounded = false;
         damage_taken = 0;
     }
 
@@ -98,9 +96,7 @@ public abstract class Animal extends Organism {
             // mmakes sure wolf is deleted properly
             if (animal instanceof Wolf wolf) {
                 if (this instanceof Wolf thiswolf) {
-                    thiswolf.overtakePack(wolf);
-                    wolf.deleteMe(world);
-                    return;
+                    if(wolf.checkAlpha()) thiswolf.overtakePack(wolf);
                 }
                 wolf.deleteMe(world);
             }
@@ -495,12 +491,6 @@ public abstract class Animal extends Organism {
         return gender;
     }
 
-    public void becomeWounded(){
-        wounded = true;
-    }
-    public boolean checkWounded(){
-        return wounded;
-    }
 
     public void attack(World world, Animal animal){
 

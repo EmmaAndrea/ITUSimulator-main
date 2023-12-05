@@ -3,6 +3,7 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Setup.IDGenerator;
 
 import java.util.Set;
