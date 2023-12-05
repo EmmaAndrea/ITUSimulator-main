@@ -14,6 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.SocketHandler;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -56,6 +57,11 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      */
     @Override
     public void carnivoreAct(World world) {
+        //System.out.println("wolf " + id + " pack: " + my_alpha.getPack().toString());
+        if(has_pack && my_alpha.getPack() == null) {
+            deletePack();
+            System.out.println("delted");
+        }
         super.carnivoreAct(world);
 
         Location current_location = world.getLocation(this);
@@ -94,9 +100,13 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
             for(Wolf wolf : pack){
                 if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
                     if(wolf != this) {
-                        wolf.attack(world, animal);
+                        if (world.getEntities().containsKey(wolf)) {
+                            wolf.attack(world, animal);
+                            return;
+                        }
                         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
                             super.attack(world, animal);
+                            return;
                         }
                     }
                 }
@@ -114,12 +124,14 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
                 for (Wolf wolf : pack) {
                     if (wolf.findFood(world) != null){
                         attack(world, wolf.findFood(world));
+                        return;
                     }
                 }
             } else {
                 for (Wolf wolf : my_alpha.getPack()){
                     if (wolf.findFood(world) != null){
                         attack(world, wolf.findFood(world));
+                        return;
                     }
                 }
             }
@@ -374,7 +386,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     public void deleteMe(World world) {
         if (my_alpha == this) {
             removeWolfFromPack(this);
-            world.delete(this);
 
             if (!pack.isEmpty()) {
                 Wolf next_alpha = pack.get(0);
@@ -384,9 +395,18 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
                 }
             }
 
-        } else if (has_pack) {
+        } else if (has_pack && pack != null) {
             my_alpha.removeWolfFromPack(this);
         }
+        world.delete(this);
+    }
+
+    public void deletePack(){
+        pack = null;
+        has_pack = false;
+        alpha = false;
+        my_alpha = null;
+
     }
 
     /**
