@@ -106,4 +106,4 @@ public class IDGenerator {
     }
 }
 
-// burrow to id, burrow to loaction, location to burrow, id to burrow
+// burrow to id, burrow to location, location to burrow, id to burrow

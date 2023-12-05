@@ -13,7 +13,6 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -57,18 +56,23 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void carnivoreAct(World world) {
         super.carnivoreAct(world);
-        if (pack != null) System.out.println("My pack: " + pack.size());
 
-        if (world.getCurrentTime() == 3) {
-            in_hiding = true;
-            is_sleeping = true;
+        Location current_location = world.getLocation(this);
+
+        if (world.getCurrentTime() == 1 && has_cave) {
+            if (world.containsNonBlocking(current_location)) {
+                if (world.getNonBlocking(current_location) == my_cave) {
+                    enterCave(world);
+                } else {
+                    moveCloser(world, world.getLocation(my_cave));
+                }
+            }
+
         } else if (world.getCurrentTime() == 7) {
-            is_sleeping = false;
             in_hiding = false;
         }
-        if (!is_sleeping && !in_hiding) {
-            if (timeToNight(world) == 1) System.out.println("hooooooooowwwwwwwlllll");
 
+        if (!in_hiding) {
             if (!has_cave && age > 8) {
                 if (alpha) createCave(world, id_generator);
             }
@@ -271,7 +275,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
         pack.remove(thewolf);
         thewolf.setHasNotPack();
-        thewolf.setAlpha(null);
     }
 
     /**
@@ -316,7 +319,21 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_cave = true;
     }
 
-
+    /**
+     * Enters the cave that the wolf is standing on, if it is empty, and it's their cave.
+     * @param world The world in which the current events are happening.
+     */
+    public void enterCave(World world) {
+        if (has_cave) {
+            if (my_cave.getResidents().isEmpty()) {
+                if (my_cave == world.getNonBlocking(world.getLocation(this))) {
+                    my_cave.addResident(this);
+                    world.remove(this);
+                    in_hiding = true;
+                }
+            }
+        }
+    }
 
     /**
      * Determines the graphic of the wolf based on its current condition and age.
@@ -349,13 +366,19 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param world The simulation world from which the wolf is deleted.
      */
     public void deleteMe(World world) {
-        if (alpha) {
-            for (Wolf wolf : pack){
-                wolf.setAlpha(null);
+        if (my_alpha == this) {
+            removeWolfFromPack(this);
+            world.delete(this);
+
+            if (!pack.isEmpty()) {
+                Wolf next_alpha = pack.get(0);
+
+                for (Wolf wolf : pack) {
+                    wolf.setAlpha(next_alpha);
+                }
             }
-            pack.clear();
-            has_pack = false;
-        } else if (has_pack && my_alpha != null) {
+
+        } else if (has_pack) {
             my_alpha.removeWolfFromPack(this);
         }
         world.delete(this);

@@ -103,7 +103,6 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         } else if (!isNight) exitBurrow(world);
 
         if (!in_hiding) nextMove(world);
-
     }
 
     /**
