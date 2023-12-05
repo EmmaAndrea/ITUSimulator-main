@@ -26,6 +26,7 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
         max_age = 190;
         max_hunger = 30;
         power = 6;
+        max_damage = 16;
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
     }
 

@@ -37,6 +37,7 @@ public abstract class Animal extends Organism {
     protected boolean wounded;
     protected int damage_taken;
     protected int power;
+    protected int max_damage;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -121,14 +122,16 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            herbivoreAct(world);
-            omnivoreAct(world);
-            carnivoreAct(world);
+            if (checkDamage()) {
+                herbivoreAct(world);
+                omnivoreAct(world);
+                carnivoreAct(world);
 
-            if (!in_hiding) {
-                breed(world);
-            }
-            return true;
+                if (!in_hiding) {
+                    breed(world);
+                }
+                return true;
+            } else return false;
         } else return false;
     }
 
@@ -420,7 +423,7 @@ public abstract class Animal extends Organism {
                             return true;
                         } else if (this instanceof Carnivore carnivore) {
                             if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                carnivore.attack(world, animal);
+                                if (hunger > 4) carnivore.attack(world, animal);
                                 return true;
                             }
                         }
@@ -431,7 +434,7 @@ public abstract class Animal extends Organism {
                         // If the organism has a higher trophic level than itself.
                     } else if (this instanceof Carnivore carnivore) {
                         if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                            carnivore.attack(world, animal);
+                            if (hunger > 4) carnivore.attack(world, animal);
                             return true;
                         }
                     }
@@ -463,7 +466,7 @@ public abstract class Animal extends Organism {
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Bush bush) {
                     if (consumable_foods.contains("bush")) {
-                        bush.eatBerries();
+                        if (hunger > 4) bush.eatBerries();
                         System.out.println(type + " ate berries");
                         return false;
                     }
@@ -492,7 +495,14 @@ public abstract class Animal extends Organism {
         return wounded;
     }
 
-    protected void attack(World world, Animal animal){
+    public void attack(World world, Animal animal){
 
+    }
+    public void damage(int power){
+        damage_taken += power;
+    }
+
+    public boolean checkDamage(){
+        return damage_taken <= max_damage;
     }
 }

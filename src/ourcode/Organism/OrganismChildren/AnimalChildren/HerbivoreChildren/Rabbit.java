@@ -41,6 +41,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         // Specifics for rabbit.
         has_burrow = false;
         my_burrows = new ArrayList<>();
+        max_damage = 8;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
     }
 
@@ -259,4 +260,5 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     public int getPower(){
         return power;
     }
+
 }

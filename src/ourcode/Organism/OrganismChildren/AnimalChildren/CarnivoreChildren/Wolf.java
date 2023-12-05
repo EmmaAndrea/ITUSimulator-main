@@ -47,6 +47,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         alpha = false;
         has_cave = false;
         power = 4;
+        max_damage = 12;
     }
 
     /**
@@ -97,23 +98,13 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void attack(World world, Animal animal) {
         if(alpha){
-            for(Wolf wolf : pack){
-                if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
-                    if(wolf != this) {
-                        if (world.getEntities().containsKey(wolf)) {
-                            wolf.attack(world, animal);
-                            return;
-                        }
-                        if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
-                            super.attack(world, animal);
-                            return;
-                        }
-                    }
-                }
+            for (Wolf wolf: pack){
+                //set pack hunt mode
             }
         }
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
             super.attack(world, animal);
+
         }
     }
 
