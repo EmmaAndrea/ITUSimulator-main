@@ -40,6 +40,9 @@ public class CaveTest {
         Cave cave1 = new Cave(id_generator);
         Cave cave2 = new Cave(id_generator);
 
+        world.add(cave1);
+        world.add(cave2);
+
         assertEquals(world.getEntities().size(), 2,
                 "the amount of caves in the world should be 3, but it is: " + world.getEntities().size());
     }
