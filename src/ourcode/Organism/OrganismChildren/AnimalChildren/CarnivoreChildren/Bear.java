@@ -78,8 +78,10 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
             if (gender == Gender.Male && age > 19 && mate == null) {
                 findMate(world);
             }
-
-            if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
+            if (distanceTo(world, territory) > 3) {
+                moveCloser(world, territory);
+            }
+            else if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
                 if (world.getLocation(this).equals(territory)) {
                     if (getRandomMoveLocation(world) != null) {
                         world.move(this, getRandomMoveLocation(world));
@@ -92,8 +94,6 @@ public class Bear extends Carnivore implements DynamicDisplayInformationProvider
                             world.move(this, getRandomMoveLocation(world));
                         }
                     }
-                } else if (distanceTo(world, territory) > 3) {
-                    moveCloser(world, territory);
                 } else if (getRandomMoveLocation(world) != null) {
                     world.move(this, getRandomMoveLocation(world));
                 }

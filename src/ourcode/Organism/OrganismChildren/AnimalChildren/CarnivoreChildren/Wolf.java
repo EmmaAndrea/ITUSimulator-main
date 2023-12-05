@@ -13,6 +13,7 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -40,7 +41,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         type = "wolf";
         trophic_level = 3;
         max_age = 130;
-        max_hunger = 21;
+        max_hunger = 28;
         has_pack = false;
         consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf"));
         alpha = false;
@@ -71,9 +72,14 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
             if (!has_cave && age > 8) {
                 if (alpha) createCave(world, id_generator);
             }
-            if (!alpha) {
-                moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
-            } else nextMove(world);
+            if (!alpha && my_alpha != null) {
+                if (distanceTo(world, world.getLocation(my_alpha)) > 2) {
+                    moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
+                }
+            } else if (hunger > 15) {
+                hunt(world);
+            }
+            else nextMove(world);
         }
     }
 
@@ -81,10 +87,64 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     public void attack(World world, Animal animal) {
         if(alpha){
             for(Wolf wolf : pack){
-                if (wolf != this) wolf.attack(world, animal);
+                if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
+                    if(wolf != this) {
+                        wolf.attack(world, animal);
+                        if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
+                            super.attack(world, animal);
+                        }
+                    }
+                }
             }
         }
-        super.attack(world, animal);
+        if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
+            super.attack(world, animal);
+        }
+    }
+
+    @Override
+    public void hunt(World world){
+        if(has_pack){
+            if (alpha) {
+                for (Wolf wolf : pack) {
+                    if (wolf.findFood(world) != null){
+                        attack(world, wolf.findFood(world));
+                    }
+                }
+            } else {
+                for (Wolf wolf : my_alpha.getPack()){
+                    if (wolf.findFood(world) != null){
+                        attack(world, wolf.findFood(world));
+                    }
+                }
+            }
+        } else {
+            super.hunt(world);
+        }
+    }
+
+    public Animal findFood(World world){
+        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
+
+        // First, check for blocking organisms.
+        // Though, if there is an animal of higher trophic level, move away from this animal.
+        for (Location location : surrounding_tiles) {
+
+            // If the tile at given location isn't empty.
+            if (!world.isTileEmpty(location)) {
+
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Animal animal) {
+                    if (consumable_foods.contains(animal.getType())) {
+                        return animal;
+                    }
+                }
+            }
+        }
+        return null;
     }
     /**
      * Creates a new pack with this wolf as the alpha. Initializes the pack and sets pack-related properties.
@@ -211,6 +271,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
         pack.remove(thewolf);
         thewolf.setHasNotPack();
+        thewolf.setAlpha(null);
     }
 
     /**
@@ -288,10 +349,13 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param world The simulation world from which the wolf is deleted.
      */
     public void deleteMe(World world) {
-        if (my_alpha == this) {
+        if (alpha) {
+            for (Wolf wolf : pack){
+                wolf.setAlpha(null);
+            }
             pack.clear();
             has_pack = false;
-        } else if (has_pack) {
+        } else if (has_pack && my_alpha != null) {
             my_alpha.removeWolfFromPack(this);
         }
         world.delete(this);
