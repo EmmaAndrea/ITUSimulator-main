@@ -35,6 +35,8 @@ public abstract class Animal extends Organism {
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
     protected boolean being_hunted;
     protected boolean wounded;
+    protected int damage_taken;
+    protected int power;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -51,6 +53,7 @@ public abstract class Animal extends Organism {
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         being_hunted = false;
         wounded = false;
+        damage_taken = 0;
     }
 
     /**
@@ -84,18 +87,17 @@ public abstract class Animal extends Organism {
             world.delete(world.getNonBlocking(world.getLocation(this)));
             System.out.println(this.getType() + this.getTrophicLevel() + " ate " + grass.getType());
         } if (object instanceof Animal animal) {
-                hunger -= animal.getNutritionalValue();
-                System.out.println(this.getType() + this.getTrophicLevel() + " ate " + animal.getType() + animal.getTrophicLevel());
-                if (animal instanceof Wolf wolf) {
-                    if (this instanceof Wolf thiswolf) {
-                        thiswolf.overtakePack(wolf);
-                    }
-                    wolf.deleteMe(world);
+            hunger -= animal.getNutritionalValue();
+            if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
+            System.out.println(this.getType() + this.getTrophicLevel() + " ate " + animal.getType() + animal.getTrophicLevel());
+            if (animal instanceof Wolf wolf) {
+                if (this instanceof Wolf thiswolf) {
+                    thiswolf.overtakePack(wolf);
                 }
-                else world.delete(animal);
+                wolf.deleteMe(world);
             }
-            wounded = false;
-
+            else world.delete(animal);
+        }
     }
 
     /**

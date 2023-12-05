@@ -37,7 +37,7 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
         nutritional_value = 4;
         max_age = 100;
         trophic_level = 2;
-
+        power = 2;
         // Specifics for rabbit.
         has_burrow = false;
         my_burrows = new ArrayList<>();
@@ -251,5 +251,12 @@ public class Rabbit extends Herbivore implements DynamicDisplayInformationProvid
     @Override
     public int getTrophicLevel() {
         return trophic_level;
+    }
+
+    public int getDamageTaken() {
+        return damage_taken;
+    }
+    public int getPower(){
+        return power;
     }
 }
