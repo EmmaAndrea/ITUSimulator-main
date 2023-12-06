@@ -1,5 +1,6 @@
 package ourcode.Test.Theme2;
 
+import itumulator.executable.Program;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -52,13 +53,20 @@ public class WolfTest {
         IDGenerator id = new IDGenerator();
 
         Wolf wolf1 = new Wolf(id);
+        wolf1.spawn(world);
+        System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
         Wolf wolf2 = new Wolf(id);
+        wolf2.spawn(world);
+        System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
 
         wolf1.createPack();
+        System.out.println("a wolf pack has been made and has a size of: " + wolf1.getPack().size());
         wolf1.addWolfToPack(wolf2);
+        System.out.println("a wolf has been added to the pack");
 
         assertEquals(wolf1.getPack().size(), 2,
                 "The size of the wolf pack list should be 2, but it is: " + wolf1.getPack().size());
+        System.out.println("the amount of wolves in the pack is: " + wolf1.getPack().size());
     }
 
     /**
@@ -71,12 +79,21 @@ public class WolfTest {
         IDGenerator idGenerator = new IDGenerator();
 
         Wolf wolf1 = new Wolf(idGenerator);
+        wolf1.spawn(world);
+        System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
         Wolf wolf2 = new Wolf(idGenerator);
+        wolf2.spawn(world);
+        System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
 
         wolf1.createPack();
-        wolf1.addWolfToPack(wolf1);
+        System.out.println("wolf1 created a pack with a size of: " + wolf1.getPack().size());
+        wolf1.addWolfToPack(wolf2);
+        System.out.println("wolf1 added wolf2, the packs size is: " + wolf1.getPack().size());
+        System.out.println("wolf2 is now in a pack and 'has_pack boolean is '" + wolf2.getHasPack() + "'");
 
         wolf1.removeWolfFromPack(wolf2);
+        System.out.println("wolf2 was removed by wolf1 from the pack and the size of the pack is: " + wolf1.getPack().size());
+        System.out.println("wolf2 currently doesn't have a pack and 'has_pack' boolean is '" + wolf2.getHasPack() + "'");
 
         assertEquals(wolf1.getPack().size(), 1,
                 "The size of the pack after removing a wolf should be 1, but is: " + wolf1.getPack().size());
@@ -95,10 +112,19 @@ public class WolfTest {
         IDGenerator idGenerator = new IDGenerator();
 
         Wolf wolf1 = new Wolf(idGenerator);
+        wolf1.spawn(world);
+        System.out.println("wolf1 added to the world, the amount of entities are: " + world.getEntities().size());
         Wolf wolf2 = new Wolf(idGenerator);
+        wolf2.spawn(world);
+        System.out.println("wolf2 added to the world, the amount of entities are: " + world.getEntities().size());
         Wolf wolf3 = new Wolf(idGenerator);
+        wolf3.spawn(world);
+        System.out.println("wolf3 added to the world, the amount of entities are: " + world.getEntities().size());
 
+        System.out.println("wolf1 doesn't have a pack and 'has_pack' is " + wolf1.getHasPack());
         wolf1.createPack();
+        System.out.println("wolf1 created a pack, wolf1's 'has_pack' boolean is " + wolf1.getHasPack());
+        System.out.println("the size of wolf1's pack is " + wolf1.getPack().size());
         wolf1.addWolfToPack(wolf2);
 
         wolf3.overtakePack(wolf1);
@@ -195,5 +221,13 @@ public class WolfTest {
         assertEquals(wolf1.getMy_cave().getResidents().size(), 0,
                 "the amount of wolves in the cave should be 0, but is: "
                          + wolf1.getMy_cave().getResidents().size());
+    }
+
+    @Test
+    public void testWolves() throws Exception {
+        Program program = new Program(4, 100, 500);
+        world = programRunner.getWorld();
+        programRunner.runSimulation(20);
+
     }
 }
