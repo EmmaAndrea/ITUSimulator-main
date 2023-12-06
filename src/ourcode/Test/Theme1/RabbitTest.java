@@ -231,7 +231,7 @@ public class RabbitTest {
     }
 
     @org.testng.annotations.Test
-    public void testRabbit4() throws Exception{
+    public void testRabbitGoesIntoBurrowAtNight() throws Exception{
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
 

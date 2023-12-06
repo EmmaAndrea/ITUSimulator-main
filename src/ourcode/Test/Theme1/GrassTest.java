@@ -90,7 +90,7 @@ public class GrassTest {
      * and didn't crash the program
      */
     @Test
-    public void testRabbitonGrass() throws Exception {
+    public void testRabbitStandingOnGrassTile() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
 
