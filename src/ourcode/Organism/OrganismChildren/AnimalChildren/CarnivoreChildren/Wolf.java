@@ -6,7 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.Animal;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
@@ -20,7 +20,7 @@ import java.util.Set;
  * Wolves have unique behaviors such as forming packs, having an alpha wolf,
  * and different interactions based on their pack status and trophic level.
  */
-public class Wolf extends Carnivore implements DynamicDisplayInformationProvider {
+public class Wolf extends Predator implements DynamicDisplayInformationProvider {
 
     protected ArrayList<Wolf> pack; // The pack of wolves to which this wolf belongs.
     public boolean has_pack; // Indicates whether this wolf is part of a pack.

@@ -5,7 +5,7 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Herbivore;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
@@ -19,7 +19,7 @@ import java.util.Random;
  * Rabbits are a type of Herbivore, characterized by their interactions with burrows.
  * They have unique behaviors like seeking burrows for shelter and foraging for food.
  */
-public class Rabbit extends Herbivore implements DynamicDisplayInformationProvider {
+public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
     ArrayList <Burrow> my_burrows;
     boolean has_burrow; // Indicates whether the rabbit has a burrow.

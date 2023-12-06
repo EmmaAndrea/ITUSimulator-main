@@ -5,7 +5,7 @@ import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -424,9 +424,9 @@ public abstract class Animal extends Organism {
                             moveAway(world, location);
                             being_hunted = true;
                             return true;
-                        } else if (this instanceof Carnivore carnivore) {
+                        } else if (this instanceof Predator predator) {
                             if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger > 4) carnivore.attack(world, animal);
+                                if (hunger > 4) predator.attack(world, animal);
                                 return true;
                             }
                         }
@@ -435,9 +435,9 @@ public abstract class Animal extends Organism {
                         being_hunted = true;
                         return true;
                         // If the organism has a higher trophic level than itself.
-                    } else if (this instanceof Carnivore carnivore) {
+                    } else if (this instanceof Predator predator) {
                         if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                            if (hunger > 4) carnivore.attack(world, animal);
+                            if (hunger > 4) predator.attack(world, animal);
                             return true;
                         }
                     }

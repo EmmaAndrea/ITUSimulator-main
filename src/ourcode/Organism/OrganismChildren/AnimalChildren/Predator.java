@@ -3,7 +3,6 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Setup.IDGenerator;
 
 import java.util.Set;
@@ -13,14 +12,14 @@ import java.util.Set;
  * other food than meat. Carnivores will typically hunt their prey and be fed through the prey's
  * sustenance.
  */
-public abstract class Carnivore extends Animal {
+public abstract class Predator extends Animal {
     protected boolean is_sleeping;
 
     /**
      * the constructor of a Carnivore, will call 'super()' from the Animal class.
      * @param original_id_generator idGenerator that creates the ID for the entity.
      */
-    public Carnivore(IDGenerator original_id_generator) {
+    public Predator(IDGenerator original_id_generator) {
         super(original_id_generator);
         is_sleeping = false;
     }
