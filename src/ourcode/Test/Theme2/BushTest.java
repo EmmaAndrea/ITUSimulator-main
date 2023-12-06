@@ -98,7 +98,8 @@ public class BushTest {
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;
             bush.act(world);
+            System.out.println("the amount of berries are: " + bush.getBerries());
         }
-        Assertions.assertTrue(bush.getBerries() < 3, "bushAct should grow the amount of berries");
+        Assertions.assertTrue(bush.getBerries() == 3, "bushAct should grow the amount of berries");
     }
 }
