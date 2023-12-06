@@ -40,7 +40,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         power = 2;
         // Specifics for rabbit.
         has_burrow = false;
-        my_burrows = new ArrayList<>();
         max_damage = 8;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
     }
@@ -63,50 +62,46 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
+        if (has_burrow){
+            if (my_burrows.isEmpty()) has_burrow = false;
+        }
         boolean isCloseToBurrow = false;
 
         boolean isNight = timeToNight(world) == 0;
 
         // get a burrow
-        if (my_burrows.isEmpty()){
+        if (!has_burrow && !being_eaten){
             acquireBurrow(world);
-            if (my_burrows.isEmpty()){
-                nextMove(world);
-                return;
-            }
         }
 
         // if it is not in its burrow
-        if (!in_hiding && !my_burrows.isEmpty() && world.getEntities().containsKey(this)) {
+        if (!in_hiding && has_burrow && !being_eaten) {
             if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
                 isCloseToBurrow = true;
             }
-            if (being_hunted) {
-                if (isCloseToBurrow) {
+            if (isNight) {
+
+                if (isCloseToBurrow && !being_eaten) {
                     enterBurrow(world);
-                    being_hunted = false;
-                    return;
+
+                } else {
+                    if (world.getEntities().containsKey(this) && !being_eaten) {
+                        moveCloser(world, world.getLocation(my_burrows.get(0)));
+                    }
                 }
-            }
-            else if (isNight) {
 
-                if (isCloseToBurrow) {
-                    enterBurrow(world);
-
-                } else moveCloser(world, world.getLocation(my_burrows.get(0)));
-
-            } else if (timeToNight(world) < 5) {
+            } else if (timeToNight(world) < 5 && !being_eaten) {
                 moveCloser(world, world.getLocation(my_burrows.get(0)));
                 return;
             }
 
             // if it is in the burrow
-        } else if (!isNight) {
+        } else if (!isNight && has_burrow) {
             exitBurrow(world);
             return;
         }
 
-        if (!in_hiding) nextMove(world);
+        if (!in_hiding && !being_eaten) nextMove(world);
     }
 
     /**
@@ -116,24 +111,27 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      * @param world The simulation world where the burrow acquisition occurs.
      */
     public void acquireBurrow(World world) {
+
         // Removes whatever nonblocking it’s standing on if there is one.
         if (age > 5 ){
             if (world.containsNonBlocking(world.getLocation(this))) {
                 // Remove the nonblocking tile from id_generators lists
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
-                    world.delete(world.getNonBlocking(world.getLocation(this)));
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                    world.delete(grass);
                     // Instantiates new burrow and sets the tile with current location.
-                } else {
-                my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
-                has_burrow = true;
-                return;
-                }
+                } else if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow burrow) {
+                    my_burrows = new ArrayList<>();
+                    my_burrows.add(0, burrow);
+                    has_burrow = true;
+                    return;
+                } else return;
             }
             Burrow newburrow = new Burrow(id_generator);
             world.setTile(world.getLocation(this), newburrow);
 
+            my_burrows = new ArrayList<>();
             // Rabbit now has a personal burrow.
-            my_burrows.add(newburrow);
+            my_burrows.add(0, newburrow);
 
             // Set rabbit’s boolean has_burrow to be true.
             has_burrow = true;
@@ -146,8 +144,9 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
         } else {
             if (world.containsNonBlocking(world.getLocation(this))) {
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow) {
-                    my_burrows.add(0, id_generator.getBurrow(world.getLocation(this)));
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow burrow) {
+                    my_burrows = new ArrayList<>();
+                    my_burrows.add(0, burrow);
                     has_burrow = true;
                 }
             }

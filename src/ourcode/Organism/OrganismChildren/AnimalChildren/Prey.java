@@ -26,7 +26,7 @@ public abstract class Prey extends Animal {
      */
     @Override
     public void herbivoreAct(World world) {
-        if (world.getEntities().containsKey(this)) {
+        if (world.getEntities().containsKey(this) && !being_eaten) {
             // If the herbivore is not currently in a burrow.
             if (!in_hiding) {
 

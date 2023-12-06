@@ -37,6 +37,7 @@ public abstract class Animal extends Organism {
     protected int damage_taken;
     protected int power;
     protected int max_damage;
+    protected boolean being_eaten;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -85,22 +86,24 @@ public abstract class Animal extends Organism {
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
             // check
-            System.out.println(this.getType() + this.getTrophicLevel() + " ate " + grass.getType());
+            System.out.println(this.getType() + " " + this.getId() + " ate " + grass.getId());
         } else if (object instanceof Animal animal) {
-            // takes off hunger by eating
-            hunger -= animal.getNutritionalValue();
-            // gives back damage by eating
-            if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
-            // check
-            System.out.println(this.getType() + this.getTrophicLevel() + " ate " + animal.getType() + animal.getTrophicLevel());
-            // mmakes sure wolf is deleted properly
-            if (animal instanceof Wolf wolf) {
-                if (this instanceof Wolf thiswolf) {
-                    if(wolf.checkAlpha()) thiswolf.overtakePack(wolf);
-                }
-                wolf.deleteMe(world);
+            synchronized (animal) {
+                animal.setBeingEaten(true);
+                // takes off hunger by eating
+                hunger -= animal.getNutritionalValue();
+                // gives back damage by eating
+                if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
+                // check
+                System.out.println(this.getType() + this.getId() + " ate " + animal.getType() + animal.getId());
+                // mmakes sure wolf is deleted properly
+                if (animal instanceof Wolf wolf) {
+                    if (this instanceof Wolf thiswolf) {
+                        if (wolf.checkAlpha()) thiswolf.overtakePack(wolf);
+                    }
+                    wolf.deleteMe(world);
+                } else world.delete(animal);
             }
-            else world.delete(animal);
         }
     }
 
@@ -115,6 +118,7 @@ public abstract class Animal extends Organism {
     @Override
     public boolean animalAct(World world) {
 
+
         // Adds hunger if it is not sleeping/hiding.
         if (!in_hiding) {
             hunger++;
@@ -125,7 +129,7 @@ public abstract class Animal extends Organism {
 
         // Checks if it dies of hunger; if not, move, breed if possible, and go to next step in act process: herbivoreAct.
         if (checkHunger()) {
-            if (checkDamage()) {
+            if (checkDamage() && world.getEntities().containsKey(this)) {
                 herbivoreAct(world);
                 omnivoreAct(world);
                 carnivoreAct(world);
@@ -285,10 +289,12 @@ public abstract class Animal extends Organism {
      */
     public void nextMove(World world) {
         // check for food nearby
-        if (!findFoodOrSafety(world)) {
-            // If no food or danger is found, move randomly.
-            if (getRandomMoveLocation(world) != null) {
-                world.move(this, getRandomMoveLocation(world));
+        if (world.getEntities().containsKey(this)) {
+            if (!findFoodOrSafety(world)) {
+                // If no food or danger is found, move randomly.
+                if (getRandomMoveLocation(world) != null) {
+                    world.move(this, getRandomMoveLocation(world));
+                }
             }
         }
     }
@@ -425,9 +431,11 @@ public abstract class Animal extends Organism {
                             being_hunted = true;
                             return true;
                         } else if (this instanceof Predator predator) {
-                            if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger > 4) predator.attack(world, animal);
-                                return true;
+                            synchronized (predator) {
+                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                                    if (hunger > 4) predator.attack(world, animal);
+                                    return true;
+                                }
                             }
                         }
                     } else if (animal.getTrophicLevel() > trophic_level) {
@@ -436,9 +444,11 @@ public abstract class Animal extends Organism {
                         return true;
                         // If the organism has a higher trophic level than itself.
                     } else if (this instanceof Predator predator) {
-                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                            if (hunger > 4) predator.attack(world, animal);
-                            return true;
+                        synchronized (predator) {
+                            if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                                if (hunger > 4) predator.attack(world, animal);
+                                return true;
+                            }
                         }
                     }
                 }
@@ -455,7 +465,7 @@ public abstract class Animal extends Organism {
                         if (world.containsNonBlocking(world.getLocation(this))) {
                             if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
                                 if (hunger >= 2) {
-                                    eat(world, grass);
+                                    if (world.getEntities().containsKey(this)) eat(world, grass);
                                     return true;
                                 }
                             }
@@ -501,5 +511,9 @@ public abstract class Animal extends Organism {
 
     public boolean checkDamage(){
         return damage_taken <= max_damage;
+    }
+
+    public void setBeingEaten(Boolean b){
+        being_eaten = b;
     }
 }

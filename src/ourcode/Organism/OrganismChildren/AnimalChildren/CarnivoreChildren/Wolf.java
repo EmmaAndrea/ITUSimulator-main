@@ -88,12 +88,16 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             exitCave(world);
         }
 
+
         if (!in_hiding) {
             if (pack_hunting && world.getEntities().containsKey(my_alpha)){
                 if(my_alpha != null) {
                     if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                         moveCloser(world, world.getLocation(my_alpha));
-                    } hunt(world);
+                    }
+                    hunt(world);
+                    nextMove(world);
+                    return;
                 }
             }
             if (alpha) {
@@ -198,10 +202,13 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public void createCave(World world, IDGenerator id_generator) {
         Location location = world.getLocation(this);
-        Object tile = world.containsNonBlocking(location) ? world.getNonBlocking(location) : null;
 
-        if (tile instanceof Grass) {
-            world.delete(tile);
+        if (world.containsNonBlocking(location)) {
+            if (world.getNonBlocking(location) instanceof Grass grass) {
+                //grass.setExists(false)
+                world.delete(grass);
+            }
+            else return;
         }
 
         Cave cave = new Cave(id_generator);
