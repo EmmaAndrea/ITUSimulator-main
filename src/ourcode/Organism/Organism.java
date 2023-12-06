@@ -10,6 +10,7 @@ import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.Random;
+import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a generic organism in a simulation environment.
@@ -22,6 +23,8 @@ public abstract class Organism extends Entity implements Actor {
 
     protected int trophic_level;
 
+    private final ReentrantLock lock;
+
     /**
      * Constructor for an Organism, the parent class for all life on the world.
      * Needs an IDGenerator and a type of organism.
@@ -29,6 +32,7 @@ public abstract class Organism extends Entity implements Actor {
     public Organism(IDGenerator original_id_generator) {
         super(original_id_generator);
         nutritional_value = 2;
+        lock = new ReentrantLock();
     }
 
     /**
@@ -41,17 +45,19 @@ public abstract class Organism extends Entity implements Actor {
         if (age > max_age) {
             world.delete(this);
         } else {
-            // Checks if the organism still should be alive after running act method.
-            // before: world.getEntities().containsKey(this)
-            if (animalAct(world)) {
-                // then run the plant methods
-                plantAct(world);
-            } else {
-                //delete the animal if animalAct returns false
-                System.out.println(type + " died");
-                if (this instanceof Wolf wolf) wolf.deleteMe(world);
-                else world.delete(this);
-            }
+            lock.lock();
+                // Checks if the organism still should be alive after running act method.
+                // before: world.getEntities().containsKey(this)
+                if (animalAct(world)) {
+                    // then run the plant methods
+                    plantAct(world);
+                } else {
+                    //delete the animal if animalAct returns false
+                    System.out.println(type + " died");
+                    if (this instanceof Wolf wolf) wolf.deleteMe(world);
+                    else world.delete(this);
+                }
+            lock.unlock();
         }
     }
 

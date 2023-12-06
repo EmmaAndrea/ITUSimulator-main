@@ -39,6 +39,8 @@ public abstract class Animal extends Organism {
     protected int max_damage;
     protected boolean being_eaten;
 
+    protected int grace_period;
+
     /**
      * Constructs a new Animal with a unique identifier.
      * Initializes hunger levels, breeding steps, hiding state, and randomly assigns gender.
@@ -54,57 +56,7 @@ public abstract class Animal extends Organism {
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         being_hunted = false;
         damage_taken = 0;
-    }
-
-    /**
-     * Calculates and returns the nutritional value of the organism the animal is currently standing on.
-     *
-     * @param world The world in which the animal exists.
-     * @return The nutritional value of the organism at the current location.
-     */
-    public int getStandingOnNutritionalValue(World world) {
-        Entity entity = id_generator.getGrass(world.getLocation(this));
-
-        if (entity instanceof Organism organism) {
-            return organism.getNutritionalValue();
-        }
-
-        // Handle the case where the entity is not an Organism (e.g., return a default value or throw an exception)
-        return 0; // Or handle this scenario appropriately
-    }
-
-    /**
-     * Enables the animal to eat, reducing its hunger based on the nutritional value of the organism consumed.
-     * The consumed organism is removed from the world.
-     *
-     * @param world The world in which the animal and its food source exist.
-     */
-    public void eat(World world, Object object) {
-        // Deducts the animal's hunger with the nutritional value of the eaten organism.
-        if (object instanceof Grass grass) {
-            hunger -= 2;
-            // Deletes the eaten organism from the world.
-            world.delete(world.getNonBlocking(world.getLocation(this)));
-            // check
-            System.out.println(this.getType() + " " + this.getId() + " ate " + grass.getId());
-        } else if (object instanceof Animal animal) {
-            synchronized (animal) {
-                animal.setBeingEaten(true);
-                // takes off hunger by eating
-                hunger -= animal.getNutritionalValue();
-                // gives back damage by eating
-                if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
-                // check
-                System.out.println(this.getType() + this.getId() + " ate " + animal.getType() + animal.getId());
-                // mmakes sure wolf is deleted properly
-                if (animal instanceof Wolf wolf) {
-                    if (this instanceof Wolf thiswolf) {
-                        if (wolf.checkAlpha()) thiswolf.overtakePack(wolf);
-                    }
-                    wolf.deleteMe(world);
-                } else world.delete(animal);
-            }
-        }
+        grace_period = 0;
     }
 
     /**
@@ -117,7 +69,6 @@ public abstract class Animal extends Organism {
 
     @Override
     public boolean animalAct(World world) {
-
 
         // Adds hunger if it is not sleeping/hiding.
         if (!in_hiding) {
@@ -170,6 +121,40 @@ public abstract class Animal extends Organism {
     public void omnivoreAct(World world) {
     }
 
+    /**
+     * Enables the animal to eat, reducing its hunger based on the nutritional value of the organism consumed.
+     * The consumed organism is removed from the world.
+     *
+     * @param world The world in which the animal and its food source exist.
+     */
+    public void eat(World world, Object object) {
+        // Deducts the animal's hunger with the nutritional value of the eaten organism.
+        if (object instanceof Grass grass) {
+            hunger -= 2;
+            // Deletes the eaten organism from the world.
+            world.delete(world.getNonBlocking(world.getLocation(this)));
+            // check
+            System.out.println(this.getType() + " " + this.getId() + " ate " + grass.getId());
+        } else if (object instanceof Animal animal) {
+            synchronized (animal) {
+                if (animal.getGracePeriod() == 0) {
+                    // takes off hunger by eating
+                    hunger -= animal.getNutritionalValue();
+                    // gives back damage by eating
+                    if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
+                    // check
+                    System.out.println(this.getType() + this.getId() + " ate " + animal.getType() + animal.getId());
+                    // mmakes sure wolf is deleted properly
+                    if (animal instanceof Wolf wolf) {
+                        if (this instanceof Wolf thiswolf) {
+                            if (wolf.checkAlpha()) thiswolf.overtakePack(wolf);
+                        }
+                        wolf.deleteMe(world);
+                    } else world.delete(animal);
+                }
+            }
+        }
+    }
     /**
      * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
      * Creates and spawns a new entity of the same type as this animal.
@@ -515,5 +500,25 @@ public abstract class Animal extends Organism {
 
     public void setBeingEaten(Boolean b){
         being_eaten = b;
+    }
+    /**
+     * Calculates and returns the nutritional value of the organism the animal is currently standing on.
+     *
+     * @param world The world in which the animal exists.
+     * @return The nutritional value of the organism at the current location.
+     */
+    public int getStandingOnNutritionalValue(World world) {
+        Entity entity = id_generator.getGrass(world.getLocation(this));
+
+        if (entity instanceof Organism organism) {
+            return organism.getNutritionalValue();
+        }
+
+        // Handle the case where the entity is not an Organism (e.g., return a default value or throw an exception)
+        return 0; // Or handle this scenario appropriately
+    }
+
+    public int getGracePeriod(){
+        return grace_period;
     }
 }

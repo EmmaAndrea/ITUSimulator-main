@@ -23,7 +23,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
     ArrayList <Burrow> my_burrows;
     boolean has_burrow; // Indicates whether the rabbit has a burrow.
-
     /**
      * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
      * sets up its relationship with burrows.
@@ -62,6 +61,9 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         // Gets older and hungrier and dies if too old or hungry.
         super.herbivoreAct(world);
 
+        if (grace_period == 1 && !in_hiding) {
+            grace_period = 0;
+        }
         if (has_burrow){
             if (my_burrows.isEmpty()) has_burrow = false;
         }
@@ -160,6 +162,8 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      */
     public void enterBurrow(World world) {
         // If it has not been assigned a burrow.
+        grace_period = 1;
+
         if (my_burrows.isEmpty()) {
 
             // Sets its personal burrow to be the burrow it enters.
@@ -257,6 +261,10 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     }
     public int getPower(){
         return power;
+    }
+    @Override
+    public int getGracePeriod(){
+        return grace_period;
     }
 
 }
