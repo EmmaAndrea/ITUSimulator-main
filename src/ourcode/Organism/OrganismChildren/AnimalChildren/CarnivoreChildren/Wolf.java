@@ -89,7 +89,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
 
         if (!in_hiding) {
-            if (pack_hunting){
+            if (pack_hunting) {
                 if (distanceTo(world, world.getLocation(my_alpha)) > 2) {
                     moveCloser(world, world.getLocation(my_alpha));
                 } else {
@@ -120,11 +120,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
 
     }
-
-
-
-
-
 
     @Override
     public void attack(World world, Animal animal) {
