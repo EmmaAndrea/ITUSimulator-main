@@ -9,9 +9,9 @@ import ourcode.Setup.IDGenerator;
  * The Herbivore class gives the abstraction of the types of animals who are non-meat eaters.
  */
 
-public abstract class Herbivore extends Animal {
+public abstract class Prey extends Animal {
 
-    public Herbivore(IDGenerator original_id_generator) {
+    public Prey(IDGenerator original_id_generator) {
         super(original_id_generator);
         trophic_level = 2;
     }

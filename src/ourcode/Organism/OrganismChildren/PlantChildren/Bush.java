@@ -25,7 +25,7 @@ public class Bush extends Plant implements DynamicDisplayInformationProvider {
     }
 
     public void grow() {
-        berries =+ 3;
+        berries += 3;
     }
 
     public int getBerries() {
@@ -33,7 +33,7 @@ public class Bush extends Plant implements DynamicDisplayInformationProvider {
     }
 
     public void eatBerries() {
-        berries =-3;
+        berries -= 3;
     }
 
     @Override

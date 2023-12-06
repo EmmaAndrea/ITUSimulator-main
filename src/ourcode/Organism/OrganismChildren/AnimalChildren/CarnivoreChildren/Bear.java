@@ -5,14 +5,14 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.Gender;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Bear extends Carnivore implements DynamicDisplayInformationProvider {
+public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
     protected Location territory;
 

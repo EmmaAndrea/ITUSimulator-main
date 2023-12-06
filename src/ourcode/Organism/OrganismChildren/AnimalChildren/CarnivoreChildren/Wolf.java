@@ -6,7 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.Animal;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Carnivore;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
@@ -20,7 +20,7 @@ import java.util.Set;
  * Wolves have unique behaviors such as forming packs, having an alpha wolf,
  * and different interactions based on their pack status and trophic level.
  */
-public class Wolf extends Carnivore implements DynamicDisplayInformationProvider {
+public class Wolf extends Predator implements DynamicDisplayInformationProvider {
 
     protected ArrayList<Wolf> pack; // The pack of wolves to which this wolf belongs.
     public boolean has_pack; // Indicates whether this wolf is part of a pack.
@@ -49,7 +49,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         alpha = false;
         has_cave = false;
         power = 4;
-        max_damage = 12;
+        max_damage = 16;
         pack_hunting = false;
     }
 
@@ -62,7 +62,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     @Override
     public void carnivoreAct(World world) {
         //System.out.println("wolf " + id + " pack: " + my_alpha.getPack().toString());
-        if (has_pack && my_alpha.getPack() == null) {
+        if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
             System.out.println("deleted");
         }
@@ -89,11 +89,11 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         }
 
         if (!in_hiding) {
-            if (pack_hunting) {
-                if (distanceTo(world, world.getLocation(my_alpha)) > 2) {
-                    moveCloser(world, world.getLocation(my_alpha));
-                } else {
-                    hunt(world);
+            if (pack_hunting && world.getEntities().containsKey(my_alpha)){
+                if(my_alpha != null) {
+                    if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
+                        moveCloser(world, world.getLocation(my_alpha));
+                    } hunt(world);
                 }
             }
             if (alpha) {
@@ -104,10 +104,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
                     for (Wolf wolf : pack) {
                         wolf.setPackHunting();
                     }
-                }
+                } else nextMove(world);
             }
             if (!alpha) {
-                if (my_alpha != null) {
+                if (world.getEntities().containsKey(my_alpha)) {
                     if (hunger > 15) {
                         for (Wolf wolf : my_alpha.getPack()) {
                             wolf.setPackHunting();
@@ -115,16 +115,26 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
                     } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                         moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
                     }
-                }
-            } else nextMove(world);
+                } else nextMove(world);
+            }
         }
 
     }
 
+
+
+
+
+
     @Override
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
-            super.attack(world, animal);
+            if (animal instanceof Wolf wolf) {
+                if(wolf.getDamageTaken() > 7) {
+                    if (alpha) this.overtakePack(wolf);
+                }
+            }
+            else super.attack(world, animal);
         }
     }
 
@@ -274,6 +284,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_pack = false;
         alpha = false;
         trophic_level = 3;
+        pack = null;
     }
 
     /**
@@ -285,6 +296,7 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         if (pack.size() == 4) {
             for (Wolf wolf : pack) {
                 wolf.setTrophicLevel(3);
+                wolf.setPackNotHunting();
             }
         }
         pack.remove(thewolf);
@@ -300,7 +312,10 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     public void overtakePack(Wolf oldwolf) {
         if (oldwolf.getPack() != null) {
             pack = new ArrayList<>();
-            pack.addAll(oldwolf.getPack());
+            for (Wolf wolf : oldwolf.getPack()) {
+                addWolfToPack(wolf);
+            }
+            addWolfToPack(this);
             has_pack = true;
             alpha = true;
             removeWolfFromPack(oldwolf);
@@ -381,17 +396,19 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
      * @param world The simulation world from which the wolf is deleted.
      */
     public void deleteMe(World world) {
-        if (my_alpha == this) {
-            removeWolfFromPack(this);
-
+        if(alpha){
             if (!pack.isEmpty()) {
-                Wolf next_alpha = pack.get(0);
+                int i = 0;
+                while (pack.get(i) == this){
+                    i++;
+                }
+                Wolf next_alpha = pack.get(i);
 
                 for (Wolf wolf : pack) {
                     wolf.setAlpha(next_alpha);
+                    wolf.overtakePack(this);
                 }
             }
-
         } else if (has_pack && pack != null) {
             my_alpha.removeWolfFromPack(this);
         }
@@ -403,7 +420,6 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
         has_pack = false;
         alpha = false;
         my_alpha = null;
-
     }
 
     /**
@@ -431,5 +447,8 @@ public class Wolf extends Carnivore implements DynamicDisplayInformationProvider
     }
     public void setPackNotHunting(){
         pack_hunting = false;
+    }
+    public boolean checkAlpha(){
+        return alpha;
     }
 }
