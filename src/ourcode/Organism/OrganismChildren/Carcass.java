@@ -14,6 +14,8 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected boolean rotten;
     protected boolean hasFungus;
 
+
+
     protected int size;
     public Carcass(IDGenerator idGenerator, int nutritionalValue, String type) {
         super(idGenerator);
