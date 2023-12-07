@@ -28,8 +28,6 @@ public abstract class Entity {
     // Boolean to check if an entity has been killed
     protected boolean hasBeenKilled;
 
-    protected int trophic_level;
-
     /**
      * Constructor for an Entity, gives them an identity, sets 'age' to 1 and the 'hasBeenKilled' boolean to 'false'
      */
@@ -93,23 +91,5 @@ public abstract class Entity {
         } else {
             return 10 - world.getCurrentTime() % 20;
         }
-    }
-
-    // javadoc???
-    public int time(World world) {
-        if (world.getCurrentTime() <= 10){
-            return 0;
-        } else {
-            return world.getCurrentTime();
-        }
-    }
-
-    /**
-     * Returns the trophic level of the entity.
-     * This integer describes the entity's place in the food chain.
-     * @return trophic level.
-     */
-    public int getTrophicLevel() {
-        return trophic_level;
     }
 }

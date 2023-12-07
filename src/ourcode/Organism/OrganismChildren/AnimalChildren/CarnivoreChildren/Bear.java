@@ -66,7 +66,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             }
         }
 
-        if (time(world) == 12) {
+        if (world.getCurrentTime() == 12) {
             if (distanceTo(world, territory_location) < 2) {
                 is_sleeping = true;
                 System.out.println("bear asleep");

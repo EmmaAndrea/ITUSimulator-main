@@ -56,7 +56,7 @@ public class BearTest {
         Bear bear = new Bear(id_generator, false);
         bear.spawn(world);
 
-        bear.setTerritory(world.getLocation(bear));
+        bear.setTerritoryLocation(world.getLocation(bear));
 
         Assertions.assertSame(bear.getTerritory(), world.getLocation(bear));
     }

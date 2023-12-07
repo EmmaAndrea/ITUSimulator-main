@@ -166,4 +166,13 @@ public abstract class Organism extends Entity implements Actor {
         // Return null if there are no surrounding free locations.
         return null;
     }
+
+    /**
+     * Returns the trophic level of the entity.
+     * This integer describes the entity's place in the food chain.
+     * @return trophic level.
+     */
+    public int getTrophicLevel() {
+        return trophic_level;
+    }
 }

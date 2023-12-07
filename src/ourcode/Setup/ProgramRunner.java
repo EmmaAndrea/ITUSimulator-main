@@ -99,7 +99,7 @@ public class ProgramRunner {
         String beartype = "bear" + i;
         if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
             Bear bear = (Bear) entity;
-            bear.setTerritory(input_reader.getTerritory(beartype));
+            bear.setTerritoryLocation(input_reader.getTerritory(beartype));
         }
     }
 
