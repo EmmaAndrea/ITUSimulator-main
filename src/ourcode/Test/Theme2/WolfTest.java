@@ -179,8 +179,8 @@ public class WolfTest {
 
         wolf1.createCave(world, id_generator);
 
-        wolf1.enterCave(world);
-        wolf2.enterCave(world);
+        wolf1.enterHabitat(world);
+        wolf2.enterHabitat(world);
 
         assertEquals(wolf1.getMyCave().getResidents().size(), 2,
                 "the amount of wolfs in the cave should be 2, but there is: "
@@ -211,8 +211,8 @@ public class WolfTest {
         wolf1.createCave(world, id_generator);
 
         // should add two wolves to the cave's residents, works from previous testing
-        wolf1.enterCave(world);
-        wolf2.enterCave(world);
+        wolf1.enterHabitat(world);
+        wolf2.enterHabitat(world);
 
         wolf1.exitCave(world);
         wolf1.nextMove(world);
@@ -251,7 +251,7 @@ public class WolfTest {
     }
 
     @Test
-    public void testWolfBreedingMethod() {
+    public void testWolfBreedingMethod() throws Exception {
         Program p = new Program(20,800,500);
         IDGenerator id_generator = new IDGenerator();
         world = p.getWorld();
@@ -270,10 +270,10 @@ public class WolfTest {
         wolf1.addWolfToPack(wolf2);
 
         wolf1.createCave(world, id_generator);
-        wolf1.enterCave(world);
-        wolf2.enterCave(world);
+        wolf1.enterHabitat(world);
+        wolf2.enterHabitat(world);
         int prev = wolf1.getMyCave().getResidents().size();
-        wolf1.breedWolf(id_generator, wolf1.getMyCave().getResidents());
+        wolf1.breed(world);
         int post = wolf1.getMyCave().getResidents().size();
 
         assertTrue(prev < post, "the amount of residents in the cave should increase post breed");

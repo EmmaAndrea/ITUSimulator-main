@@ -5,7 +5,6 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
-import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -55,14 +54,21 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         this.has_cordyceps = has_cordyceps;
     }
 
+
+    @Override
+    public void act(World world) {
+        super.act(world);
+
+    }
+
     /**
      * Defines the behavior of a wolf in each simulation step. This includes pack behavior,
      * nighttime activities such as sleeping, and movement during the day.
      *
      * @param world The simulation world in which the wolf exists.
      */
-    @Override
-    public void carnivoreAct(World world) {
+    /*
+    public void carnivoreAct(World world) throws Exception {
         // if wolf has an alpha and the pack does not exist, delete pack
         if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
@@ -85,7 +91,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         // else, if checkBreed, breed
         if (world.getCurrentTime() == 1 && has_cave && !pack_hunting && !in_hiding) {
             if (distanceTo(world, world.getLocation(my_cave)) <= 1) {
-                enterCave(world);
+                enterHabitat(world);
             } else {
                 moveCloser(world, world.getLocation(my_cave));
             }
@@ -94,8 +100,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         } else if (in_hiding && pack_hunting) {
             exitCave(world);
         } else if (in_hiding) {
-            if (checkBreedWolf()) {
-                breedWolf(id_generator, my_cave.getResidents());
+            if (checkBreed(world)) {
+                breed(world);
             }
         }
 
@@ -141,6 +147,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
         }
     }
+     */
 
     /**
      * Attacks a specified animal in the world. If the target is a wolf with significant damage,
@@ -200,7 +207,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         has_cave = true;
 
         for (Wolf wolf : pack) {
-            wolf.setCave(cave);
+            wolf.setHabitat(cave);
         }
     }
 
@@ -338,35 +345,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public Wolf getMyAlpha() { return my_alpha; }
 
-    /**
-     * Assigns a given cave to a wolf.
-     * @param cave The cave which is to be assigned a new wolf.
-     */
-    public void setCave(Cave cave) {
-        my_cave = cave;
-        has_cave = true;
-    }
 
-    /**
-     * Enters the cave that the wolf is standing on, if it is empty, and it's their cave.
-     * @param world The world in which the current events are happening.
-     */
-    public void enterCave(World world) {
-        my_cave.addResident(this);
-        world.remove(this);
-        in_hiding = true;
-    }
-
-    /**
-     * Exits the cave in which this wolf is currently hiding.
-     *
-     * @param world The world where the cave is located.
-     */
-    public void exitCave(World world) {
-        my_cave.removeResident(this);
-        world.setTile(world.getLocation(my_cave), this);
-        in_hiding = false;
-    }
 
     /**
      * Determines the graphic of the wolf based on its current condition and age.
@@ -427,52 +406,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         has_pack = false;
         alpha = false;
         my_alpha = null;
-    }
-
-    /**
-     * Checks whether the conditions for wolf breeding are met. Breeding occurs during the day, inside a cave.
-     * The method ensures that the wolf is male, has a cave, and finds a female wolf in the cave who hasn't bred recently.
-     * Additionally, it checks that the age of the wolves is within a certain range of their maximum age.
-     *
-     * @return true if all breeding conditions are met, false otherwise.
-     */
-    public boolean checkBreedWolf() {
-        if (gender == Gender.Male) {
-            if (has_cave) {
-                List<Animal> residents = my_cave.getResidents();
-
-                if (residents.size() >= 2) {
-                    for (Animal resident : residents) {
-                        if (resident.getGender() == Gender.Female) {
-                            if (resident.getStepsSinceLastBirth() <= 12 && steps_since_last_birth <= 12) {
-                                if (age >= max_age * 0.15 && age <= max_age * 0.85) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        // If only one or two or three or four or five... or none of the conditions are met, return false.
-        return false;
-    }
-
-    /**
-     * Creates a new wolf cub and adds it to the pack and the cave's residents.
-     * This method is invoked when breeding conditions are met.
-     * It generates a new Wolf instance (cub), adds it to the list of residents in the cave,
-     * and adds it to the alpha wolf's pack. The cub is also assigned the same cave as its parents.
-     *
-     * @param id_generator The ID generator used for creating the unique ID of the new wolf cub.
-     * @param residents The list of animals residing in the cave, to which the new cub will be added.
-     */
-    public void breedWolf(IDGenerator id_generator, List<Animal> residents) {
-        Wolf cub = new Wolf(id_generator, false);
-        residents.add(cub);
-        my_alpha.addWolfToPack(cub);
-        cub.setCave(my_cave);
     }
 
     /**

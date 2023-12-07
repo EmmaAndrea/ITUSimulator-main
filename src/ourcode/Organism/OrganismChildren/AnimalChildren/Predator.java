@@ -44,7 +44,7 @@ public abstract class Predator extends Animal {
      * @param world The simulation world in which the carnivore exists.
      */
     @Override
-    public void carnivoreAct(World world) {
+    public void act(World world) {
     }
 
     /**

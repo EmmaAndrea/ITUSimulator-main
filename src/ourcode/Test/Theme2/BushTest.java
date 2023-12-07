@@ -95,7 +95,7 @@ public class BushTest {
      * Verifies that the act method affects the bush's state correctly.
      */
     @Test
-    public void testBushAct() {
+    public void testBushAct() throws Exception {
         Bush bush = null;
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;

@@ -2,7 +2,6 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 /**
@@ -23,6 +22,11 @@ public abstract class Prey extends Animal {
         trophic_level = 2;
     }
 
+    @Override
+    public void act(World world) {
+        super.act(world);
+    }
+
     /**
      * Spawns this prey into the world. This method leverages the spawn behavior
      * defined in the Animal superclass, applying any additional rules or logic
@@ -41,8 +45,9 @@ public abstract class Prey extends Animal {
      *
      * @param world The simulation world in which the herbivore exists.
      */
+    /*
     @Override
-    public void herbivoreAct(World world) {
+    public void herbivoreAct(World world) throws Exception {
         if (world.getEntities().containsKey(this) && !being_eaten) {
             // If the herbivore is not currently in a burrow.
             if (!in_hiding) {
@@ -63,4 +68,5 @@ public abstract class Prey extends Animal {
             }
         }
     }
+    */
 }

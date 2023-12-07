@@ -3,8 +3,6 @@ package ourcode.Organism;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
@@ -65,32 +63,6 @@ public abstract class Organism extends Entity implements Actor {
     }
 
     /**
-     * Represents the action an animal takes during a simulation step.
-     * This method should be overridden by subclasses to define specific animal behaviors.
-     * @param world The simulation world where the animal exists.
-     * @return true if the animal successfully completes its action, false otherwise.
-     */
-    public boolean animalAct(World world) {
-        return true;
-    }
-
-
-    /**
-     * An act method for plants, potentially involving growth or other plant-specific behaviors.
-     * @param world The simulation world where the plant exists.
-     */
-    public void plantAct(World world) {
-    }
-
-    /**
-     * Returns the nutritional value of the organism, indicating how much hunger it satisfies when eaten.
-     * @return The nutritional value of the organism.
-     */
-    public int getNutritionalValue() {
-        return nutritional_value;
-    }
-
-    /**
      * Checks surrounding locations within a radius of one and returns a list of free locations.
      * @param world The simulation world to check surrounding locations in.
      * @return A list of free locations around the organism, or null if none are available.
@@ -138,34 +110,6 @@ public abstract class Organism extends Entity implements Actor {
             //
             return getSurroundingFreeLocation(world).get(random_index);
         } else return null;
-    }
-
-    /**
-     * Searches for grass in the surrounding tiles of an organism's current location.
-     * This method checks each surrounding tile to see if it contains grass. If grass
-     * is found on any of these tiles, the location of the grass is returned.
-     *
-     * @param world The simulation world in which the organism and grass exist.
-     * @return The Location of the grass if found in the surrounding tiles, otherwise null.
-     */
-    public Location getGrassLocation(World world) {
-        // Check if there are any surrounding free locations in the world.
-        if (getSurroundingFreeLocation(world) != null) {
-            // Iterate through each surrounding location.
-            for (Location location : getSurroundingFreeLocation(world)) {
-                // Check if the location contains non-blocking entities.
-                if (world.containsNonBlocking(location)) {
-                    // Return the location if it contains Grass.
-                    if (world.getNonBlocking(location) instanceof Grass) {
-                        return location;
-                    }
-                }
-            }
-            // Return null if no grass is found.
-            return null;
-        }
-        // Return null if there are no surrounding free locations.
-        return null;
     }
 
     /**

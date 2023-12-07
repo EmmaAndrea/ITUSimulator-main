@@ -22,14 +22,8 @@ public abstract class Plant extends Organism {
         this.trophic_level = 1;
     }
 
-    /**
-     * Executes plant-specific actions during a simulation step.
-     * This method can be overridden by subclasses to implement behaviors like growth, reproduction, or response to environmental changes.
-     *
-     * @param world The simulation world in which the plant exists, providing context for its actions.
-     */
     @Override
-    public void plantAct(World world) {
-        super.plantAct(world);
+    public void act(World world) {
+        super.act(world);
     }
 }

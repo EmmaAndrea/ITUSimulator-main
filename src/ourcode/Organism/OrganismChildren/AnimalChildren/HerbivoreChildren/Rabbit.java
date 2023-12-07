@@ -28,7 +28,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      * sets up its relationship with burrows.
      *
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the rabbit.
-     * @param has_cordyceps
+     * @param has_cordyceps If the animal is being born in an infected state (with cordyceps).
      */
     public Rabbit(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
@@ -45,23 +45,9 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         this.has_cordyceps = has_cordyceps;
     }
 
-    /**
-     * Spawns a rabbit.
-     */
-    public void spawn(World world) {
-        super.spawn(world);
-    }
-
-    /**
-     * Executes the specific actions for a rabbit in the simulation. This includes finding or creating a burrow,
-     * moving towards or into the burrow, and other herbivore behaviors.
-     *
-     * @param world The simulation world in which the rabbit exists.
-     */
-    public void herbivoreAct(World world) {
-        //trophic_level = 4;
-        // Gets older and hungrier and dies if too old or hungry.
-        super.herbivoreAct(world);
+    @Override
+    public void act(World world) {
+        super.act(world);
 
         if (grace_period == 1 && !in_hiding) {
             grace_period = 0;
@@ -106,58 +92,79 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         }
 
         if (!in_hiding && !being_eaten) {
-            breed(world);
             nextMove(world);
         }
     }
 
     /**
-     * Attempts to acquire a burrow for the rabbit. If the rabbit is standing on a grass tile, it creates a new burrow;
-     * otherwise, it claims an existing burrow at its location.
+     * Spawns a rabbit.
+     */
+    public void spawn(World world) {
+        super.spawn(world);
+    }
+
+    /**
+     * Acquires a burrow for the animal in the simulation world. If the animal is standing on a burrow, it links
+     * to the existing burrow. If the animal is older than 5 and standing on grass, it replaces the grass with a new burrow.
+     * If it's standing on an empty tile and is older than 5, it creates a new burrow at its current location.
      *
-     * @param world The simulation world where the burrow acquisition occurs.
+     * @param world The simulation world where the burrow acquisition or creation takes place.
      */
     public void acquireBurrow(World world) {
+        Location currentLocation = world.getLocation(this);
+        if (world.containsNonBlocking(currentLocation)) {
+            Object currentTile = world.getNonBlocking(currentLocation);
 
-        // Removes whatever nonblocking it’s standing on if there is one.
-        if (age > 5 ){
-            if (world.containsNonBlocking(world.getLocation(this))) {
-                // Remove the nonblocking tile from id_generators lists
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                    world.delete(grass);
-                    // Instantiates new burrow and sets the tile with current location.
-                } else if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow burrow) {
-                    my_burrows = new ArrayList<>();
-                    my_burrows.add(0, burrow);
-                    has_burrow = true;
-                    return;
-                } else return;
+
+            // If it's a Burrow, link it and return early.
+            if (currentTile instanceof Burrow burrow) {
+                linkBurrow(burrow);
+                return;
             }
-            Burrow newburrow = new Burrow(id_generator);
-            world.setTile(world.getLocation(this), newburrow);
 
-            my_burrows = new ArrayList<>();
-            // Rabbit now has a personal burrow.
-            my_burrows.add(0, newburrow);
-
-            // Set rabbit’s boolean has_burrow to be true.
-            has_burrow = true;
-
-            // Add to maps to keep track of where things are.
-            id_generator.addBurrowToLocationMap(world.getLocation(this), my_burrows.get(0));
-            id_generator.addLocationToIdMap(world.getLocation(my_burrows.get(0)), my_burrows.get(0).getId());
-
-            nextMove(world);
-
-        } else {
-            if (world.containsNonBlocking(world.getLocation(this))) {
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Burrow burrow) {
-                    my_burrows = new ArrayList<>();
-                    my_burrows.add(0, burrow);
-                    has_burrow = true;
+            // For age greater than 5, delete Grass and create new Burrow if not on a Burrow.
+            if (age > 5) {
+                if (currentTile instanceof Grass grass) {
+                    world.delete(grass);
                 }
+
+                createNewBurrow(world, currentLocation);
             }
         }
+    }
+
+    /**
+     * Links the animal to an existing burrow. This method updates the animal's burrow list and sets
+     * its 'has_burrow' flag to true.
+     *
+     * @param burrow The burrow that the animal links to.
+     */
+    private void linkBurrow(Burrow burrow) {
+        my_burrows = new ArrayList<>();
+        my_burrows.add(burrow);
+        has_burrow = true;
+    }
+
+    /**
+     * Creates a new burrow at the specified location and updates the animal's state accordingly.
+     * This method also updates the ID generator maps with the new burrow's location and ID.
+     * The animal is then prompted to make its next move in the world.
+     *
+     * @param world The simulation world where the new burrow is created.
+     * @param location The location in the world where the new burrow is placed.
+     */
+    private void createNewBurrow(World world, Location location) {
+        Burrow newBurrow = new Burrow(id_generator);
+        world.setTile(location, newBurrow);
+
+        my_burrows = new ArrayList<>();
+        my_burrows.add(newBurrow);
+        has_burrow = true;
+
+        id_generator.addBurrowToLocationMap(location, newBurrow);
+        id_generator.addLocationToIdMap(location, newBurrow.getId());
+
+        nextMove(world);
     }
 
     /**

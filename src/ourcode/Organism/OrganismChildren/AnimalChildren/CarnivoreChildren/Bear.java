@@ -7,7 +7,6 @@ import itumulator.world.World;
 import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
