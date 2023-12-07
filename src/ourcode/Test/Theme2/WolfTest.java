@@ -225,9 +225,30 @@ public class WolfTest {
 
     @Test
     public void testWolves() throws Exception {
-        Program program = new Program(4, 100, 500);
+        programRunner.create("./data/t2-3a.txt");
         world = programRunner.getWorld();
-        programRunner.runSimulation(20);
+        programRunner.runSimulation(10);
+
+        for (int i = 0; i < 10; i++) {
+            System.out.println(world.getEntities().size());
+        }
 
     }
+
+    @Test
+    public void testWolvesBreedInCave() {
+        Program p = new Program(3, 800, 500);
+        world = p.getWorld();
+
+        Wolf
+
+    }
+
+    @Test
+    public void testWolfGroupEatingBear() {
+        Program p = new Program(3, 800, 500);
+        world = p.getWorld();
+    }
+
+
 }
