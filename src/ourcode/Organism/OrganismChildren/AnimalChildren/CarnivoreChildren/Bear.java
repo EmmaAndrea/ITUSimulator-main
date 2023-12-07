@@ -6,7 +6,6 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
-import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
@@ -110,7 +109,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @param world The simulation world where the bear searches for a mate.
      */
     public void findMate(World world){
-        for(Location location: world.getSurroundingTiles(world.getLocation(this), 7)){
+        for (Location location: world.getSurroundingTiles(world.getLocation(this), 7)) {
             if (world.getTile(location) instanceof Bear potential_mate){
                 if (potential_mate.getGender() == Gender.Female){
                     for(int i = 1 ; i < (distanceTo(world, world.getLocation(potential_mate))) ; i++) {
@@ -132,7 +131,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @return true if breeding conditions are met, false otherwise.
      */
     @Override
-    public boolean checkBreed(World world){
+    public boolean checkBreed(World world) {
         if (gender == Gender.Female) {
             if (mate != null) {
                 if (world.getEntities().containsKey(mate)) {
@@ -153,16 +152,17 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * Sets the bear's mate to a specified bear and updates its territory
      * to match that of its mate.
      *
-     * @param potential_mate The bear to be set as the mate.
+     * @param female_bear The bear to be set as the mate.
      */
-    public void maleSetMate(Bear potential_mate, World world){
-        mate = potential_mate;
-        for (Location location : world.getSurroundingTiles(potential_mate.getTerritory())){
+    public void maleSetMate(Bear female_bear, World world) {
+        mate = female_bear;
+        friends.add(female_bear);
+        for (Location location : world.getSurroundingTiles(female_bear.getTerritory())) {
             if (world.containsNonBlocking(location)){
-                if (world.getNonBlocking(location) instanceof Grass grass){
+                if (world.getNonBlocking(location) instanceof Grass grass) {
                     world.delete(grass);
                 }
-            } if (!world.containsNonBlocking(location)){
+            } if (!world.containsNonBlocking(location)) {
                 setTerritory(world, location);
                 System.out.println("BOY GOT MATE");
                 return;
@@ -234,21 +234,5 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         Territory new_territory = new Territory(id_generator);
         world.setTile(location, new_territory);
         my_territory = new_territory;
-    }
-
-    /**
-     * Retrieves the trophic level of the bear.
-     *
-     * @return The trophic level of the bear.
-     */
-    @Override
-    public int getTrophicLevel() {
-        return trophic_level;
-    }
-
-    @Override
-    public Animal getMate() {
-        if (mate instanceof Animal animal) return animal;
-        else return null;
     }
 }

@@ -5,7 +5,6 @@ import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;

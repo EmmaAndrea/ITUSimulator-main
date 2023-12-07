@@ -256,11 +256,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         }
     }
 
-    @Override
-    public int getTrophicLevel() {
-        return trophic_level;
-    }
-
     public int getDamageTaken() {
         return damage_taken;
     }

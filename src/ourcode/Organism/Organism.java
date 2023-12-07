@@ -33,6 +33,7 @@ public abstract class Organism extends Entity implements Actor {
         super(original_id_generator);
         nutritional_value = 2;
         lock = new ReentrantLock();
+        trophic_level = 0;
     }
 
     /**

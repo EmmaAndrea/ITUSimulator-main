@@ -14,7 +14,6 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -38,7 +37,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
      * @param idGenerator  The IDGenerator instance providing the unique identifier for the wolf.
-     * @param has_cordyceps
+     * @param has_cordyceps Boolean if it has cordyceps at birth or not.
      */
     public Wolf(IDGenerator idGenerator, boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
@@ -153,7 +152,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     @Override
     public void attack(World world, Animal animal) {
-        if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
+        if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
             if (animal instanceof Wolf wolf) {
                 if(wolf.getDamageTaken() > 7) {
                     if (alpha) this.overtakePack(wolf);
@@ -163,55 +162,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
     }
 
-    /**
-     * Searches for and hunts down consumable food within the world.
-     * The wolf moves closer to the food and attacks it upon reach.
-     *
-     * @param world The simulation world where hunting takes place.
-     */
-    @Override
-    public void hunt(World world){
-        if(findFood(world) != null){
-            Animal animal = findFood(world);
-            for(int i = 0; i < distanceTo(world, world.getLocation(animal)) ; i++) {
-                if (world.getEntities().containsKey(animal)){
-                    moveCloser(world, world.getLocation(animal));
-                }
-            }
-            attack(world, animal);
-        }
-    }
-
-    /**
-     * Searches for food within a specified range in the world.
-     * Targets animals that are of a consumable type for the wolf.
-     *
-     * @param world The simulation world where the food search takes place.
-     * @return The nearest consumable animal, or null if none are found.
-     */
-    public Animal findFood(World world){
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
-
-        // First, check for blocking organisms.
-        // Though, if there is an animal of higher trophic level, move away from this animal.
-        for (Location location : surrounding_tiles) {
-
-            // If the tile at given location isn't empty.
-            if (!world.isTileEmpty(location)) {
-
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
-
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Animal animal) {
-                    if (consumable_foods.contains(animal.getType())) {
-                        return animal;
-                    }
-                }
-            }
-        }
-        return null;
-    }
     /**
      * Creates a new pack with this wolf as the alpha. Initializes the pack and sets pack-related properties.
      */
@@ -522,16 +472,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         residents.add(cub);
         my_alpha.addWolfToPack(cub);
         cub.setCave(my_cave);
-    }
-
-    /**
-     * Retrieves the trophic level of this wolf.
-     *
-     * @return The trophic level.
-     */
-    @Override
-    public int getTrophicLevel(){
-        return trophic_level;
     }
 
     /**
