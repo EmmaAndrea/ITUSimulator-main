@@ -199,13 +199,4 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         return damage_taken;
     }
 
-    /**
-     * Retrieves the power level of this bear.
-     *
-     * @return The power level.
-     */
-    public int getPower(){
-        return power;
-    }
-
 }

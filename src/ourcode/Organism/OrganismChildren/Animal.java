@@ -521,4 +521,13 @@ public abstract class Animal extends Organism {
     public int getGracePeriod(){
         return grace_period;
     }
+
+    /**
+     * Retrieves the days since the last time this animal made a baby.
+     * @return steps_since_last_day
+     */
+    public int getStepsSinceLastBirth() {
+        return steps_since_last_birth;
+    }
 }
+

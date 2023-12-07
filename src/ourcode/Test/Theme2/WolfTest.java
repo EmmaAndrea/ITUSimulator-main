@@ -240,7 +240,7 @@ public class WolfTest {
         Program p = new Program(3, 800, 500);
         world = p.getWorld();
 
-        Wolf
+        // Wolf
 
     }
 
