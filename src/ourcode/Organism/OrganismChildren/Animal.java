@@ -39,7 +39,7 @@ public abstract class Animal extends Organism {
     protected int max_damage;
     protected boolean being_eaten;
 
-    protected int grace_period;
+    protected int grace_period; //
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -528,6 +528,19 @@ public abstract class Animal extends Organism {
      */
     public int getStepsSinceLastBirth() {
         return steps_since_last_birth;
+    }
+
+    /**
+     * Changes the gender to male or female, depending on the paramter..
+     * This method is created for test purposes!
+     * @param gender String of what gender to transition to.
+     */
+    public void setGender(String gender) {
+        if (gender.equalsIgnoreCase("male")) {
+            this.gender = Gender.Male;
+        } else {
+            this.gender = Gender.Female;
+        }
     }
 }
 

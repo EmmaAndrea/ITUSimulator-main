@@ -86,6 +86,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             exitCave(world);
         } else if (in_hiding && pack_hunting) {
             exitCave(world);
+        } else if (in_hiding) {
+            if (checkBreedWolf()) {
+                breedWolf(id_generator, my_cave.getResidents());
+            }
         }
 
 
@@ -433,7 +437,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if(alpha){
             if (!pack.isEmpty()) {
                 int i = 0;
-                while (pack.get(i) == this){
+                while (pack.get(i) == this) {
                     i++;
                 }
                 Wolf next_alpha = pack.get(i);

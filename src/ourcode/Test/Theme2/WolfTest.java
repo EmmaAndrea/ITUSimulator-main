@@ -250,5 +250,23 @@ public class WolfTest {
         world = p.getWorld();
     }
 
+    @Test
+    public void testWolfBreeding() {
+        Program p = new Program(3,800,500);
+        IDGenerator id_generator = new IDGenerator();
+        world = p.getWorld();
 
+        Wolf wolf1 = new Wolf(id_generator);
+        Wolf wolf2 = new Wolf(id_generator);
+
+        wolf1.setGender("MALE");
+        System.out.println(wolf1.getGender());
+        wolf2.setGender("FEMALE");
+        System.out.println(wolf2.getGender());
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+            // System.out.println(wolf1.getMyCave().getResidents();
+        }
+    }
 }
