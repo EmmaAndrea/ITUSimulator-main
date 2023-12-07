@@ -36,7 +36,7 @@ public class BearTest {
         world = new World(3);
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator);
+        Bear bear = new Bear(id_generator, false);
 
         bear.spawn(world);
 
@@ -53,10 +53,10 @@ public class BearTest {
         world = new World(3);
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator);
+        Bear bear = new Bear(id_generator, false);
         bear.spawn(world);
 
-        bear.setTerritory(world.getLocation(bear));
+        bear.setTerritoryLocation(world.getLocation(bear));
 
         Assertions.assertSame(bear.getTerritory(), world.getLocation(bear));
     }

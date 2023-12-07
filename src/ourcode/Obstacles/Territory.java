@@ -15,8 +15,6 @@ import java.awt.*;
  */
 public class Territory extends Habitat implements DynamicDisplayInformationProvider {
 
-    Location location;
-
     /**
      * Constructs a Territory object with a specific ID generator.
      * Initializes the territory with the given ID generator.
@@ -25,6 +23,7 @@ public class Territory extends Habitat implements DynamicDisplayInformationProvi
      */
     public Territory (IDGenerator id_generator) {
         super(id_generator);
+        type = "territory";
     }
 
     /**
