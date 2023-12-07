@@ -75,7 +75,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
         }
 
-        Location current_location = world.getLocation(this);
         if (world.getCurrentTime() == 1 && has_cave && !pack_hunting) {
             if (distanceTo(world, world.getLocation(my_alpha)) < 2) {
                 enterCave(world);
@@ -486,15 +485,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public int getDamageTaken() {
         return damage_taken;
-    }
-
-    /**
-     * Retrieves the power level of this wolf.
-     *
-     * @return The power level.
-     */
-    public int getPower(){
-        return power;
     }
 
     /**
