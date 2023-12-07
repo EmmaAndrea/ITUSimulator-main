@@ -103,18 +103,31 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         }
 
     }
+
+    /**
+     * Sets the bear's territory to a specified location.
+     *
+     * @param territory The location to be set as the bear's new territory.
+     */
     public void setTerritory(Location territory) {
         this.territory = territory;
     }
 
+    /**
+     * Retrieves the trophic level of the bear.
+     *
+     * @return The trophic level of the bear.
+     */
     @Override
     public int getTrophicLevel() {
         return trophic_level;
     }
 
     /**
+     * Searches for a mate within a specified range in the world. If a potential mate
+     * is found, the bear moves closer and establishes a mating pair.
      *
-     * @param world
+     * @param world The simulation world where the bear searches for a mate.
      */
     public void findMate(World world){
 
@@ -133,15 +146,17 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
+     * Checks if the bear meets the conditions for breeding. If the bear is female
+     * and has a mate within proximity, breeding may occur.
      *
-     * @param world The simulation world where breeding might occur.
-     * @return
+     * @param world The simulation world where breeding is checked.
+     * @return true if breeding conditions are met, false otherwise.
      */
     @Override
     public boolean checkBreed(World world){
         if (gender == Gender.Female) {
             if (mate != null) {
-                if(world.getEntities().containsKey(mate)) {
+                if (world.getEntities().containsKey(mate)) {
                     System.out.println("tries to breed");
                     if (distanceTo(world, world.getLocation(mate)) < 2) {
                         return true;
@@ -155,18 +170,40 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         return false;
     }
 
+    /**
+     * Sets the bear's mate to a specified bear and updates its territory
+     * to match that of its mate.
+     *
+     * @param potential_mate The bear to be set as the mate.
+     */
     public void setMate(Bear potential_mate){
         mate = potential_mate;
         territory = potential_mate.getTerritory();
     }
 
+    /**
+     * Retrieves the territory of the bear.
+     *
+     * @return The current territory of the bear.
+     */
     public Location getTerritory(){
         return territory;
     }
 
+    /**
+     * Retrieves the amount of damage this bear has taken.
+     *
+     * @return The damage taken.
+     */
     public int getDamageTaken() {
         return damage_taken;
     }
+
+    /**
+     * Retrieves the power level of this bear.
+     *
+     * @return The power level.
+     */
     public int getPower(){
         return power;
     }

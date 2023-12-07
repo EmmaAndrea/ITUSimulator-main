@@ -147,7 +147,7 @@ public abstract class Animal extends Organism {
                     // mmakes sure wolf is deleted properly
                     if (animal instanceof Wolf wolf) {
                         if (this instanceof Wolf thiswolf) {
-                            if (wolf.checkAlpha()) thiswolf.overtakePack(wolf);
+                            if (wolf.isAlpha()) thiswolf.overtakePack(wolf);
                         }
                         wolf.deleteMe(world);
                     } else world.delete(animal);

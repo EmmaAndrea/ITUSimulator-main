@@ -182,9 +182,9 @@ public class WolfTest {
         wolf1.enterCave(world);
         wolf2.enterCave(world);
 
-        assertEquals(wolf1.getMy_cave().getResidents().size(), 2,
+        assertEquals(wolf1.getMyCave().getResidents().size(), 2,
                 "the amount of wolfs in the cave should be 2, but there is: "
-                         + wolf1.getMy_cave().getResidents().size());
+                         + wolf1.getMyCave().getResidents().size());
 
 
     }
@@ -218,9 +218,9 @@ public class WolfTest {
         wolf1.nextMove(world);
         wolf2.exitCave(world);
 
-        assertEquals(wolf1.getMy_cave().getResidents().size(), 0,
+        assertEquals(wolf1.getMyCave().getResidents().size(), 0,
                 "the amount of wolves in the cave should be 0, but is: "
-                         + wolf1.getMy_cave().getResidents().size());
+                         + wolf1.getMyCave().getResidents().size());
     }
 
     @Test
