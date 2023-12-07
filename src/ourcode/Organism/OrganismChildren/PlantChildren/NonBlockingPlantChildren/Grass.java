@@ -36,8 +36,8 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
      * @param world The simulation world in which the grass exists.
      */
     @Override
-    public void plantAct(World world) {
-        super.plantAct(world);
+    public void act(World world) {
+        super.act(world);
 
         // After a given amount of steps, the grass will spread
         if (age % 8 == 0) {

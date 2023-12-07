@@ -3,8 +3,6 @@ package ourcode.Organism;
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
@@ -21,7 +19,7 @@ public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
-    protected int trophic_level;
+    protected int trophic_level = 0;
 
     private final ReentrantLock lock;
 
@@ -33,6 +31,7 @@ public abstract class Organism extends Entity implements Actor {
         super(original_id_generator);
         nutritional_value = 2;
         lock = new ReentrantLock();
+        trophic_level = 0;
     }
 
     /**
@@ -42,51 +41,7 @@ public abstract class Organism extends Entity implements Actor {
      */
     public void act(World world) {
         age++;
-
         // An organism can die of old age.
-        if (age > max_age) {
-            world.delete(this);
-        } else {
-            lock.lock();
-                // Checks if the organism still should be alive after running act method.
-                // before: world.getEntities().containsKey(this)
-                if (animalAct(world)) {
-                    // then run the plant methods
-                    plantAct(world);
-                } else {
-                    //delete the animal if animalAct returns false
-                    System.out.println(type + " died");
-                    if (this instanceof Wolf wolf) wolf.deleteMe(world);
-                    else world.delete(this);
-                }
-            lock.unlock();
-        }
-    }
-
-    /**
-     * Represents the action an animal takes during a simulation step.
-     * This method should be overridden by subclasses to define specific animal behaviors.
-     * @param world The simulation world where the animal exists.
-     * @return true if the animal successfully completes its action, false otherwise.
-     */
-    public boolean animalAct(World world) {
-        return true;
-    }
-
-
-    /**
-     * An act method for plants, potentially involving growth or other plant-specific behaviors.
-     * @param world The simulation world where the plant exists.
-     */
-    public void plantAct(World world) {
-    }
-
-    /**
-     * Returns the nutritional value of the organism, indicating how much hunger it satisfies when eaten.
-     * @return The nutritional value of the organism.
-     */
-    public int getNutritionalValue() {
-        return nutritional_value;
     }
 
     /**
@@ -94,7 +49,7 @@ public abstract class Organism extends Entity implements Actor {
      * @param world The simulation world to check surrounding locations in.
      * @return A list of free locations around the organism, or null if none are available.
      */
-    public ArrayList<Location> getSurroundingFreeLocation(World world) {
+    public ArrayList<Location> getSurroundingFreeLocations(World world) {
         // Retrieve current location
 
         Location current_location = world.getLocation(this);
@@ -131,40 +86,12 @@ public abstract class Organism extends Entity implements Actor {
         // Finds a random index in this list of locations.
         Random random = new Random();
         //
-        if (getSurroundingFreeLocation(world) != null) {
+        if (getSurroundingFreeLocations(world) != null) {
             //
-            int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+            int random_index = random.nextInt(0, getSurroundingFreeLocations(world).size());
             //
-            return getSurroundingFreeLocation(world).get(random_index);
+            return getSurroundingFreeLocations(world).get(random_index);
         } else return null;
-    }
-
-    /**
-     * Searches for grass in the surrounding tiles of an organism's current location.
-     * This method checks each surrounding tile to see if it contains grass. If grass
-     * is found on any of these tiles, the location of the grass is returned.
-     *
-     * @param world The simulation world in which the organism and grass exist.
-     * @return The Location of the grass if found in the surrounding tiles, otherwise null.
-     */
-    public Location getGrassLocation(World world) {
-        // Check if there are any surrounding free locations in the world.
-        if (getSurroundingFreeLocation(world) != null) {
-            // Iterate through each surrounding location.
-            for (Location location : getSurroundingFreeLocation(world)) {
-                // Check if the location contains non-blocking entities.
-                if (world.containsNonBlocking(location)) {
-                    // Return the location if it contains Grass.
-                    if (world.getNonBlocking(location) instanceof Grass) {
-                        return location;
-                    }
-                }
-            }
-            // Return null if no grass is found.
-            return null;
-        }
-        // Return null if there are no surrounding free locations.
-        return null;
     }
 
     /**
@@ -174,5 +101,13 @@ public abstract class Organism extends Entity implements Actor {
      */
     public int getTrophicLevel() {
         return trophic_level;
+    }
+
+    /**
+     * Returns the nutritional value of the organism, indicating how much hunger it satisfies when eaten.
+     * @return The nutritional value of the organism.
+     */
+    public int getNutritionalValue() {
+        return nutritional_value;
     }
 }

@@ -23,7 +23,6 @@ public abstract class Predator extends Animal {
      */
     public Predator(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        is_sleeping = false;
     }
 
     /**
@@ -44,7 +43,7 @@ public abstract class Predator extends Animal {
      * @param world The simulation world in which the carnivore exists.
      */
     @Override
-    public void carnivoreAct(World world) {
+    public void act(World world) {
     }
 
     /**
@@ -84,9 +83,10 @@ public abstract class Predator extends Animal {
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
                     if (consumable_foods.contains(animal.getType())) {
-                        for (int i = 2; i <= distanceTo(world, location); i++) {
+                        for (int i = 1; i <= distanceTo(world, location); i++) {
                             moveCloser(world, location);
                         }
+                        attack(world, animal);
                     }
                 }
             }
