@@ -42,7 +42,7 @@ public abstract class NonBlockingPlant extends Plant implements NonBlocking {
      * Calls super.act.
      */
     @Override
-    public void plantAct(World world) {
-        super.plantAct(world);
+    public void act(World world) {
+        super.act(world);
     }
 }

@@ -41,25 +41,7 @@ public abstract class Organism extends Entity implements Actor {
      */
     public void act(World world) {
         age++;
-
         // An organism can die of old age.
-        if (age > max_age) {
-            world.delete(this);
-        } else {
-            lock.lock();
-                // Checks if the organism still should be alive after running act method.
-                // before: world.getEntities().containsKey(this)
-                if (animalAct(world)) {
-                    // then run the plant methods
-                    plantAct(world);
-                } else {
-                    //delete the animal if animalAct returns false
-                    System.out.println(type + " died");
-                    if (this instanceof Wolf wolf) wolf.deleteMe(world);
-                    else world.delete(this);
-                }
-            lock.unlock();
-        }
     }
 
     /**
@@ -67,7 +49,7 @@ public abstract class Organism extends Entity implements Actor {
      * @param world The simulation world to check surrounding locations in.
      * @return A list of free locations around the organism, or null if none are available.
      */
-    public ArrayList<Location> getSurroundingFreeLocation(World world) {
+    public ArrayList<Location> getSurroundingFreeLocations(World world) {
         // Retrieve current location
 
         Location current_location = world.getLocation(this);
@@ -104,11 +86,11 @@ public abstract class Organism extends Entity implements Actor {
         // Finds a random index in this list of locations.
         Random random = new Random();
         //
-        if (getSurroundingFreeLocation(world) != null) {
+        if (getSurroundingFreeLocations(world) != null) {
             //
-            int random_index = random.nextInt(0, getSurroundingFreeLocation(world).size());
+            int random_index = random.nextInt(0, getSurroundingFreeLocations(world).size());
             //
-            return getSurroundingFreeLocation(world).get(random_index);
+            return getSurroundingFreeLocations(world).get(random_index);
         } else return null;
     }
 
@@ -119,5 +101,13 @@ public abstract class Organism extends Entity implements Actor {
      */
     public int getTrophicLevel() {
         return trophic_level;
+    }
+
+    /**
+     * Returns the nutritional value of the organism, indicating how much hunger it satisfies when eaten.
+     * @return The nutritional value of the organism.
+     */
+    public int getNutritionalValue() {
+        return nutritional_value;
     }
 }

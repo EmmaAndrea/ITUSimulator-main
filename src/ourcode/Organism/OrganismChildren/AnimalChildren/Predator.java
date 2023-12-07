@@ -23,7 +23,6 @@ public abstract class Predator extends Animal {
      */
     public Predator(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        is_sleeping = false;
     }
 
     /**

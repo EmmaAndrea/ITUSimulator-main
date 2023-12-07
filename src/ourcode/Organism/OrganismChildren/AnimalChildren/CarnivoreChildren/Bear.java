@@ -44,61 +44,62 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @param world The simulation world in which the omnivore exists.
      */
     @Override
-    public void omnivoreAct(World world) {
-        if (territory_location == null) {
-            if (world.containsNonBlocking(world.getLocation(this))) {
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                    world.delete(grass);
-                }
-            } if (!world.containsNonBlocking(territory_location = world.getLocation(this))) {
-                setTerritory(world, territory_location);
-            }
-        } else if (my_territory == null) {
-            if (world.containsNonBlocking(world.getLocation(this))) {
-                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                    world.delete(grass);
-                }
-            }
-            if (!world.containsNonBlocking(territory_location)) {
-                setTerritory(world, territory_location);
-            }
-        }
+    public void act(World world) {
+        super.act(world);
 
-        if (world.getCurrentTime() == 12) {
-            if (distanceTo(world, territory_location) < 2) {
-                is_sleeping = true;
-                System.out.println("bear asleep");
+        // if it's dusk, go to sleep
+        if (world.getCurrentTime() == 12 && my_territory != null) {
+            if (distanceTo(world, territory_location) < 1) {
+                my_territory.addResident(this);
                 in_hiding = true;
             } else {
                 moveCloser(world, territory_location);
             }
-        } else if (world.getCurrentTime() == 3) {
-            is_sleeping = false;
+        }
+        // if it's dawn, wake up
+        if (world.getCurrentTime() == 18 && my_territory != null) {
+            my_territory.removeResident(this);
             in_hiding = false;
         }
 
-
-        if (!is_sleeping) {
+        // if not sleeping
+        if (!in_hiding) {
+            // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
                 findMate(world);
-            } if (mate != null) {
-                breed(world);
             }
-            if (distanceTo(world, territory_location) > 3) {
-                moveCloser(world, territory_location);
-            } else if (hunger >= 20) {
+
+            // if very hungry, go hunt
+            else if (hunger >= 20) {
                 hunt(world);
-                if (!findFoodOrSafety(world)) {
-                    if (getRandomMoveLocation(world) != null) {
-                        world.move(this, getRandomMoveLocation(world));
-                    }
-                }
-            } else if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
+            }
+
+            // stay close to territory
+            else if (distanceTo(world, territory_location) > 3) {
+                moveCloser(world, territory_location);
+            }
+
+            // if it is still alive, and hasn't done anything else move randomly
+            else if (world.getEntities().get(this) != null) {
                 if (getRandomMoveLocation(world) != null) {
                     world.move(this, getRandomMoveLocation(world));
                 }
             }
         }
+
+    }
+
+    @Override
+    public void makeHabitat(World world) {
+        if (territory_location == null) {
+            territory_location = world.getLocation(this);
+        }
+
+        if (checkEmptySpace(world, territory_location)) {
+            my_territory = new Territory(id_generator);
+            world.setTile(territory_location, my_territory);
+        }
+                
     }
 
     /**
@@ -114,9 +115,9 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                     for(int i = 1 ; i < (distanceTo(world, world.getLocation(potential_mate))) ; i++) {
                         moveCloser(world, location);
                     }
-                    maleSetMate(potential_mate, world);
-                    potential_mate.femaleSetMate(this);
-                    System.out.println("got mate");
+                    if (maleSetMate(potential_mate, world)){
+                        potential_mate.femaleSetMate(this);
+                    }
                 }
             }
         }
@@ -153,20 +154,16 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      *
      * @param female_bear The bear to be set as the mate.
      */
-    public void maleSetMate(Bear female_bear, World world) {
+    public boolean maleSetMate(Bear female_bear, World world) {
         mate = female_bear;
         friends.add(female_bear);
         for (Location location : world.getSurroundingTiles(female_bear.getTerritory())) {
-            if (world.containsNonBlocking(location)){
-                if (world.getNonBlocking(location) instanceof Grass grass) {
-                    world.delete(grass);
-                }
-            } if (!world.containsNonBlocking(location)) {
+            if (checkEmptySpace(world, location)) {
                 setTerritory(world, location);
                 System.out.println("BOY GOT MATE");
-                return;
+                return true;
             }
-        }
+        } return false;
     }
 
     public void femaleSetMate(Bear male_bear){
@@ -202,7 +199,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         if (age >= 11) {
             if (damage_taken > 0) {
                 return new DisplayInformation(Color.yellow, "bear-large-wounded");
-            } else if (is_sleeping) {
+            } else if (in_hiding) {
                 return new DisplayInformation(Color.yellow, "bear-large-sleeping");
             } else {
                 return new DisplayInformation(Color.yellow, "bear-large");
@@ -210,7 +207,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         } else {
             if (damage_taken > 0) {
                 return new DisplayInformation(Color.yellow, "bear-small-wounded");
-            } else if (is_sleeping) {
+            } else if (in_hiding) {
                 return new DisplayInformation(Color.yellow, "bear-small-sleeping");
             } else {
                 return new DisplayInformation(Color.yellow, "bear-small");

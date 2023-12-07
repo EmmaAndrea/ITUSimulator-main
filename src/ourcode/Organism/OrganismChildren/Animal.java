@@ -39,6 +39,8 @@ public abstract class Animal extends Organism {
     protected boolean has_cordyceps;
     protected int grace_period; // holy period after coming out of burrow such that canvas errors are evaded.
     protected ArrayList<Animal> friends;
+    protected Habitat habitat;
+    protected boolean has_habitat;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -58,6 +60,8 @@ public abstract class Animal extends Organism {
         grace_period = 0;
         this.has_cordyceps = has_cordyceps;
         friends = new ArrayList<>();
+        habitat = null;
+        has_habitat = false; // watch out for problem with this when spawning wolves in packs.
     }
 
     /**
@@ -67,11 +71,16 @@ public abstract class Animal extends Organism {
      * @param world The simulation world in which the animal exists.
      */
     @Override
-    public boolean animalAct(World world) {
-
+    public void act(World world) {
+        super.act(world);
         // Adds hunger if it is not sleeping/hiding.
         if (!in_hiding) {
             hunger++;
+        }
+        // checks if the animal should die
+        if (hunger >= max_hunger || age >= max_age) {
+            // become carcass
+            return;
         }
 
         // Adds one to the counter of how many days since it gave birth to an offspring.
@@ -101,13 +110,26 @@ public abstract class Animal extends Organism {
         }
     }
 
+    public void makeHabitat(World world) {
+        // individual for each animal
+    }
+
+    public boolean checkEmptySpace(World world, Location location) {
+        if (world.containsNonBlocking(location)) {
+            if (world.getNonBlocking(location) instanceof Grass grass) {
+                world.delete(grass);
+            }
+        }
+        return !world.containsNonBlocking(location);
+    }
+
     /**
      * Enables the animal to eat, reducing its hunger based on the nutritional value of the organism consumed.
      * The consumed organism is removed from the world.
      *
      * @param world The world in which the animal and its food source exist.
      */
-    public void eat(World world, Object object) {
+    public void eat(World world, Organism object) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
         if (object instanceof Grass grass) {
             hunger -= 2;
@@ -181,15 +203,6 @@ public abstract class Animal extends Organism {
         }
         // If any of these are false, return false.
         return false;
-    }
-
-    /**
-     * Determines whether the animal survives based on its current hunger level.
-     *
-     * @return true if the animal's hunger is below the maximum threshold, false if it dies of hunger.
-     */
-    public boolean checkHunger() {
-        return hunger <= max_hunger;
     }
 
     /**
