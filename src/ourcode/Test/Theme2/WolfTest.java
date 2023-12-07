@@ -251,8 +251,8 @@ public class WolfTest {
     }
 
     @Test
-    public void testWolfBreeding() {
-        Program p = new Program(3,800,500);
+    public void testWolfBreedingMethod() {
+        Program p = new Program(20,800,500);
         IDGenerator id_generator = new IDGenerator();
         world = p.getWorld();
 
@@ -262,11 +262,20 @@ public class WolfTest {
         wolf1.setGender("MALE");
         System.out.println(wolf1.getGender());
         wolf2.setGender("FEMALE");
-        System.out.println(wolf2.getGender());
-        p.show();
-        for (int i = 0; i < 20; i++) {
-            p.simulate();
-            // System.out.println(wolf1.getMyCave().getResidents();
-        }
+
+        wolf1.spawn(world);
+        wolf2.spawn(world);
+
+        wolf1.createPack();
+        wolf1.addWolfToPack(wolf2);
+
+        wolf1.createCave(world, id_generator);
+        wolf1.enterCave(world);
+        wolf2.enterCave(world);
+        int prev = wolf1.getMyCave().getResidents().size();
+        wolf1.breedWolf(id_generator, wolf1.getMyCave().getResidents());
+        int post = wolf1.getMyCave().getResidents().size();
+
+        assertTrue(prev < post, "the amount of residents in the cave should increase post breed");
     }
 }

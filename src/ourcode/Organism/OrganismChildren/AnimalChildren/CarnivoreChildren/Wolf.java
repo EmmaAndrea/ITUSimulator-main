@@ -62,27 +62,33 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     @Override
     public void carnivoreAct(World world) {
-        //System.out.println("wolf " + id + " pack: " + my_alpha.getPack().toString());
+        // if wolf has an alpha and the pack does not exist, delete pack
         if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
-            System.out.println("deleted");
         }
 
+        // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
         if (alpha) {
             if (hunger < 5) {
-                for(Wolf wolf : pack){
+                for (Wolf wolf : pack) {
                     wolf.setPackHuntingFalse();
                 }
             }
         }
 
-        if (world.getCurrentTime() == 1 && has_cave && !pack_hunting) {
-            if (distanceTo(world, world.getLocation(my_alpha)) < 2) {
+        // if the current time is 1, wolf has a cave, pack isn't hunting, and wolf is not in cave
+            // if cave is nearby, enter
+            // else move closer to cave
+        // else, exit cave if time is 7
+        // else, exit if in cave and the pack is hunting
+        // else, if checkBreed, breed
+        if (world.getCurrentTime() == 1 && has_cave && !pack_hunting && !in_hiding) {
+            if (distanceTo(world, world.getLocation(my_cave)) <= 1) {
                 enterCave(world);
             } else {
                 moveCloser(world, world.getLocation(my_cave));
             }
-        } else if (in_hiding && world.getCurrentTime()==7) {
+        } else if (in_hiding && world.getCurrentTime() == 7) {
             exitCave(world);
         } else if (in_hiding && pack_hunting) {
             exitCave(world);
@@ -92,7 +98,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
         }
 
-
+        // if not in cave:
+            // move closer to alpha, if the packing is hunting and alpha is not sleeping and alpha is not null
+            // if this is alpha
+                // and doesn't have cave and is older than 8, make cave
+                // if hungry enough, set all wolves in pack in hunting mode
+            // if not alpha
+                // and is pretty hungry, set all wolves in pack in hunting mode
+                //
         if (!in_hiding) {
             if (pack_hunting && world.getEntities().containsKey(my_alpha)){
                 if (my_alpha != null) {
@@ -121,7 +134,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                             wolf.setPackHuntingTrue();
                         }
                     } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
-                        moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
+                        moveCloser(world, world.getLocation(my_alpha));
                     }
                 } else nextMove(world);
             }

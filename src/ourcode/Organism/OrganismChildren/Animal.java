@@ -538,5 +538,9 @@ public abstract class Animal extends Organism {
             this.gender = Gender.Female;
         }
     }
+
+    public int getHunger() {
+        return hunger;
+    }
 }
 
