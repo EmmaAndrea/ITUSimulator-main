@@ -35,13 +35,14 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     }
 
     /**
-     *
+     * when a fungus 'spreads' it will add a new fungus to the found carcass, which will then
      * @param carcass
      * @param idGenerator
      */
     public void spread(Carcass carcass, IDGenerator idGenerator) {
         Fungus fungus = new Fungus(idGenerator);
         carcass.setHasFungus();
+        carcass.addFungus(fungus);
         fungus.setAge(carcass);
         fungus.setInCarcass();
         fungus.setMyCarcass(carcass);

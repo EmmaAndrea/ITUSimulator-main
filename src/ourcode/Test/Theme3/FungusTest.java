@@ -54,12 +54,12 @@ public class FungusTest {
         fungus.spawn(world);
 
         fungus.act(world);
-        fungus.act(world);
-        fungus.act(world);
-        fungus.act(world);
 
+        boolean state = false;
+        if (carcass.getMyFungus().isInCarcass()) {
+            state = true;
+        }
 
-        System.out.println(world.getEntities().size());
-
+        System.out.println(state);
     }
 }
