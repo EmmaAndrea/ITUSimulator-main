@@ -8,16 +8,18 @@ import ourcode.Setup.IDGenerator;
 import java.util.Set;
 
 /**
- * the Carnivore class gives the abstraction of all meat eaters. Animals of this type cannot eat any
- * other food than meat. Carnivores will typically hunt their prey and be fed through the prey's
- * sustenance.
+ * The Predator class provides an abstraction for all carnivorous animals.
+ * These animals exclusively consume meat and typically hunt their prey
+ * to obtain sustenance.
  */
 public abstract class Predator extends Animal {
     protected boolean is_sleeping;
 
     /**
-     * the constructor of a Carnivore, will call 'super()' from the Animal class.
-     * @param original_id_generator idGenerator that creates the ID for the entity.
+     * Constructs a Predator instance. Calls the constructor of the superclass Animal
+     * and initializes specific attributes for a predator.
+     *
+     * @param original_id_generator The IDGenerator instance for generating the unique ID of the predator.
      */
     public Predator(IDGenerator original_id_generator) {
         super(original_id_generator);
@@ -25,13 +27,19 @@ public abstract class Predator extends Animal {
     }
 
     /**
-     * will spawn a Carnivore at given world
+     * Spawns this predator in the world. This method leverages the spawn behavior
+     * defined in the Animal superclass, applying any additional rules or logic
+     * specific to predators.
+     *
+     * @param world The world in which the predator is spawned.
      */
     public void spawn(World world) {
         super.spawn(world);
     }
 
     /**
+     * Defines the behavior of a carnivore in each simulation step. This method
+     * should be implemented to specify the actions of the carnivore in the world.
      *
      * @param world The simulation world in which the carnivore exists.
      */
@@ -39,6 +47,13 @@ public abstract class Predator extends Animal {
     public void carnivoreAct(World world) {
     }
 
+    /**
+     * Attacks a specified animal in the world. If the target animal is defeated,
+     * the predator eats it if hungry enough.
+     *
+     * @param world  The simulation world where the attack occurs.
+     * @param animal The animal being attacked.
+     */
     @Override
     public void attack(World world, Animal animal) {
         animal.damage(power);
@@ -48,8 +63,10 @@ public abstract class Predator extends Animal {
     }
 
     /**
+     * Searches for and hunts down potential prey within a specified range in the world.
+     * The predator moves closer to the prey and attacks if it is a consumable animal.
      *
-     * @param world
+     * @param world The simulation world where hunting takes place.
      */
     public void hunt(World world) {
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);

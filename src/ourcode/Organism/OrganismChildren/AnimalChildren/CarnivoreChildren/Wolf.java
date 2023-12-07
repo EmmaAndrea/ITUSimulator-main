@@ -70,7 +70,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (alpha) {
             if (hunger < 5) {
                 for(Wolf wolf : pack){
-                    wolf.setPackNotHunting();
+                    wolf.setPackHuntingFalse();
                 }
             }
         }
@@ -91,7 +91,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
         if (!in_hiding) {
             if (pack_hunting && world.getEntities().containsKey(my_alpha)){
-                if(my_alpha != null) {
+                if (my_alpha != null) {
                     if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                         moveCloser(world, world.getLocation(my_alpha));
                     }
@@ -106,7 +106,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 }
                 if (hunger > 8) {
                     for (Wolf wolf : pack) {
-                        wolf.setPackHunting();
+                        wolf.setPackHuntingTrue();
                     }
                 } else nextMove(world);
             }
@@ -114,7 +114,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 if (world.getEntities().containsKey(my_alpha)) {
                     if (hunger > 15) {
                         for (Wolf wolf : my_alpha.getPack()) {
-                            wolf.setPackHunting();
+                            wolf.setPackHuntingTrue();
                         }
                     } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                         moveCloser(world, world.getLocation(my_alpha)); // my alpha is null, so program crash
@@ -125,11 +125,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     }
 
-
-
-
-
-
+    /**
+     * Attacks a specified animal in the world. If the target is a wolf with significant damage,
+     * and this wolf is the alpha, it overtakes the target wolf's pack. Otherwise, performs
+     * a standard attack.
+     *
+     * @param world  The simulation world where the attack happens.
+     * @param animal The animal to be attacked.
+     */
     @Override
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null){
@@ -142,6 +145,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
     }
 
+    /**
+     * Searches for and hunts down consumable food within the world.
+     * The wolf moves closer to the food and attacks it upon reach.
+     *
+     * @param world The simulation world where hunting takes place.
+     */
     @Override
     public void hunt(World world){
         if(findFood(world) != null){
@@ -155,6 +164,13 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
     }
 
+    /**
+     * Searches for food within a specified range in the world.
+     * Targets animals that are of a consumable type for the wolf.
+     *
+     * @param world The simulation world where the food search takes place.
+     * @return The nearest consumable animal, or null if none are found.
+     */
     public Animal findFood(World world){
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
 
@@ -194,7 +210,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * If the object has a pack (has_pack is true) and doesn't already have a cave (has_cave is false),
      * this method will attempt to create a new Cave. If the current location in the world contains
      * Grass, the grass will be removed.
-     * A new cave is then created and set at this location. 
+     * A new cave is then created and set at this location.
      * Finally, if a cave is created, all wolves in the pack are assigned this cave.
      *
      * @param world         The world in which the cave is to be created.
@@ -221,15 +237,20 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Retrieves the pack of wolves to which this wolf belongs.
+     * Retrieves the pack to which this wolf belongs.
      *
-     * @return The pack of wolves.
+     * @return The pack of wolves, or null if this wolf is not part of any pack.
      */
     public ArrayList<Wolf> getPack() {
         return pack;
     }
 
-    public Cave getMy_cave() {
+    /**
+     * Retrieves the cave associated with this wolf.
+     *
+     * @return The cave where this wolf resides, or null if no cave is associated.
+     */
+    public Cave getMyCave() {
         return my_cave;
     }
 
@@ -303,7 +324,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (pack.size() == 4) {
             for (Wolf wolf : pack) {
                 wolf.setTrophicLevel(3);
-                wolf.setPackNotHunting();
+                wolf.setPackHuntingFalse();
             }
         }
         pack.remove(thewolf);
@@ -312,9 +333,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * This wolf overtakes the pack of another wolf, becoming the new alpha.
+     * Overtakes the pack of another wolf, becoming the new alpha. The existing pack members
+     * are transferred to this wolf's pack, and the former alpha is removed from the pack.
      *
-     * @param oldwolf The wolf whose pack is being overtaken.
+     * @param oldwolf The alpha wolf of the pack being overtaken.
      */
     public void overtakePack(Wolf oldwolf) {
         if (oldwolf.getPack() != null) {
@@ -332,9 +354,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Sets the trophic level of the wolf.
+     * Sets the trophic level of this wolf.
      *
-     * @param i The new trophic level to be set.
+     * @param i The new trophic level to be set for the wolf.
      */
     public void setTrophicLevel(int i) {
         trophic_level = i;
@@ -343,7 +365,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     /**
      * Retrieves the alpha wolf of the pack to which this wolf belongs.
      *
-     * @return The alpha wolf of the pack.
+     * @return The alpha wolf of the pack, or null if this wolf has no pack.
      */
     public Wolf getMyAlpha() { return my_alpha; }
 
@@ -366,6 +388,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         in_hiding = true;
     }
 
+    /**
+     * Exits the cave in which this wolf is currently hiding.
+     *
+     * @param world The world where the cave is located.
+     */
     public void exitCave(World world) {
         my_cave.removeResident(this);
         world.setTile(world.getLocation(my_cave), this);
@@ -398,9 +425,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Deletes this wolf from the simulation world and handles pack dynamics if this wolf is the alpha.
+     * Removes this wolf from the simulation world. If this wolf is the alpha, pack dynamics
+     * are adjusted accordingly.
      *
-     * @param world The simulation world from which the wolf is deleted.
+     * @param world The simulation world from which the wolf is removed.
      */
     public void deleteMe(World world) {
         if(alpha){
@@ -422,6 +450,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         world.delete(this);
     }
 
+    /**
+     * Deletes the pack associated with this wolf, resetting pack-related properties.
+     */
     public void deletePack(){
         pack = null;
         has_pack = false;
@@ -430,32 +461,62 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Retrieves the trophic level of the wolf.
+     * Retrieves the trophic level of this wolf.
      *
-     * @return The trophic level of the wolf.
+     * @return The trophic level.
      */
     @Override
     public int getTrophicLevel(){
         return trophic_level;
     }
 
+    /**
+     * Sets the alpha wolf for this wolf.
+     *
+     * @param wolf The wolf to be set as alpha.
+     */
     public void setAlpha(Wolf wolf){
         my_alpha = wolf;
     }
 
+    /**
+     * Retrieves the amount of damage this wolf has taken.
+     *
+     * @return The damage taken.
+     */
     public int getDamageTaken() {
         return damage_taken;
     }
+
+    /**
+     * Retrieves the power level of this wolf.
+     *
+     * @return The power level.
+     */
     public int getPower(){
         return power;
     }
-    public void setPackHunting(){
+
+    /**
+     * Sets the pack hunting status of this wolf to true, indicating it is part of a hunting pack.
+     */
+    public void setPackHuntingTrue(){
         pack_hunting = true;
     }
-    public void setPackNotHunting(){
+
+    /**
+     * Sets the pack hunting status of this wolf to false, indicating it is not part of a hunting pack.
+     */
+    public void setPackHuntingFalse(){
         pack_hunting = false;
     }
-    public boolean checkAlpha(){
+
+    /**
+     * Checks if this wolf is the alpha of its pack.
+     *
+     * @return true if this wolf is the alpha, false otherwise.
+     */
+    public boolean isAlpha(){
         return alpha;
     }
 }

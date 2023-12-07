@@ -26,8 +26,8 @@ public abstract class Organism extends Entity implements Actor {
     private final ReentrantLock lock;
 
     /**
-     * Constructor for an Organism, the parent class for all life on the world.
-     * Needs an IDGenerator and a type of organism.
+     * Constructor for Organism, initializing common attributes for all organisms in the world.
+     * @param original_id_generator The IDGenerator used for assigning unique IDs to the organism.
      */
     public Organism(IDGenerator original_id_generator) {
         super(original_id_generator);
@@ -36,7 +36,9 @@ public abstract class Organism extends Entity implements Actor {
     }
 
     /**
-     * The general act method, calling both animalAct() and plantAct()
+     * General act method, invoking both animalAct() and plantAct().
+     * Handles the aging process and checks for the organism's survival post-action.
+     * @param world The simulation world where the organism exists.
      */
     public void act(World world) {
         age++;
@@ -64,7 +66,7 @@ public abstract class Organism extends Entity implements Actor {
     /**
      * Represents the action an animal takes during a simulation step.
      * This method should be overridden by subclasses to define specific animal behaviors.
-     * Used to control whether all animals have acted, such that classes don't conflict.
+     * @param world The simulation world where the animal exists.
      * @return true if the animal successfully completes its action, false otherwise.
      */
     public boolean animalAct(World world) {
@@ -73,21 +75,24 @@ public abstract class Organism extends Entity implements Actor {
 
 
     /**
-     * An act method for plants. Plants will have their age increased by 1 calling the 'proceedAge()' method
+     * An act method for plants, potentially involving growth or other plant-specific behaviors.
+     * @param world The simulation world where the plant exists.
      */
     public void plantAct(World world) {
     }
 
     /**
-     *Returns the nutritional value of the organism, ergo how much hunger it satisfies when eaten.
+     * Returns the nutritional value of the organism, indicating how much hunger it satisfies when eaten.
+     * @return The nutritional value of the organism.
      */
     public int getNutritionalValue() {
         return nutritional_value;
     }
 
     /**
-     * Checks surrounding locations within a radius of one.
-     * Returns a list of free locations around the organism
+     * Checks surrounding locations within a radius of one and returns a list of free locations.
+     * @param world The simulation world to check surrounding locations in.
+     * @return A list of free locations around the organism, or null if none are available.
      */
     public ArrayList<Location> getSurroundingFreeLocation(World world) {
         // Retrieve current location
@@ -114,7 +119,13 @@ public abstract class Organism extends Entity implements Actor {
     }
 
     /**
-     * uses list of free locations to find a random location to go to
+     * Retrieves a random location from the list of surrounding free locations in the given world.
+     * This method first checks if there are any free locations around in the world. If there are,
+     * it selects one at random and returns it. If there are no free locations available,
+     * it returns null.
+     *
+     * @param world the World object representing the environment where the free locations are to be found.
+     * @return a randomly selected Location from the list of free locations if available, otherwise null.
      */
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
@@ -129,27 +140,30 @@ public abstract class Organism extends Entity implements Actor {
     }
 
     /**
-     * Finds out if there is grass on an organisms surrounding tile
-     * Returns the location of the grass if there is one
-     * Otherwise null
+     * Searches for grass in the surrounding tiles of an organism's current location.
+     * This method checks each surrounding tile to see if it contains grass. If grass
+     * is found on any of these tiles, the location of the grass is returned.
+     *
+     * @param world The simulation world in which the organism and grass exist.
+     * @return The Location of the grass if found in the surrounding tiles, otherwise null.
      */
     public Location getGrassLocation(World world) {
-        //
+        // Check if there are any surrounding free locations in the world.
         if (getSurroundingFreeLocation(world) != null) {
-            //
+            // Iterate through each surrounding location.
             for (Location location : getSurroundingFreeLocation(world)) {
-                //
+                // Check if the location contains non-blocking entities.
                 if (world.containsNonBlocking(location)) {
-                    //
-                    if ((world.getNonBlocking(location) instanceof Grass)) {
+                    // Return the location if it contains Grass.
+                    if (world.getNonBlocking(location) instanceof Grass) {
                         return location;
                     }
                 }
-            } return null;
-        } return null;
-    }
-
-    public int getTraphicLevel(){
-        return this.trophic_level;
+            }
+            // Return null if no grass is found.
+            return null;
+        }
+        // Return null if there are no surrounding free locations.
+        return null;
     }
 }

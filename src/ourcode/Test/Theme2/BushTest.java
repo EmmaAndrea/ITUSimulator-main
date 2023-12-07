@@ -70,7 +70,7 @@ public class BushTest {
             bush = (Bush) object;
             bush.grow();
         }
-        Assertions.assertTrue(bush.getBerries() > 0, "the bush should have more berries after growing");
+        Assertions.assertTrue(bush.getBerriesAmount() > 0, "the bush should have more berries after growing");
     }
 
     /**
@@ -85,7 +85,7 @@ public class BushTest {
             bush.grow();
         }
         bush.eatBerries();
-        Assertions.assertTrue(bush.getBerries() < 3, "the bush should have less berries after eating");
+        Assertions.assertTrue(bush.getBerriesAmount() < 3, "the bush should have less berries after eating");
     }
 
     /**
@@ -98,8 +98,8 @@ public class BushTest {
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;
             bush.act(world);
-            System.out.println("the amount of berries are: " + bush.getBerries());
+            System.out.println("the amount of berries are: " + bush.getBerriesAmount());
         }
-        Assertions.assertTrue(bush.getBerries() == 3, "bushAct should grow the amount of berries");
+        Assertions.assertTrue(bush.getBerriesAmount() == 3, "bushAct should grow the amount of berries");
     }
 }
