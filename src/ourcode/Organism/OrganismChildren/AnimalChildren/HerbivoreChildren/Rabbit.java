@@ -52,18 +52,23 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         if (grace_period == 1 && !in_hiding) {
             grace_period = 0;
         }
-        if (has_burrow){
-            if (my_burrows.isEmpty()) has_burrow = false;
-        }
+
         boolean isCloseToBurrow = false;
 
         boolean isNight = timeToNight(world) == 0;
 
-        // get a burrow
-        if (!has_burrow && !being_eaten){
-            acquireBurrow(world);
+        // if it is in the burrow
+        if (!isNight && has_burrow) {
+            exitBurrow(world);
+            return;
         }
 
+        // get a burrow
+        if (!has_burrow) {
+            if (linkBurrow(world)) {
+                return;
+            }
+        }
         // if it is not in its burrow
         if (!in_hiding && has_burrow && !being_eaten) {
             if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
@@ -75,9 +80,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
                     enterBurrow(world);
 
                 } else {
-                    if (world.getEntities().containsKey(this) && !being_eaten) {
-                        moveCloser(world, world.getLocation(my_burrows.get(0)));
-                    }
+                    moveCloser(world, world.getLocation(my_burrows.get(0)));
                 }
 
             } else if (timeToNight(world) < 5 && !being_eaten) {
@@ -85,14 +88,9 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
                 return;
             }
 
-            // if it is in the burrow
-        } else if (!isNight && has_burrow) {
-            exitBurrow(world);
-            return;
-        }
-
-        if (!in_hiding && !being_eaten) {
-            nextMove(world);
+            else if (!in_hiding && !being_eaten) {
+                nextMove(world);
+            }
         }
     }
 
@@ -104,45 +102,19 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     }
 
     /**
-     * Acquires a burrow for the animal in the simulation world. If the animal is standing on a burrow, it links
-     * to the existing burrow. If the animal is older than 5 and standing on grass, it replaces the grass with a new burrow.
-     * If it's standing on an empty tile and is older than 5, it creates a new burrow at its current location.
-     *
-     * @param world The simulation world where the burrow acquisition or creation takes place.
-     */
-    public void acquireBurrow(World world) {
-        Location currentLocation = world.getLocation(this);
-        if (world.containsNonBlocking(currentLocation)) {
-            Object currentTile = world.getNonBlocking(currentLocation);
-
-
-            // If it's a Burrow, link it and return early.
-            if (currentTile instanceof Burrow burrow) {
-                linkBurrow(burrow);
-                return;
-            }
-
-            // For age greater than 5, delete Grass and create new Burrow if not on a Burrow.
-            if (age > 5) {
-                if (currentTile instanceof Grass grass) {
-                    world.delete(grass);
-                }
-
-                createNewBurrow(world, currentLocation);
-            }
-        }
-    }
-
-    /**
      * Links the animal to an existing burrow. This method updates the animal's burrow list and sets
      * its 'has_burrow' flag to true.
-     *
-     * @param burrow The burrow that the animal links to.
      */
-    private void linkBurrow(Burrow burrow) {
-        my_burrows = new ArrayList<>();
-        my_burrows.add(burrow);
-        has_burrow = true;
+    private boolean linkBurrow(World world) {
+        Location location = world.getLocation(this);
+        if (world.containsNonBlocking(location)){
+            if(world.getNonBlocking(location) instanceof Burrow burrow){
+                my_burrows = new ArrayList<>();
+                my_burrows.add(burrow);
+                has_burrow = true;
+                return true;
+            }
+        } return false;
     }
 
     /**
@@ -151,9 +123,11 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      * The animal is then prompted to make its next move in the world.
      *
      * @param world The simulation world where the new burrow is created.
-     * @param location The location in the world where the new burrow is placed.
      */
-    private void createNewBurrow(World world, Location location) {
+    @Override
+    public void makeHabitat(World world) {
+        if (age < 5) return;
+        Location location = world.getLocation(this);
         Burrow newBurrow = new Burrow(id_generator);
         world.setTile(location, newBurrow);
 
@@ -161,8 +135,8 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         my_burrows.add(newBurrow);
         has_burrow = true;
 
-        id_generator.addBurrowToLocationMap(location, newBurrow);
-        id_generator.addLocationToIdMap(location, newBurrow.getId());
+        id_generator.addBurrowToLocationMap(world.getLocation(this), newBurrow);
+        id_generator.addLocationToIdMap(world.getLocation(this), newBurrow.getId());
 
         nextMove(world);
     }

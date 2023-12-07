@@ -12,6 +12,7 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantLock;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
@@ -45,6 +46,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      */
     @Override
     public void act(World world) {
+
         super.act(world);
 
         // if it's dusk, go to sleep
@@ -86,7 +88,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 }
             }
         }
-
     }
 
     @Override
