@@ -52,10 +52,10 @@ public class WolfTest {
         world = new World(4);
         IDGenerator id = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id);
+        Wolf wolf1 = new Wolf(id, false);
         wolf1.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(id);
+        Wolf wolf2 = new Wolf(id, false);
         wolf2.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
 
@@ -78,10 +78,10 @@ public class WolfTest {
         world = new World(3);
         IDGenerator idGenerator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(idGenerator);
+        Wolf wolf1 = new Wolf(idGenerator, false);
         wolf1.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(idGenerator);
+        Wolf wolf2 = new Wolf(idGenerator, false);
         wolf2.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
 
@@ -111,13 +111,13 @@ public class WolfTest {
         world = new World(3);
         IDGenerator idGenerator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(idGenerator);
+        Wolf wolf1 = new Wolf(idGenerator, false);
         wolf1.spawn(world);
         System.out.println("wolf1 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(idGenerator);
+        Wolf wolf2 = new Wolf(idGenerator, false);
         wolf2.spawn(world);
         System.out.println("wolf2 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf3 = new Wolf(idGenerator);
+        Wolf wolf3 = new Wolf(idGenerator, false);
         wolf3.spawn(world);
         System.out.println("wolf3 added to the world, the amount of entities are: " + world.getEntities().size());
 
@@ -141,8 +141,8 @@ public class WolfTest {
         world = new World(3);
         IDGenerator id_generator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id_generator);
-        Wolf wolf2 = new Wolf(id_generator);
+        Wolf wolf1 = new Wolf(id_generator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
@@ -168,8 +168,8 @@ public class WolfTest {
         world = new World(4);
         IDGenerator id_generator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id_generator);
-        Wolf wolf2 = new Wolf(id_generator);
+        Wolf wolf1 = new Wolf(id_generator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
@@ -199,8 +199,8 @@ public class WolfTest {
         world = new World(5);
         IDGenerator id_generator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id_generator);
-        Wolf wolf2 = new Wolf(id_generator);
+        Wolf wolf1 = new Wolf(id_generator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
@@ -256,8 +256,8 @@ public class WolfTest {
         IDGenerator id_generator = new IDGenerator();
         world = p.getWorld();
 
-        Wolf wolf1 = new Wolf(id_generator);
-        Wolf wolf2 = new Wolf(id_generator);
+        Wolf wolf1 = new Wolf(id_generator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
 
         wolf1.setGender("MALE");
         System.out.println(wolf1.getGender());

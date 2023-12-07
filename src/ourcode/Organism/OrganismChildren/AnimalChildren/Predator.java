@@ -21,8 +21,8 @@ public abstract class Predator extends Animal {
      *
      * @param original_id_generator The IDGenerator instance for generating the unique ID of the predator.
      */
-    public Predator(IDGenerator original_id_generator) {
-        super(original_id_generator);
+    public Predator(IDGenerator original_id_generator, boolean has_cordyceps) {
+        super(original_id_generator, has_cordyceps);
         is_sleeping = false;
     }
 

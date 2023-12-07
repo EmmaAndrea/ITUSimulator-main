@@ -65,7 +65,7 @@ public class ProgramRunner {
             spawnEntity(world, type, input_reader.getAmount(type));
         }
 
-        alpha = new Wolf(id_generator);
+        alpha = new Wolf(id_generator, false);
         pack_number = 0;
     }
 
@@ -146,18 +146,21 @@ public class ProgramRunner {
      * @param amount The number of entities of the specified type to spawn.
      */
     public void spawnEntity(World world, String entityType, int amount) {
-        switch (entityType) {
+        boolean has_cordyceps = entityType.toLowerCase().startsWith("cordyceps ");
+        String actualType = has_cordyceps ? entityType.substring(10) : entityType;
+
+        switch (actualType) {
             case "berry":
                 spawnEntities(world, amount, () -> new Bush(id_generator));
                 break;
             case "wolf":
-                spawnEntities(world, amount, () -> new Wolf(id_generator));
+                spawnEntities(world, amount, () -> new Wolf(id_generator, has_cordyceps));
                 break;
             case "bear":
-                spawnEntities(world, amount, () -> new Bear(id_generator));
+                spawnEntities(world, amount, () -> new Bear(id_generator, has_cordyceps));
                 break;
             case "rabbit":
-                spawnEntities(world, amount, () -> new Rabbit(id_generator));
+                spawnEntities(world, amount, () -> new Rabbit(id_generator, has_cordyceps));
                 break;
             case "grass":
                 spawnEntities(world, amount, () -> new Grass(id_generator));

@@ -60,7 +60,8 @@ public class InputReader {
 
         for (int i = 1; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(" ");
-            String type = parts[0];
+            boolean isCordyceps = parts[0].equalsIgnoreCase("cordyceps");
+            String type = isCordyceps ? parts[1] : parts[0];
             int amount;
 
             // Determines the amount, handling both single values and ranges
@@ -73,9 +74,17 @@ public class InputReader {
                 amount = Integer.parseInt(parts[1]); // Fixed amount
             }
 
+            // Handle special "cordyceps" case
+            if (isCordyceps) {
+                String cordycepsKey = "cordyceps " + type;
+                map_of_spawns.put(cordycepsKey, map_of_spawns.getOrDefault(cordycepsKey, 0) + amount);
+                continue;
+            }
+
+            // Handle wolf packs
             if (type.equals("wolf")) {
-                map_of_wolf_packs.put(packcount, amount);
-                packcount++;
+                map_of_wolf_packs.put(packcount++, amount);
+                continue;
             }
 
             // Processing for bear spawns
@@ -92,15 +101,9 @@ public class InputReader {
                     map_of_bear_territories.put(bearType, territory);
                 }
 
-                map_of_spawns.remove("bear");
                 map_of_spawns.put("bear", totalBearAmount);
-
             } else {
-                if (map_of_spawns.containsKey(type)) {
-                    int total = map_of_spawns.get(type) + amount;
-                    map_of_spawns.remove(type);
-                    map_of_spawns.put(type, total);
-                } else map_of_spawns.put(type, amount);
+                map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
             }
         }
     }

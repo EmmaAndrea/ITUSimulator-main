@@ -18,8 +18,8 @@ public abstract class Prey extends Animal {
      *
      * @param original_id_generator The ID generator for the prey.
      */
-    public Prey(IDGenerator original_id_generator) {
-        super(original_id_generator);
+    public Prey(IDGenerator original_id_generator, boolean has_cordyceps) {
+        super(original_id_generator, has_cordyceps);
         trophic_level = 2;
     }
 

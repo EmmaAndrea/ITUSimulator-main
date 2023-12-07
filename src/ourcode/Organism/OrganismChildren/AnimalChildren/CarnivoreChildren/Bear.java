@@ -22,8 +22,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
     protected Bear mate;
 
-    public Bear(IDGenerator idGenerator) {
-        super(idGenerator);
+    public Bear(IDGenerator idGenerator, boolean has_cordyceps) {
+        super(idGenerator, has_cordyceps);
         trophic_level = 4;
         territory_location = null;
         type = "bear";
@@ -32,6 +32,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         power = 6;
         max_damage = 16;
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
+        this.has_cordyceps = has_cordyceps;
     }
 
 

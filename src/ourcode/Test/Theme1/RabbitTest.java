@@ -2,6 +2,7 @@ package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
 import itumulator.world.World;
+import org.junit.Test;
 import org.junit.jupiter.api.*;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -72,7 +73,7 @@ public class RabbitTest {
     public void testRabbitDeath() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
-        Rabbit rabbit0 = new Rabbit(programRunner.getOriginal_id_generator());
+        Rabbit rabbit0 = new Rabbit(programRunner.getOriginal_id_generator(), false);
         rabbit0.spawn(world);
 
         // Run the simulation for a certain number of steps that would lead to the rabbit's death.
@@ -90,7 +91,7 @@ public class RabbitTest {
 
         // Create a rabbit and grass
         IDGenerator idGenerator = new IDGenerator();
-        Rabbit rabbit = new Rabbit(idGenerator);
+        Rabbit rabbit = new Rabbit(idGenerator, false);
         Grass grass = new Grass(idGenerator);
 
         // Spawn both rabbit and grass at the same location
@@ -110,6 +111,7 @@ public class RabbitTest {
         assertTrue(postFeedingHungerLevel < initialHungerLevel, "Rabbit's hunger should decrease after eating grass");
     }
 
+    @Test
     @org.testng.annotations.Test
     public void testDeleteAfterEat() {
         // Create a 1x1 world
@@ -118,7 +120,7 @@ public class RabbitTest {
 
         // Create a rabbit and grass
         IDGenerator idGenerator = new IDGenerator();
-        Rabbit rabbit = new Rabbit(idGenerator);
+        Rabbit rabbit = new Rabbit(idGenerator, false);
         Grass grass = new Grass(idGenerator);
 
         // Spawn both rabbit and grass at the same location
@@ -132,6 +134,7 @@ public class RabbitTest {
         assertThrows(Exception.class, () -> assertNull(world.getNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten."));
     }
 
+    @Test
     @org.testng.annotations.Test
     public void testRabbitBreeding() throws Exception{
         // Create a world
@@ -139,7 +142,7 @@ public class RabbitTest {
         world = programRunner.getWorld();
 
         for(int i =0 ; i<3 ; i++){
-            Rabbit rabbit = new Rabbit(programRunner.getOriginal_id_generator());
+            Rabbit rabbit = new Rabbit(programRunner.getOriginal_id_generator(), false);
             rabbit.spawn(world);
         }
         for(int i =0 ; i<25 ; i++){
@@ -170,6 +173,7 @@ public class RabbitTest {
         return counter;
     }
 
+    @Test
     @org.testng.annotations.Test
     public void testRabbitsDontBreedThemselves() throws Exception{
         // Create a world
@@ -201,9 +205,9 @@ public class RabbitTest {
     public void testRabbitAgeDeath() throws Exception{
         programRunner.create("./data/t1-2a.txt");
         world = programRunner.getWorld();
-        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator());
+        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator(), false);
         rabbit1.spawn(world);
-        for(int i =0 ; i<25 ; i++){
+        for (int i =0 ; i<25 ; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }

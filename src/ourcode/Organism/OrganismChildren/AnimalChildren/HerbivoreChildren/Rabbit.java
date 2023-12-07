@@ -28,9 +28,10 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      * sets up its relationship with burrows.
      *
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the rabbit.
+     * @param has_cordyceps
      */
-    public Rabbit(IDGenerator original_id_generator) {
-        super(original_id_generator);
+    public Rabbit(IDGenerator original_id_generator, boolean has_cordyceps) {
+        super(original_id_generator, has_cordyceps);
         type = "rabbit";
         max_hunger = 18;
         nutritional_value = 4;
@@ -41,6 +42,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         has_burrow = false;
         max_damage = 8;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
+        this.has_cordyceps = has_cordyceps;
     }
 
     /**

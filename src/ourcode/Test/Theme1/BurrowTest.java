@@ -61,7 +61,7 @@ public class BurrowTest {
         IDGenerator id = new IDGenerator();
 
         // creates a rabbit
-        Rabbit rabbit = new Rabbit(id);
+        Rabbit rabbit = new Rabbit(id, false);
         // creates a burrow
         Burrow burrow = new Burrow(id);
         // creates a location for the rabbit and burrow to be spawned at
@@ -93,9 +93,9 @@ public class BurrowTest {
         // declares a new burrow
         Burrow burrow = new Burrow(id);
         // declares a new rabbit
-        Rabbit rabbit = new Rabbit(id);
+        Rabbit rabbit = new Rabbit(id, false);
         // declares another new rabbit
-        Rabbit rabbit1 = new Rabbit(id);
+        Rabbit rabbit1 = new Rabbit(id, false);
 
         // adds the 'first' rabbit to the list of residents in the burrow
         burrow.addResident(rabbit);

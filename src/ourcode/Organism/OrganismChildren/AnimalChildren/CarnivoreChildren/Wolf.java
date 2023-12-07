@@ -37,10 +37,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
-     * @param idGenerator The IDGenerator instance providing the unique identifier for the wolf.
+     * @param idGenerator  The IDGenerator instance providing the unique identifier for the wolf.
+     * @param has_cordyceps
      */
-    public Wolf(IDGenerator idGenerator) {
-        super(idGenerator);
+    public Wolf(IDGenerator idGenerator, boolean has_cordyceps) {
+        super(idGenerator, has_cordyceps);
         type = "wolf";
         trophic_level = 3;
         max_age = 130;
@@ -52,6 +53,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         power = 4;
         max_damage = 16;
         pack_hunting = false;
+        this.has_cordyceps = has_cordyceps;
     }
 
     /**
@@ -503,7 +505,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param residents The list of animals residing in the cave, to which the new cub will be added.
      */
     public void breedWolf(IDGenerator id_generator, List<Animal> residents) {
-        Wolf cub = new Wolf(id_generator);
+        Wolf cub = new Wolf(id_generator, false);
         residents.add(cub);
         my_alpha.addWolfToPack(cub);
         cub.setCave(my_cave);

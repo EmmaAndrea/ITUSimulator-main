@@ -38,7 +38,7 @@ public abstract class Animal extends Organism {
     protected int power; // used to decide how much damage a bear deals.
     protected int max_damage;
     protected boolean being_eaten;
-
+    protected boolean has_cordyceps;
     protected int grace_period; //
 
     /**
@@ -47,7 +47,7 @@ public abstract class Animal extends Organism {
      *
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the animal.
      */
-    public Animal(IDGenerator original_id_generator) {
+    public Animal(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator); // life_counter = 1;
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
@@ -57,6 +57,7 @@ public abstract class Animal extends Organism {
         being_hunted = false;
         damage_taken = 0;
         grace_period = 0;
+        this.has_cordyceps = has_cordyceps;
     }
 
     /**
@@ -176,13 +177,13 @@ public abstract class Animal extends Organism {
     public void spawnEntity(World world, String entityType) {
         switch (entityType) {
             case "bear":
-                Bear bear = new Bear(id_generator);
+                Bear bear = new Bear(id_generator, has_cordyceps);
                 bear.spawn(world);
             case "wolf":
-                Wolf wolf = new Wolf(id_generator);
+                Wolf wolf = new Wolf(id_generator, has_cordyceps);
                 wolf.spawn(world);
             case "rabbit":
-                Rabbit rabbit = new Rabbit(id_generator);
+                Rabbit rabbit = new Rabbit(id_generator, has_cordyceps);
                 rabbit.spawn(world);
                 break;
             case "grass":
