@@ -15,6 +15,7 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
+import java.util.concurrent.locks.ReentrantLock;
 
 import static ourcode.Organism.Gender.Female;
 import static ourcode.Organism.Gender.Male;
@@ -41,6 +42,7 @@ public abstract class Animal extends Organism {
     protected ArrayList<Animal> friends;
     protected Habitat habitat;
     protected boolean has_habitat;
+    private final ReentrantLock lock;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -62,6 +64,7 @@ public abstract class Animal extends Organism {
         friends = new ArrayList<>();
         habitat = null;
         has_habitat = false; // watch out for problem with this when spawning wolves in packs.
+        lock = new ReentrantLock();
     }
 
     /**
@@ -86,6 +89,7 @@ public abstract class Animal extends Organism {
         // Adds one to the counter of how many days since it gave birth to an offspring.
         steps_since_last_birth++;
 
+        lock.lock();
         // If the animal is currently inside its habitat.
         if (in_hiding) {
             if (checkBreed(world)) {
@@ -108,6 +112,7 @@ public abstract class Animal extends Organism {
                 nextMove(world);
             }
         }
+        lock.unlock();
     }
 
     public void makeHabitat(World world) {
@@ -129,15 +134,16 @@ public abstract class Animal extends Organism {
      *
      * @param world The world in which the animal and its food source exist.
      */
-    public void eat(World world, Organism object) {
+    public void eat(World world, Organism organism) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
-        if (object instanceof Grass grass) {
+        if (organism instanceof Grass grass) {
             hunger -= 2;
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
             // check
             System.out.println(this.getType() + " " + this.getId() + " ate " + grass.getId());
-        } else if (object instanceof Animal animal) {
+
+        } else if (organism instanceof Animal animal) {
             synchronized (animal) {
                 if (animal.getGracePeriod() == 0) {
                     // takes off hunger by eating

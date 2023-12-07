@@ -21,8 +21,6 @@ public abstract class Organism extends Entity implements Actor {
 
     protected int trophic_level = 0;
 
-    private final ReentrantLock lock;
-
     /**
      * Constructor for Organism, initializing common attributes for all organisms in the world.
      * @param original_id_generator The IDGenerator used for assigning unique IDs to the organism.
@@ -30,7 +28,6 @@ public abstract class Organism extends Entity implements Actor {
     public Organism(IDGenerator original_id_generator) {
         super(original_id_generator);
         nutritional_value = 2;
-        lock = new ReentrantLock();
         trophic_level = 0;
     }
 
