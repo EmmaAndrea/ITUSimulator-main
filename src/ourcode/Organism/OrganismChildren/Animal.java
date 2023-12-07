@@ -407,7 +407,7 @@ public abstract class Animal extends Organism {
                         if (wolf.getPack() != null && wolf.getPack().contains(this)){
                             System.out.println("found pack");
                             break;
-                        } else if (animal.getTrophicLevel() > trophic_level) {
+                        } else if (wolf.getTrophicLevel() > trophic_level) {
                             moveAway(world, location);
                             being_hunted = true;
                             return true;
@@ -427,8 +427,10 @@ public abstract class Animal extends Organism {
                     } else if (this instanceof Predator predator) {
                         synchronized (predator) {
                             if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger > 4) predator.attack(world, animal);
-                                return true;
+                                if (animal.getMate() != this) {
+                                    if (hunger >= animal.getNutritionalValue()) predator.attack(world, animal);
+                                    return true;
+                                }
                             }
                         }
                     }
@@ -537,6 +539,9 @@ public abstract class Animal extends Organism {
         } else {
             this.gender = Gender.Female;
         }
+    }
+    public Animal getMate(){
+        return null;
     }
 }
 

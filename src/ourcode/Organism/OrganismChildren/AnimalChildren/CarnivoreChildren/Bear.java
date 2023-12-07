@@ -6,6 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
@@ -51,9 +52,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                     world.delete(grass);
                 }
             } if (!world.containsNonBlocking(territory_location = world.getLocation(this))) {
-                Territory new_territory = new Territory(id_generator);
-                world.setTile(territory_location, new_territory);
-                my_territory = new_territory;
+                setTerritory(world, territory_location);
             }
         } else if (my_territory == null) {
             if (world.containsNonBlocking(world.getLocation(this))) {
@@ -62,9 +61,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 }
             }
             if (!world.containsNonBlocking(territory_location)) {
-                Territory new_territory = new Territory(id_generator);
-                world.setTile(territory_location, new_territory);
-                my_territory = new_territory;
+                setTerritory(world, territory_location);
             }
         }
 
@@ -112,15 +109,14 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @param world The simulation world where the bear searches for a mate.
      */
     public void findMate(World world){
-
         for(Location location: world.getSurroundingTiles(world.getLocation(this), 7)){
             if (world.getTile(location) instanceof Bear potential_mate){
                 if (potential_mate.getGender() == Gender.Female){
-                    for(int i = 0 ; i < 3 ; i++) {
+                    for(int i = 1 ; i < (distanceTo(world, world.getLocation(potential_mate))) ; i++) {
                         moveCloser(world, location);
                     }
-                    setMate(potential_mate);
-                    potential_mate.setMate(this);
+                    maleSetMate(potential_mate, world);
+                    potential_mate.femaleSetMate(this);
                     System.out.println("got mate");
                 }
             }
@@ -158,10 +154,24 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      *
      * @param potential_mate The bear to be set as the mate.
      */
-    public void setMate(Bear potential_mate){
+    public void maleSetMate(Bear potential_mate, World world){
         mate = potential_mate;
+        for (Location location : world.getSurroundingTiles(potential_mate.getTerritory())){
+            if (world.containsNonBlocking(location)){
+                if (world.getNonBlocking(location) instanceof Grass grass){
+                    world.delete(grass);
+                }
+            } if (!world.containsNonBlocking(location)){
+                setTerritory(world, location);
+                System.out.println("BOY GOT MATE");
+                return;
+            }
+        }
+    }
 
-        territory_location = potential_mate.getTerritory();
+    public void femaleSetMate(Bear male_bear){
+        mate = male_bear;
+        System.out.println("GIRL GOT MATE");
     }
 
     /**
@@ -212,8 +222,17 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      *
      * @param territory The location to be set as the bear's new territory.
      */
-    public void setTerritory(Location territory) {
+    public void setTerritoryLocation(Location territory) {
         this.territory_location = territory;
+    }
+
+    public void setTerritory(World world, Location location){
+        if (my_territory != null){
+            world.delete(my_territory);
+        }
+        Territory new_territory = new Territory(id_generator);
+        world.setTile(location, new_territory);
+        my_territory = new_territory;
     }
 
     /**
@@ -224,5 +243,11 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     @Override
     public int getTrophicLevel() {
         return trophic_level;
+    }
+
+    @Override
+    public Animal getMate() {
+        if (mate instanceof Animal animal) return animal;
+        else return null;
     }
 }
