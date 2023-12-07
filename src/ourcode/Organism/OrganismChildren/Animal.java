@@ -392,87 +392,64 @@ public abstract class Animal extends Organism {
      * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
      */
     public boolean findFoodOrSafety(World world) {
-        // Get surrounding tiles to iterate through them.
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
+        Set<Location> surroundingTiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
-        // First, check for blocking organisms.
-        // Though, if there is an animal of higher trophic level, move away from this animal.
-        for (Location location : surrounding_tiles) {
+        // Consolidate checks for blocking and non-blocking entities in a single loop
+        for (Location location : surroundingTiles) {
+            Object object = world.getTile(location);
 
-            // If the tile at given location isn't empty.
-            if (!world.isTileEmpty(location)) {
-
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
-
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Animal animal) {
-                    if(animal instanceof Wolf wolf){
-                        if (wolf.getPack() != null && wolf.getPack().contains(this)){
-                            System.out.println("found pack");
-                            break;
-                        } else if (animal.getTrophicLevel() > trophic_level) {
-                            moveAway(world, location);
-                            being_hunted = true;
-                            return true;
-                        } else if (this instanceof Predator predator) {
-                            synchronized (predator) {
-                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                    if (hunger > 4) predator.attack(world, animal);
-                                    return true;
-                                }
-                            }
-                        }
-                    } else if (animal.getTrophicLevel() > trophic_level) {
-                        moveAway(world, location);
-                        being_hunted = true;
-                        return true;
-                        // If the organism has a higher trophic level than itself.
-                    } else if (this instanceof Predator predator) {
-                        synchronized (predator) {
-                            if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger > 4) predator.attack(world, animal);
-                                return true;
-                            }
-                        }
-                    }
+            if (object instanceof Animal animal) {
+                // Handle interactions with other animals
+                return handleAnimalInteraction(world, animal, location);
+            } else if (object instanceof Bush bush && consumable_foods.contains("bush")) {
+                // Handle interaction with a Bush
+                if (hunger > 4) {
+                    bush.eatBerries();
+                    System.out.println(type + " ate berries");
+                    return false;
+                }
+            } else if (object instanceof Grass grass && consumable_foods.contains("grass")) {
+                // Handle interaction with Grass
+                if (hunger >= 2) {
+                    eat(world, grass);
+                    return true;
                 }
             }
         }
 
-        // Next, check for non-blocking organisms like grass.
-        for (Location location : surrounding_tiles) {
-            if (world.containsNonBlocking(location)) {
-                Object object = world.getNonBlocking(location);
-                if (object instanceof Organism organism) {
-                    if (consumable_foods.contains(organism.getType())) {
-                        moveCloser(world, location);
-                        if (world.containsNonBlocking(world.getLocation(this))) {
-                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                if (hunger >= 2) {
-                                    if (world.getEntities().containsKey(this)) eat(world, grass);
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (!world.isTileEmpty(location)){
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
+        // If no food or danger is found, animal moves to a random location
+        return false;
+    }
 
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Bush bush) {
-                    if (consumable_foods.contains("bush")) {
-                        if (hunger > 4) bush.eatBerries();
-                        System.out.println(type + " ate berries");
-                        return false;
-                    }
-                }
+    /**
+     * Handles interaction of the animal with another animal.
+     *
+     * @param world The simulation world.
+     * @param animal The animal encountered.
+     * @param location The location of the encountered animal.
+     * @return true if action is taken towards the encountered animal, false otherwise.
+     */
+    private boolean handleAnimalInteraction(World world, Animal animal, Location location) {
+        if (animal instanceof Wolf wolf) {
+            if (wolf.getPack() != null && wolf.getPack().contains(this)) {
+                System.out.println("found pack");
+                return false;
             }
         }
 
-        // If no food or danger is found, return false.
+        if (animal.getTrophicLevel() > trophic_level) {
+            moveAway(world, location);
+            being_hunted = true;
+            return true;
+        } else if (this instanceof Predator predator && animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+            if (hunger > 4) {
+                synchronized (predator) {
+                    predator.attack(world, animal);
+                }
+                return true;
+            }
+        }
+
         return false;
     }
 
