@@ -21,7 +21,7 @@ public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
-    protected int trophic_level;
+    protected int trophic_level = 0;
 
     private final ReentrantLock lock;
 

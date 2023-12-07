@@ -172,6 +172,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
     public void femaleSetMate(Bear male_bear){
         mate = male_bear;
+        friends.add(male_bear);
         System.out.println("GIRL GOT MATE");
     }
 

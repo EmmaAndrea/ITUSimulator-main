@@ -38,7 +38,8 @@ public abstract class Animal extends Organism {
     protected int max_damage;
     protected boolean being_eaten;
     protected boolean has_cordyceps;
-    protected int grace_period; //
+    protected int grace_period; // holy period after coming out of burrow such that canvas errors are evaded.
+    protected ArrayList<Animal> friends;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -57,6 +58,7 @@ public abstract class Animal extends Organism {
         damage_taken = 0;
         grace_period = 0;
         this.has_cordyceps = has_cordyceps;
+        friends = new ArrayList<>();
     }
 
     /**
@@ -403,40 +405,21 @@ public abstract class Animal extends Organism {
 
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
-                    if(animal instanceof Wolf wolf){
-                        if (wolf.getPack() != null && wolf.getPack().contains(this)){
-                            System.out.println("found pack");
-                            break;
-                        } else if (wolf.getTrophicLevel() > trophic_level) {
+                    if (!friends.contains(animal)) {
+                        if (animal.getTrophicLevel() > trophic_level) {
                             moveAway(world, location);
                             being_hunted = true;
                             return true;
-                        } else if (this instanceof Predator predator) {
-                            synchronized (predator) {
-                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                    if (hunger > 4) predator.attack(world, animal);
-                                    return true;
-                                }
-                            }
+                            // If the organism has a higher trophic level than itself.
                         }
-                    } else if (animal.getTrophicLevel() > trophic_level) {
-                        moveAway(world, location);
-                        being_hunted = true;
-                        return true;
-                        // If the organism has a higher trophic level than itself.
-                    } else if (this instanceof Predator predator) {
-                        synchronized (predator) {
-                            if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (animal.getMate() != this) {
-                                    if (hunger >= animal.getNutritionalValue()) predator.attack(world, animal);
-                                    return true;
-                                }
-                            }
+                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                            eat(world, animal);
                         }
                     }
                 }
             }
         }
+
 
         // Next, check for non-blocking organisms like grass.
         for (Location location : surrounding_tiles) {
@@ -542,6 +525,10 @@ public abstract class Animal extends Organism {
     }
     public Animal getMate(){
         return null;
+    }
+
+    public void setFriends(Animal animal) {
+        friends.add(animal);
     }
 }
 

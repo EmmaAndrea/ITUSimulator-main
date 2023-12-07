@@ -232,8 +232,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             pack.add(new_wolf);
             new_wolf.setAlpha(this);
             new_wolf.setHasPack();
-            if (pack.size() == 5) {
-                for (Wolf wolf : pack) {
+            for (Wolf wolf : pack) {
+                wolf.setFriends(new_wolf);
+                if (pack.size() == 5) {
                     wolf.setTrophicLevel(5);
                 }
             }

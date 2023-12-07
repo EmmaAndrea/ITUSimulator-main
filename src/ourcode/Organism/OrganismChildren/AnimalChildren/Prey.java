@@ -63,35 +63,4 @@ public abstract class Prey extends Animal {
             }
         }
     }
-
-    /*
-      Determines the next move of a herbivore based on the availability of grass.
-      Herbivores move towards nearby grass or make a random move if no grass is near.
-
-      @param world The simulation world where the herbivore moves.
-     */
-   /*
-    public void nextMove(World world) {
-
-        // Moves to grass, if there is grass nearby.
-        if (getGrassLocation(world) != null) {
-            //
-            if (getGrassLocation(world) != world.getLocation(this)) {
-                //
-                world.move(this, getGrassLocation(world));
-                //
-            } else if (getRandomMoveLocation(world) != null) {
-                //
-                world.move(this, getRandomMoveLocation(world));
-                return;
-            }
-            // if there is no grass, move randomly
-        }  else if (getRandomMoveLocation(world) != null){
-            world.move(this, getRandomMoveLocation(world));
-            return;
-        }
-
-
-    }
-    */
 }

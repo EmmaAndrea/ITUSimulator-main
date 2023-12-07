@@ -84,9 +84,10 @@ public abstract class Predator extends Animal {
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
                     if (consumable_foods.contains(animal.getType())) {
-                        for (int i = 2; i <= distanceTo(world, location); i++) {
+                        for (int i = 1; i <= distanceTo(world, location); i++) {
                             moveCloser(world, location);
                         }
+                        attack(world, animal);
                     }
                 }
             }
