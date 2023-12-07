@@ -4,6 +4,7 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -15,14 +16,16 @@ import java.util.List;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
-    protected Location territory;
+    protected Location territory_location;
+    
+    protected Territory my_territory;
 
     protected Bear mate;
 
     public Bear(IDGenerator idGenerator) {
         super(idGenerator);
         trophic_level = 4;
-        territory = null;
+        territory_location = null;
         type = "bear";
         max_age = 190;
         max_hunger = 30;
@@ -31,46 +34,48 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
     }
 
-    /**
-     * Graphics for old, young and wounded bear.
-     * @return the display information for the bear in its current state.
-     */
-    @Override
-    public DisplayInformation getInformation() {
-        if (age >= 11) {
-            if (damage_taken > 0) {
-                return new DisplayInformation(Color.yellow, "bear-large-wounded");
-            } else if (is_sleeping) {
-                return new DisplayInformation(Color.yellow, "bear-large-sleeping");
-            } else {
-                return new DisplayInformation(Color.yellow, "bear-large");
-            }
-        } else {
-            if (damage_taken > 0) {
-                return new DisplayInformation(Color.yellow, "bear-small-wounded");
-            } else if (is_sleeping) {
-                return new DisplayInformation(Color.yellow, "bear-small-sleeping");
-            } else {
-                return new DisplayInformation(Color.yellow, "bear-small");
-            }
-        }
-    }
 
     /**
-     *
+     * Bears are extremely territorial, and therefore never wander outside their territory.
+     * The omnivore act method ensures the bear has a territory and never goes too far away.
+     * However, when the bear is old enough, it will leave its own territory in order to find a mate.
+     * If the bear is very hungry, it will go further away from its territory than normal to hunt.
+     * The bear will always sleep in its territory.
      * @param world The simulation world in which the omnivore exists.
      */
     @Override
     public void omnivoreAct(World world) {
-        //trophic_level = 4;
-        if (territory == null) {
-            territory = world.getLocation(this);
+        if (territory_location == null) {
+            if (world.containsNonBlocking(world.getLocation(this))) {
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                    world.delete(grass);
+                }
+            } if (!world.containsNonBlocking(territory_location = world.getLocation(this))) {
+                Territory new_territory = new Territory(id_generator);
+                world.setTile(territory_location, new_territory);
+                my_territory = new_territory;
+            }
+        } else if (my_territory == null) {
+            if (world.containsNonBlocking(world.getLocation(this))) {
+                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                    world.delete(grass);
+                }
+            }
+            if (!world.containsNonBlocking(territory_location)) {
+                Territory new_territory = new Territory(id_generator);
+                world.setTile(territory_location, new_territory);
+                my_territory = new_territory;
+            }
         }
 
         if (time(world) == 12) {
-            is_sleeping = true;
-            System.out.println("bear asleep");
-            in_hiding = true;
+            if (distanceTo(world, territory_location) < 2) {
+                is_sleeping = true;
+                System.out.println("bear asleep");
+                in_hiding = true;
+            } else {
+                moveCloser(world, territory_location);
+            }
         } else if (world.getCurrentTime() == 3) {
             is_sleeping = false;
             in_hiding = false;
@@ -80,48 +85,24 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         if (!is_sleeping) {
             if (gender == Gender.Male && age > 19 && mate == null) {
                 findMate(world);
+            } if (mate != null) {
+                breed(world);
             }
-            if (distanceTo(world, territory) > 3) {
-                moveCloser(world, territory);
-            }
-            else if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
-                if (world.getLocation(this).equals(territory)) {
+            if (distanceTo(world, territory_location) > 3) {
+                moveCloser(world, territory_location);
+            } else if (hunger >= 20) {
+                hunt(world);
+                if (!findFoodOrSafety(world)) {
                     if (getRandomMoveLocation(world) != null) {
                         world.move(this, getRandomMoveLocation(world));
                     }
                 }
-                if (hunger >= 20) {
-                    hunt(world);
-                    if (!findFoodOrSafety(world)) {
-                        if (getRandomMoveLocation(world) != null) {
-                            world.move(this, getRandomMoveLocation(world));
-                        }
-                    }
-                } else if (getRandomMoveLocation(world) != null) {
+            } else if (!findFoodOrSafety(world) && world.getEntities().get(this) != null) {
+                if (getRandomMoveLocation(world) != null) {
                     world.move(this, getRandomMoveLocation(world));
                 }
             }
         }
-
-    }
-
-    /**
-     * Sets the bear's territory to a specified location.
-     *
-     * @param territory The location to be set as the bear's new territory.
-     */
-    public void setTerritory(Location territory) {
-        this.territory = territory;
-    }
-
-    /**
-     * Retrieves the trophic level of the bear.
-     *
-     * @return The trophic level of the bear.
-     */
-    @Override
-    public int getTrophicLevel() {
-        return trophic_level;
     }
 
     /**
@@ -179,7 +160,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      */
     public void setMate(Bear potential_mate){
         mate = potential_mate;
-        territory = potential_mate.getTerritory();
+
+        territory_location = potential_mate.getTerritory();
     }
 
     /**
@@ -188,7 +170,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @return The current territory of the bear.
      */
     public Location getTerritory(){
-        return territory;
+        return territory_location;
     }
 
     /**
@@ -200,4 +182,47 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         return damage_taken;
     }
 
+    /**
+     * Graphics for old, young and wounded bear.
+     * @return the display information for the bear in its current state.
+     */
+    @Override
+    public DisplayInformation getInformation() {
+        if (age >= 11) {
+            if (damage_taken > 0) {
+                return new DisplayInformation(Color.yellow, "bear-large-wounded");
+            } else if (is_sleeping) {
+                return new DisplayInformation(Color.yellow, "bear-large-sleeping");
+            } else {
+                return new DisplayInformation(Color.yellow, "bear-large");
+            }
+        } else {
+            if (damage_taken > 0) {
+                return new DisplayInformation(Color.yellow, "bear-small-wounded");
+            } else if (is_sleeping) {
+                return new DisplayInformation(Color.yellow, "bear-small-sleeping");
+            } else {
+                return new DisplayInformation(Color.yellow, "bear-small");
+            }
+        }
+    }
+
+    /**
+     * Sets the bear's territory to a specified location.
+     *
+     * @param territory The location to be set as the bear's new territory.
+     */
+    public void setTerritory(Location territory) {
+        this.territory_location = territory;
+    }
+
+    /**
+     * Retrieves the trophic level of the bear.
+     *
+     * @return The trophic level of the bear.
+     */
+    @Override
+    public int getTrophicLevel() {
+        return trophic_level;
+    }
 }

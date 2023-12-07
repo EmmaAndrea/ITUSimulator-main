@@ -17,8 +17,8 @@ public abstract class Habitat extends Obstacle {
      *
      * @param id The unique identifier for the habitat, typically provided by an IDGenerator.
      */
-    public Habitat(IDGenerator id) {
-        super(id);
+    public Habitat(IDGenerator id_generator) {
+        super(id_generator);
         residents = new ArrayList<>();
     }
 

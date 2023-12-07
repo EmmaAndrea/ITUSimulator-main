@@ -35,7 +35,7 @@ public abstract class Animal extends Organism {
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
     protected boolean being_hunted;
     protected int damage_taken;
-    protected int power;
+    protected int power; // used to decide how much damage a bear deals.
     protected int max_damage;
     protected boolean being_eaten;
 
@@ -84,10 +84,6 @@ public abstract class Animal extends Organism {
                 herbivoreAct(world);
                 omnivoreAct(world);
                 carnivoreAct(world);
-
-                if (!in_hiding) {
-                    breed(world);
-                }
                 return true;
             } else return false;
         } else return false;

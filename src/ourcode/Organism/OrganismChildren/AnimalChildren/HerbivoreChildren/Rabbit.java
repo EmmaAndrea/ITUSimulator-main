@@ -103,7 +103,10 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             return;
         }
 
-        if (!in_hiding && !being_eaten) nextMove(world);
+        if (!in_hiding && !being_eaten) {
+            breed(world);
+            nextMove(world);
+        }
     }
 
     /**
