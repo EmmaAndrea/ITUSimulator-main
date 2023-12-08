@@ -118,6 +118,13 @@ public abstract class Animal extends Organism {
         // individual for each animal
     }
 
+    /**
+     * Method for reducing code duplication of this sequence
+     * Used to allow animals to make habitats
+     * @param world
+     * @param location
+     * @return
+     */
     public boolean checkEmptySpace(World world, Location location) {
         if (world.containsNonBlocking(location)) {
             if (world.getNonBlocking(location) instanceof Grass grass) {
@@ -342,8 +349,8 @@ public abstract class Animal extends Organism {
         damage_taken += power;
     }
 
-    public boolean checkDamage(){
-        return damage_taken <= max_damage;
+    public boolean ifDeadReturnTrue(){
+        return damage_taken >= max_damage;
     }
 
     public void setBeingEaten(Boolean b){
@@ -410,7 +417,6 @@ public abstract class Animal extends Organism {
      * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
      */
     public boolean findFoodOrSafety(World world) {
-        System.out.println(type + "trying to eat rabbit");
         // Get surrounding tiles to iterate through them.
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
@@ -451,8 +457,8 @@ public abstract class Animal extends Organism {
                         moveCloser(world, location);
                         if (world.containsNonBlocking(world.getLocation(this))) {
                             if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                if (hunger >= 2) {
-                                    if (world.getEntities().containsKey(this)) eat(world, grass);
+                                if (hunger >= grass.getNutritionalValue()) {
+                                    eat(world, grass);
                                     return true;
                                 }
                             }

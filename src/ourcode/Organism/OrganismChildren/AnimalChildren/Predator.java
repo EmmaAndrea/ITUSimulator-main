@@ -44,6 +44,7 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void act(World world) {
+        super.act(world);
     }
 
     /**
@@ -56,7 +57,7 @@ public abstract class Predator extends Animal {
     @Override
     public void attack(World world, Animal animal) {
         animal.damage(power);
-        if (!animal.checkDamage()) {
+        if (animal.ifDeadReturnTrue()) {
             if (hunger >= animal.getNutritionalValue()) eat(world, animal);
         }
     }
@@ -82,11 +83,15 @@ public abstract class Predator extends Animal {
 
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
-                    if (consumable_foods.contains(animal.getType())) {
-                        for (int i = 1; i <= distanceTo(world, location); i++) {
-                            moveCloser(world, location);
+                    if (!friends.contains(animal)) {
+                        if (animal.getTrophicLevel() > trophic_level) {
+                            if (consumable_foods.contains(animal.getType())) {
+                                for (int i = 1; i <= distanceTo(world, location); i++) {
+                                    moveCloser(world, location);
+                                }
+                                attack(world, animal);
+                            }
                         }
-                        attack(world, animal);
                     }
                 }
             }

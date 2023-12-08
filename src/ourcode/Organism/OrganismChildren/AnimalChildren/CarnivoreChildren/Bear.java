@@ -50,29 +50,31 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         super.act(world);
 
         // if it's dusk, go to sleep
-        if (world.getCurrentTime() == 12 && my_territory != null) {
-            if (distanceTo(world, territory_location) < 1) {
+        if (world.getCurrentTime() > 12 && world.getCurrentTime() < 18 && my_territory != null && !in_hiding) {
+            if (distanceTo(world, territory_location) > 0) {
+                moveCloser(world, territory_location);
+            } if (distanceTo(world, territory_location) < 1){
                 my_territory.addResident(this);
                 in_hiding = true;
-            } else {
-                moveCloser(world, territory_location);
             }
+            return;
         }
         // if it's dawn, wake up
-        if (world.getCurrentTime() == 18 && my_territory != null) {
+        if (world.getCurrentTime() == 18 && in_hiding) {
             my_territory.removeResident(this);
             in_hiding = false;
+            return;
         }
 
         // if not sleeping
         if (!in_hiding) {
             // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
-                findMate(world);
+                if (findMate(world)) return;
             }
 
             // if very hungry, go hunt
-            else if (hunger >= 20) {
+            if (hunger >= 20) {
                 hunt(world);
             }
 
@@ -82,20 +84,18 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             }
 
             // if it is still alive, and hasn't done anything else move randomly
-            else if (world.getEntities().get(this) != null) {
-                if (getRandomMoveLocation(world) != null) {
-                    world.move(this, getRandomMoveLocation(world));
-                }
+            else if (getRandomMoveLocation(world) != null) {
+                world.move(this, getRandomMoveLocation(world));
             }
         }
     }
 
     @Override
     public void makeHabitat(World world) {
+        if (age<8) return;
         if (territory_location == null) {
             territory_location = world.getLocation(this);
         }
-
         if (checkEmptySpace(world, territory_location)) {
             my_territory = new Territory(id_generator);
             world.setTile(territory_location, my_territory);
@@ -109,7 +109,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      *
      * @param world The simulation world where the bear searches for a mate.
      */
-    public void findMate(World world){
+    public boolean findMate(World world){
         for (Location location: world.getSurroundingTiles(world.getLocation(this), 7)) {
             if (world.getTile(location) instanceof Bear potential_mate){
                 if (potential_mate.getGender() == Gender.Female){
@@ -118,10 +118,11 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                     }
                     if (maleSetMate(potential_mate, world)){
                         potential_mate.femaleSetMate(this);
+                        return true;
                     }
                 }
             }
-        }
+        } return false;
     }
 
     /**
