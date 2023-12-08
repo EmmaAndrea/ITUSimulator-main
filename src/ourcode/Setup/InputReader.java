@@ -56,34 +56,42 @@ public class InputReader {
         int bearCount = 0;
         int totalBearAmount = 0;
         Random random = new Random();
-        int packcount = 0;
+        int pack_count = 0;
 
         for (int i = 1; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(" ");
             boolean isCordyceps = parts[0].equalsIgnoreCase("cordyceps");
-            String type = isCordyceps ? parts[1] : parts[0];
+            boolean isFungi = parts.length > 1 && parts[1].equalsIgnoreCase("fungi");
+            String type = parts[0];
+
+            if (isCordyceps) {
+                type = "cordyceps " + parts[1];
+            } else if (isFungi) {
+                type = "carcass fungi";
+            }
+
+            int j = isCordyceps || isFungi ? 2 : 1;
             int amount;
 
             // Determines the amount, handling both single values and ranges
-            if (parts[1].contains("-")) {
-                String[] range = parts[1].split("-");
+            if (parts[j].contains("-")) {
+                String[] range = parts[j].split("-");
                 int min = Integer.parseInt(range[0]);
                 int max = Integer.parseInt(range[1]);
                 amount = random.nextInt(max - min + 1) + min; // Random amount within the specified range
             } else {
-                amount = Integer.parseInt(parts[1]); // Fixed amount
+                amount = Integer.parseInt(parts[j]); // Fixed amount
             }
 
             // Handle special "cordyceps" case
             if (isCordyceps) {
-                String cordycepsKey = "cordyceps " + type;
-                map_of_spawns.put(cordycepsKey, map_of_spawns.getOrDefault(cordycepsKey, 0) + amount);
+                map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
                 continue;
             }
 
             // Handle wolf packs
             if (type.equals("wolf")) {
-                map_of_wolf_packs.put(packcount++, amount);
+                map_of_wolf_packs.put(pack_count++, amount);
                 continue;
             }
 
@@ -94,9 +102,9 @@ public class InputReader {
                 totalBearAmount += amount;
 
                 // Parses and stores territory information if available
-                if (parts.length > 2) {
-                    int x = Integer.parseInt(String.valueOf(parts[2].charAt(1)));
-                    int y = Integer.parseInt(String.valueOf(parts[2].charAt(3)));
+                if (parts.length > 2 + j) {
+                    int x = Integer.parseInt(String.valueOf(parts[2 + j].charAt(1)));
+                    int y = Integer.parseInt(String.valueOf(parts[2 + j].charAt(3)));
                     Location territory = new Location(x, y);
                     map_of_bear_territories.put(bearType, territory);
                 }

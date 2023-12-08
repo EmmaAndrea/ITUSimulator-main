@@ -47,7 +47,7 @@ public class FungusTest {
         world = new World(4);
         IDGenerator idGenerator = new IDGenerator();
 
-        Carcass carcass = new Carcass(idGenerator, 3, "bear");
+        Carcass carcass = new Carcass(idGenerator, 3, "bear", false);
         carcass.spawn(world);
 
         Fungus fungus = new Fungus(idGenerator);
@@ -55,10 +55,7 @@ public class FungusTest {
 
         fungus.act(world);
 
-        boolean state = false;
-        if (carcass.getMyFungus().isInCarcass()) {
-            state = true;
-        }
+        boolean state = carcass.getFungus().isInCarcass();
 
         System.out.println(state);
     }

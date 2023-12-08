@@ -7,6 +7,8 @@ import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.Carcass;
+import ourcode.Organism.OrganismChildren.Fungus;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
@@ -146,28 +148,43 @@ public class ProgramRunner {
      * @param amount The number of entities of the specified type to spawn.
      */
     public void spawnEntity(World world, String entityType, int amount) {
-        boolean has_cordyceps = entityType.toLowerCase().startsWith("cordyceps ");
-        String actualType = has_cordyceps ? entityType.substring(10) : entityType;
+        boolean hasCordyceps = entityType.toLowerCase().startsWith("cordyceps ");
+        String actualType = hasCordyceps ? entityType.substring(10) : entityType;
+        boolean hasFungus;
+
+        if (entityType.equalsIgnoreCase("carcass fungi")) {
+            hasFungus = true;
+            actualType = "carcass";
+        } else {
+            hasFungus = entityType.toLowerCase().contains("fungi");
+        }
 
         switch (actualType) {
-            case "berry":
-                spawnEntities(world, amount, () -> new Bush(id_generator));
-                break;
-            case "wolf":
-                spawnEntities(world, amount, () -> new Wolf(id_generator, has_cordyceps));
-                break;
-            case "bear":
-                spawnEntities(world, amount, () -> new Bear(id_generator, has_cordyceps));
-                break;
-            case "rabbit":
-                spawnEntities(world, amount, () -> new Rabbit(id_generator, has_cordyceps));
-                break;
             case "grass":
                 spawnEntities(world, amount, () -> new Grass(id_generator));
+                break;
+            case "berry":
+                spawnEntities(world, amount, () -> new Bush(id_generator));
                 break;
             case "burrow":
                 spawnEntities(world, amount, () -> new Burrow(id_generator));
                 break;
+            case "rabbit":
+                spawnEntities(world, amount, () -> new Rabbit(id_generator, hasCordyceps));
+                break;
+            case "wolf":
+                spawnEntities(world, amount, () -> new Wolf(id_generator, hasCordyceps));
+                break;
+            case "bear":
+                spawnEntities(world, amount, () -> new Bear(id_generator, hasCordyceps));
+                break;
+            case "carcass":
+                spawnEntities(world, amount, () -> new Carcass(id_generator, 4, "carcass", hasFungus));
+                break;
+            case "fungi":
+                spawnEntities(world, amount, () -> new Fungus(id_generator));
+                break;
+            // Include other cases as needed based on your entity types
             default:
                 System.out.println("Unknown entity type: " + entityType);
         }

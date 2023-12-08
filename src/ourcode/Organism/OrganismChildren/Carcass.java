@@ -6,77 +6,89 @@ import itumulator.world.World;
 import ourcode.Organism.Organism;
 import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
+
 /**
  * The Carcass class gives other carnivores in the world something to eat from. When an animal dies a carcass will
  * 'replace' it with a carcass of same type. This means that the carcass' nutritional value
  */
 public class Carcass extends Organism implements DynamicDisplayInformationProvider {
-    protected boolean rotten;
-    protected boolean hasFungus;
-    protected Fungus myFungus;
+    protected boolean is_rotten;
+    protected boolean has_fungus;
+    protected Fungus fungus;
 
 
 
     protected int size;
-    public Carcass(IDGenerator idGenerator, int nutritionalValue, String type) {
+    public Carcass(IDGenerator idGenerator, int nutritionalValue, String type, boolean has_fungus) {
         super(idGenerator);
         this.nutritional_value = nutritionalValue;
         this.type = type;
         max_age = 20;
-        rotten = false;
-        hasFungus = false;
+        is_rotten = false;
+        this.has_fungus = has_fungus;
         size = nutritionalValue;
+        if (has_fungus) {
+            fungus = new Fungus(idGenerator);
+        }
     }
 
     @Override
     public void act(World world) {
         super.act(world);
 
-        if (age >= 10) {
-            setRotten();
-        } else if (age >= max_age) {
-            world.delete(this);
-            if (hasFungus && myFungus.getGrow() >= 4) {
-                world.setTile(world.getLocation(this), myFungus);
-            }
+        if (age >= 15) {
+            is_rotten = true;
+        }
+
+        if (has_fungus && fungus.getGrowth() >= 4) {
+            world.setTile(world.getLocation(this), fungus);
         }
     }
 
     public void addFungus(Fungus fungus) {
-        myFungus = fungus;
+        this.fungus = fungus;
     }
 
-    public Fungus getMyFungus() {
-        return myFungus;
+    public Fungus getFungus() {
+        return fungus;
     }
 
     public void setSize(Animal animal) {
         size = animal.getTrophicLevel();
     }
+
     public int getSize() {
         return size;
     }
 
-    public void setRotten() {
-        rotten = true;
-    }
     public void setHasFungus() {
-        hasFungus = true;
+        has_fungus = true;
     }
-    public boolean isHasFungus() {
-        return hasFungus;
-    }
-    public boolean isRotten() {
-        return rotten;
+
+    public boolean hasFungus() {
+        return has_fungus;
     }
 
     /**
      * the carcass display information will have several 'stages' of graphic to illustrate the process of
-     * 'decomposition' for each fifth 'act'.
+     * 'decomposition'.
      * @return
      */
     @Override
     public DisplayInformation getInformation() {
-        return null;
+        if (has_fungus) {
+            if (is_rotten) {
+                return new DisplayInformation(Color.ORANGE, "carcass-rotten-fungi");
+            } else {
+                return new DisplayInformation(Color.ORANGE, "carcass-fungi");
+            }
+        } else {
+            if (is_rotten) {
+                return new DisplayInformation(Color.ORANGE, "carcass-rotten");
+            } else {
+                return new DisplayInformation(Color.ORANGE, "carcass");
+            }
+        }
     }
 }

@@ -12,7 +12,6 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 /**
  * Represents a Rabbit entity in the simulated world.
@@ -38,7 +37,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         max_age = 100;
         trophic_level = 2;
         power = 2;
-        // Specifics for rabbit.
         has_burrow = false;
         max_damage = 8;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
@@ -163,16 +161,4 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             return new DisplayInformation(Color.black, "rabbit-small");
         }
     }
-
-    public int getDamageTaken() {
-        return damage_taken;
-    }
-    public int getPower(){
-        return power;
-    }
-    @Override
-    public int getGracePeriod(){
-        return grace_period;
-    }
-
 }

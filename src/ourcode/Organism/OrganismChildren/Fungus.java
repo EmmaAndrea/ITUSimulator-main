@@ -7,31 +7,30 @@ import itumulator.world.World;
 import ourcode.Organism.Organism;
 import ourcode.Setup.IDGenerator;
 
+import java.awt.*;
+
 public class Fungus extends Organism implements DynamicDisplayInformationProvider {
     protected Carcass myCarcass; //
     protected boolean inCarcass; // a check to see if the fungus is inside a carcass
-    protected int grow; // fungus will grow if it is inside of carcass
+    protected int growth; // fungus will grow if it is inside of carcass
     public Fungus(IDGenerator idGenerator) {
         super(idGenerator);
         max_age = 5;
         nutritional_value = 2;
         inCarcass = false;
-        grow = 0;
+        growth = 0;
     }
 
     @Override
     public void act(World world) {
         if (inCarcass) {
-            grow++;
+            growth++;
         } else {
             super.act(world);
-            if (checkCarcass(world)) {
+            if (checkSurroundingCarcass(world)) {
                 spread(myCarcass, id_generator);
-            } else {
-
             }
         }
-
     }
 
     /**
@@ -53,11 +52,11 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * @param world
      * @return hasCarcass
      */
-    public boolean checkCarcass(World world) {
+    public boolean checkSurroundingCarcass(World world) {
         boolean hasCarcass = false;
         Location current = world.getLocation(this);
         for (Location location : world.getSurroundingTiles(current, 2)) {
-            if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass && !carcass.isHasFungus()) {
+            if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass && !carcass.hasFungus()) {
                 hasCarcass = true;
                 this.setMyCarcass(carcass);
             }
@@ -96,12 +95,14 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
         myCarcass = carcass;
     }
 
-    public int getGrow() {
-        return grow;
+    public int getGrowth() {
+        return growth;
     }
 
     @Override
     public DisplayInformation getInformation() {
-        return null;
+        if (age <= 2) {
+            return new DisplayInformation(Color.PINK, "fungi-small");
+        } return new DisplayInformation(Color.PINK, "fungi-large");
     }
 }
