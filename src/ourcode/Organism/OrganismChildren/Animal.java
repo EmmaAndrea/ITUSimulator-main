@@ -45,6 +45,7 @@ public abstract class Animal extends Organism {
     private final ReentrantLock lock;
     protected int bedtime;
     protected int wakeup;
+    protected boolean pack_hunting;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -69,6 +70,7 @@ public abstract class Animal extends Organism {
         lock = new ReentrantLock();
         bedtime = 0;
         wakeup = 0;
+        pack_hunting = false;
     }
 
     /**

@@ -57,6 +57,7 @@ public class InputReader {
         int totalBearAmount = 0;
         Random random = new Random();
         int packcount = 0;
+        int wolfcount = 0;
 
         for (int i = 1; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(" ");
@@ -84,7 +85,12 @@ public class InputReader {
             // Handle wolf packs
             if (type.equals("wolf")) {
                 map_of_wolf_packs.put(packcount++, amount);
-                continue;
+                if (map_of_spawns.containsKey("wolf")){
+                    wolfcount = wolfcount + map_of_spawns.get("wolf");
+                    wolfcount = wolfcount + amount;
+                    map_of_spawns.put("wolf", wolfcount);
+                    continue;
+                }
             }
 
             // Processing for bear spawns

@@ -28,8 +28,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     private boolean alpha; // Indicates whether this wolf is the alpha of a pack.
     protected boolean has_cave;
 
-    protected boolean pack_hunting;
-
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
@@ -48,7 +46,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         has_cave = false;
         power = 4;
         max_damage = 16;
-        pack_hunting = false;
         this.has_cordyceps = has_cordyceps;
         bedtime = 1;
         wakeup = 7;
@@ -70,6 +67,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
 
         if (in_hiding) return;
+
         if (isBedtime(world)) return;
 
         // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
@@ -96,7 +94,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
 
         // sequence for pack wolves
-        else if (my_alpha != null) {
+        else if (my_alpha != null && world.getEntities().get(my_alpha) != null) {
             if (hunger > 15) {
                 for (Wolf wolf : my_alpha.getPack()) {
                     wolf.setPackHuntingTrue();
@@ -114,7 +112,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     public void huntWithPack(World world){
-        if (my_alpha != null) {
+        if (my_alpha != null && world.getEntities().get(my_alpha) != null) {
             if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                 moveCloser(world, world.getLocation(my_alpha));
             }
