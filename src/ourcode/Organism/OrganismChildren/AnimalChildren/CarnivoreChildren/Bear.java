@@ -49,45 +49,29 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
         super.act(world);
 
-        // if it's dusk, go to sleep
-        if (world.getCurrentTime() > 12 && world.getCurrentTime() < 18 && my_territory != null && !in_hiding) {
-            if (distanceTo(world, territory_location) > 0) {
-                moveCloser(world, territory_location);
-            } if (distanceTo(world, territory_location) < 1){
-                my_territory.addResident(this);
-                in_hiding = true;
-            }
-            return;
-        }
-        // if it's dawn, wake up
-        if (world.getCurrentTime() == 18 && in_hiding) {
-            my_territory.removeResident(this);
-            in_hiding = false;
-            return;
-        }
-
         // if not sleeping
-        if (!in_hiding) {
-            // if ready to mate and if single, start finding a partner
-            if (gender == Gender.Male && age > 19 && mate == null) {
-                if (findMate(world)) return;
-            }
+        if (in_hiding) return;
 
-            // if very hungry, go hunt
-            if (hunger >= 20) {
-                hunt(world);
-            }
-
-            // stay close to territory
-            else if (distanceTo(world, territory_location) > 3) {
-                moveCloser(world, territory_location);
-            }
-
-            // if it is still alive, and hasn't done anything else move randomly
-            else if (getRandomMoveLocation(world) != null) {
-                world.move(this, getRandomMoveLocation(world));
-            }
+        // if ready to mate and if single, start finding a partner
+        if (gender == Gender.Male && age > 19 && mate == null) {
+            if (findMate(world)) return;
         }
+
+        // if very hungry, go hunt
+        if (hunger >= 20) {
+            hunt(world);
+        }
+
+        // stay close to territory
+        else if (distanceTo(world, territory_location) > 3) {
+            moveCloser(world, territory_location);
+        }
+
+        // if it is still alive, and hasn't done anything else move randomly
+        else if (getRandomMoveLocation(world) != null) {
+            world.move(this, getRandomMoveLocation(world));
+        }
+
     }
 
     @Override
@@ -100,7 +84,18 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             my_territory = new Territory(id_generator);
             world.setTile(territory_location, my_territory);
         }
-                
+    }
+
+    @Override
+    public void enterHabitat(World world){
+        my_territory.addResident(this);
+        in_hiding = true;
+    }
+
+    @Override
+    public void exitHabitat(World world){
+        my_territory.removeResident(this);
+        in_hiding = false;
     }
 
     /**

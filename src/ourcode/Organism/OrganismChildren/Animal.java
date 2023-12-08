@@ -43,6 +43,8 @@ public abstract class Animal extends Organism {
     protected Habitat habitat;
     protected boolean has_habitat;
     private final ReentrantLock lock;
+    protected int bedtime;
+    protected int wakeup;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -65,6 +67,8 @@ public abstract class Animal extends Organism {
         habitat = null;
         has_habitat = false; // watch out for problem with this when spawning wolves in packs.
         lock = new ReentrantLock();
+        bedtime = 0;
+        wakeup = 0;
     }
 
     /**
@@ -76,6 +80,18 @@ public abstract class Animal extends Organism {
     @Override
     public void act(World world) {
         super.act(world);
+
+        if (isBedtime(world) && !in_hiding){
+            if (distanceTo(world, world.getLocation(habitat)) > 1){
+                moveCloser(world, world.getLocation(habitat));
+            }
+            if (distanceTo(world, world.getLocation(habitat)) < 1) {
+                enterHabitat(world);
+            }
+
+        } else if (!isBedtime(world) && in_hiding){
+            exitHabitat(world);
+        }
         // Adds hunger if it is not sleeping/hiding.
         if (!in_hiding) {
             hunger++;
@@ -312,12 +328,13 @@ public abstract class Animal extends Organism {
         in_hiding = true;
     }
 
+
     /**
-     * Exits the cave in which this wolf is currently hiding.
+     * Exits the habitat in which the animal is currently hiding.
      *
      * @param world The world where the cave is located.
      */
-    public void exitCave(World world) {
+    public void exitHabitat(World world) {
         habitat.removeResident(this);
         world.setTile(world.getLocation(habitat), this);
         in_hiding = false;
@@ -401,6 +418,14 @@ public abstract class Animal extends Organism {
         return null;
     }
 
+    public boolean isBedtime(World world){
+        if (world.getCurrentTime() > bedtime) {
+            if (world.getCurrentTime() < wakeup) {
+                return true;
+            }
+        }
+        return false;
+    }
     public void setFriends(Animal animal) {
         friends.add(animal);
     }

@@ -50,6 +50,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         max_damage = 16;
         pack_hunting = false;
         this.has_cordyceps = has_cordyceps;
+        bedtime = 1;
+        wakeup = 7;
     }
 
     /**
@@ -67,6 +69,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             deletePack();
         }
 
+        if (in_hiding) return;
+
         // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
         if (alpha) {
             if (hunger < 5) {
@@ -76,66 +80,36 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
         }
 
-        // entrance scenario
-        // checks time and other conditions
-        if (world.getCurrentTime() == 1 && has_cave && !pack_hunting && !in_hiding) {
-            if (distanceTo(world, world.getLocation(habitat)) <= 1) {
-                enterHabitat(world);
-            } else {
-                moveCloser(world, world.getLocation(habitat));
-            }
-        }
-
-        // exit scenario 1
-        if (in_hiding && world.getCurrentTime() == 7) {
-            exitCave(world);
-        }
-
-        // exit scenario 2
-        if (in_hiding && pack_hunting) {
-            exitCave(world);
-        }
-
-        // if not in cave:
-            // move closer to alpha, if the packing is hunting and alpha is not sleeping and alpha is not null
-            // if this is alpha
-                // and doesn't have cave and is older than 8, make cave
-                // if hungry enough, set all wolves in pack in hunting mode
-            // if not alpha
-                // and is pretty hungry, set all wolves in pack in hunting mode
-                //
-
         // pack hunting method
-        if (!in_hiding) {
-            if (pack_hunting){
-                huntWithPack(world);
-            }
-
-            // sequence for alphas
-            else if (alpha) {
-                if (hunger > 8) {
-                    for (Wolf wolf : pack) {
-                        wolf.setPackHuntingTrue();
-                    }
-                } else nextMove(world);
-            }
-
-            // sequence for pack wolves
-            else if (my_alpha != null) {
-                if (hunger > 15) {
-                    for (Wolf wolf : my_alpha.getPack()) {
-                        wolf.setPackHuntingTrue();
-                    }
-                } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
-                    moveCloser(world, world.getLocation(my_alpha));
-
-                } else nextMove(world);
-
-                // sequence for lone wolves
-            } else if (hunger > 15) hunt(world);
-
-            else nextMove(world);
+        if (pack_hunting && my_alpha != null){
+            huntWithPack(world);
         }
+
+        // sequence for alphas
+        else if (alpha) {
+            if (hunger > 8) {
+                for (Wolf wolf : pack) {
+                    wolf.setPackHuntingTrue();
+                }
+            } else nextMove(world);
+        }
+
+        // sequence for pack wolves
+        else if (my_alpha != null) {
+            if (hunger > 15) {
+                for (Wolf wolf : my_alpha.getPack()) {
+                    wolf.setPackHuntingTrue();
+                }
+            } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
+                moveCloser(world, world.getLocation(my_alpha));
+
+            } else nextMove(world);
+
+            // sequence for lone wolves
+        } else if (hunger > 15) hunt(world);
+
+        else nextMove(world);
+
     }
 
     public void huntWithPack(World world){
