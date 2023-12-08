@@ -478,6 +478,12 @@ public abstract class Animal extends Organism {
      * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
      */
     public boolean findFoodOrSafety(World world) {
+        // Validate if the animal is on the map
+        if (!world.getEntities().containsKey(this)) {
+            System.out.println("Warning: Animal not on the map");
+            return false;
+        }
+        
         // Get surrounding tiles to iterate through them.
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
