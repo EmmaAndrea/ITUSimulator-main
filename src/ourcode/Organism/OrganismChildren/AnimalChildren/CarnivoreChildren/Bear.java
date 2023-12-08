@@ -12,13 +12,10 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.locks.ReentrantLock;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
     protected Location territory_location;
-    
-    protected Territory my_territory;
 
     protected Bear mate;
 
@@ -33,6 +30,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         max_damage = 16;
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
         this.has_cordyceps = has_cordyceps;
+        bedtime = 12;
+        wakeup = 18;
     }
 
 
@@ -51,6 +50,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
         // if not sleeping
         if (in_hiding) return;
+        if (isBedtime(world)) return;
 
         // if ready to mate and if single, start finding a partner
         if (gender == Gender.Male && age > 19 && mate == null) {
@@ -81,20 +81,21 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             territory_location = world.getLocation(this);
         }
         if (checkEmptySpace(world, territory_location)) {
-            my_territory = new Territory(id_generator);
-            world.setTile(territory_location, my_territory);
+            habitat = new Territory(id_generator);
+            world.setTile(territory_location, habitat);
         }
     }
 
     @Override
     public void enterHabitat(World world){
-        my_territory.addResident(this);
+        moveCloser(world, world.getLocation(habitat));
+        habitat.addResident(this);
         in_hiding = true;
     }
 
     @Override
     public void exitHabitat(World world){
-        my_territory.removeResident(this);
+        habitat.removeResident(this);
         in_hiding = false;
     }
 
@@ -222,11 +223,11 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     }
 
     public void setTerritory(World world, Location location){
-        if (my_territory != null){
-            world.delete(my_territory);
+        if (habitat != null){
+            world.delete(habitat);
         }
         Territory new_territory = new Territory(id_generator);
         world.setTile(location, new_territory);
-        my_territory = new_territory;
+        habitat = new_territory;
     }
 }

@@ -70,6 +70,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
 
         if (in_hiding) return;
+        if (isBedtime(world)) return;
 
         // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
         if (alpha) {

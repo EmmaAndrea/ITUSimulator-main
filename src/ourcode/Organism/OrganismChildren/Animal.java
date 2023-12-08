@@ -81,8 +81,11 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (world.getCurrentTime() == 14) {
+            System.out.println("bear bedtime");
+        }
         if (isBedtime(world) && !in_hiding && habitat != null){
-            if (distanceTo(world, world.getLocation(habitat)) > 1){
+            if (distanceTo(world, world.getLocation(habitat)) > 0){
                 moveCloser(world, world.getLocation(habitat));
             }
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
@@ -99,7 +102,7 @@ public abstract class Animal extends Organism {
         // checks if the animal should die
         if (hunger >= max_hunger || age >= max_age) {
             // become carcass
-            return;
+            System.out.println(type + " died");
         }
 
         // Adds one to the counter of how many days since it gave birth to an offspring.
