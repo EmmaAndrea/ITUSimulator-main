@@ -297,85 +297,6 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Attempts to find food or safety for the animal in the simulation world.
-     * The method first checks for blocking organisms in the surrounding tiles. If it encounters an organism
-     * with a higher trophic level (indicating a predator), it moves away from that organism. If it finds
-     * an organism that is a viable food source (as listed in consumable_foods), it moves closer to that organism.
-     * If no food or threats are found, it checks for non-blocking organisms like grass and moves closer if
-     * food is found. Otherwise, the animal moves to a random location.
-     *
-     * @param world The simulation world in which the animal is trying to find food or safety.
-     * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
-     */
-    public boolean findFoodOrSafety(World world) {
-        // Get surrounding tiles to iterate through them.
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
-
-        // First, check for blocking organisms.
-        // Though, if there is an animal of higher trophic level, move away from this animal.
-        for (Location location : surrounding_tiles) {
-
-            // If the tile at given location isn't empty.
-            if (!world.isTileEmpty(location)) {
-
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
-
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Animal animal) {
-                    if (!friends.contains(animal)) {
-                        if (animal.getTrophicLevel() > trophic_level) {
-                            moveAway(world, location);
-                            being_hunted = true;
-                            return true;
-                            // If the organism has a higher trophic level than itself.
-                        }
-                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
-                            eat(world, animal);
-                        }
-                    }
-                }
-            }
-        }
-
-
-        // Next, check for non-blocking organisms like grass.
-        for (Location location : surrounding_tiles) {
-            if (world.containsNonBlocking(location)) {
-                Object object = world.getNonBlocking(location);
-                if (object instanceof Organism organism) {
-                    if (consumable_foods.contains(organism.getType())) {
-                        moveCloser(world, location);
-                        if (world.containsNonBlocking(world.getLocation(this))) {
-                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                if (hunger >= 2) {
-                                    if (world.getEntities().containsKey(this)) eat(world, grass);
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            } else if (!world.isTileEmpty(location)){
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
-
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Bush bush) {
-                    if (consumable_foods.contains("bush")) {
-                        if (hunger > 4) bush.eatBerries();
-                        System.out.println(type + " ate berries");
-                        return false;
-                    }
-                }
-            }
-        }
-
-        // If no food or danger is found, return false.
-        return false;
-    }
-
-    /**
      * Enters the habitat that the animal is standing on, if it is empty, and it's their cave.
      * @param world The world in which the current events are happening.
      */
@@ -477,5 +398,86 @@ public abstract class Animal extends Organism {
     public void setFriends(Animal animal) {
         friends.add(animal);
     }
+
+    /**
+     * Attempts to find food or safety for the animal in the simulation world.
+     * The method first checks for blocking organisms in the surrounding tiles. If it encounters an organism
+     * with a higher trophic level (indicating a predator), it moves away from that organism. If it finds
+     * an organism that is a viable food source (as listed in consumable_foods), it moves closer to that organism.
+     * If no food or threats are found, it checks for non-blocking organisms like grass and moves closer if
+     * food is found. Otherwise, the animal moves to a random location.
+     *
+     * @param world The simulation world in which the animal is trying to find food or safety.
+     * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
+     */
+    public boolean findFoodOrSafety(World world) {
+        System.out.println(type + "trying to eat rabbit");
+        // Get surrounding tiles to iterate through them.
+        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
+
+        // First, check for blocking organisms.
+        // Though, if there is an animal of higher trophic level, move away from this animal.
+        for (Location location : surrounding_tiles) {
+
+            // If the tile at given location isn't empty.
+            if (!world.isTileEmpty(location)) {
+
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Animal animal) {
+                    if (!friends.contains(animal)) {
+                        if (animal.getTrophicLevel() > trophic_level) {
+                            moveAway(world, location);
+                            being_hunted = true;
+                            return true;
+                            // If the organism has a higher trophic level than itself.
+                        }
+                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                            eat(world, animal);
+                        }
+                    }
+                }
+            }
+        }
+
+
+        // Next, check for non-blocking organisms like grass.
+        for (Location location : surrounding_tiles) {
+            if (world.containsNonBlocking(location)) {
+                Object object = world.getNonBlocking(location);
+                if (object instanceof Organism organism) {
+                    if (consumable_foods.contains(organism.getType())) {
+                        moveCloser(world, location);
+                        if (world.containsNonBlocking(world.getLocation(this))) {
+                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                                if (hunger >= 2) {
+                                    if (world.getEntities().containsKey(this)) eat(world, grass);
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            } else if (!world.isTileEmpty(location)){
+                // Declares a new object at given location.
+                Object object = world.getTile(location);
+
+                // Casts object to Organism class and checks if the object is an Organism.
+                if (object instanceof Bush bush) {
+                    if (consumable_foods.contains("bush")) {
+                        if (hunger > 4) bush.eatBerries();
+                        System.out.println(type + " ate berries");
+                        return false;
+                    }
+                }
+            }
+        }
+
+        // If no food or danger is found, return false.
+        return false;
+    }
+
 }
 
