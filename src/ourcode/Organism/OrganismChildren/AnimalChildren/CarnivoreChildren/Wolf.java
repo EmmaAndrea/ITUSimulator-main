@@ -121,7 +121,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
     }
 
-
     /**
      * Attacks a specified animal in the world. If the target is a wolf with significant damage,
      * and this wolf is the alpha, it overtakes the target wolf's pack. Otherwise, performs

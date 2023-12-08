@@ -81,13 +81,13 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
-        if (isBedtime(world) && !in_hiding){
+        if (isBedtime(world) && !in_hiding && habitat != null){
             if (distanceTo(world, world.getLocation(habitat)) > 1){
                 moveCloser(world, world.getLocation(habitat));
             }
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 enterHabitat(world);
-            }
+            } else return;
 
         } else if (!isBedtime(world) && in_hiding){
             exitHabitat(world);
@@ -120,9 +120,7 @@ public abstract class Animal extends Organism {
         else {
             // Make habitat if doesn't have one.
             if (habitat == null) {
-                if (checkEmptySpace(world, world.getLocation(this))) {
-                    makeHabitat(world);
-                }
+                makeHabitat(world);
             } if (!findFoodOrSafety(world)) {
                 nextMove(world);
             }
@@ -323,9 +321,16 @@ public abstract class Animal extends Organism {
      * @param world The world in which the current events are happening.
      */
     public void enterHabitat(World world) {
+        // add animal to list of residents of habitat
         habitat.addResident(this);
+
+        // remove animal from map
         world.remove(this);
+
+        // goes into hiding
         in_hiding = true;
+
+        // overridden by bear
     }
 
 
@@ -336,8 +341,34 @@ public abstract class Animal extends Organism {
      */
     public void exitHabitat(World world) {
         habitat.removeResident(this);
-        world.setTile(world.getLocation(habitat), this);
+        world.setTile(getSpawnLocation(world), this);
         in_hiding = false;
+        // overridden by bear
+    }
+
+    public Location getSpawnLocation(World world){
+        Location habitat_location = world.getLocation(habitat);
+
+        // Makes list of possible spawn locations (locations with no blocking elements).
+        ArrayList<Location> possible_spawn_locations = new ArrayList<>();
+        for (Location surroundingTile : world.getSurroundingTiles(habitat_location, 1)) {
+            if (world.isTileEmpty(surroundingTile)) {
+                possible_spawn_locations.add(surroundingTile);
+            }
+        }
+
+        // Removes itself from possible locations to spawn.
+        possible_spawn_locations.remove(habitat_location);
+
+        // Return null value if there is no empty location (to be used in if statement in larger method to check).
+        if (possible_spawn_locations.isEmpty()) {
+            return null;
+        }
+        // Finds a random index in this list of locations.
+        Random random = new Random();
+        int random_index = random.nextInt(0, possible_spawn_locations.size());
+
+        return possible_spawn_locations.get(random_index);
     }
 
     /**

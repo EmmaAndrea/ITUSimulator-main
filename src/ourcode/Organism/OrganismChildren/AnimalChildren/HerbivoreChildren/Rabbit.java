@@ -43,25 +43,22 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         max_damage = 8;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
         this.has_cordyceps = has_cordyceps;
+        bedtime = 9;
+        wakeup = 19;
     }
 
     @Override
     public void act(World world) {
         super.act(world);
 
-        if (grace_period == 1 && !in_hiding) {
+        if (in_hiding) return;
+
+        if (grace_period == 1) {
             grace_period = 0;
         }
 
         boolean isCloseToBurrow = false;
 
-        boolean isNight = timeToNight(world) == 0;
-
-        // if it is in the burrow
-        if (!isNight && has_burrow && in_hiding) {
-            exitBurrow(world);
-            return;
-        }
 
         // get a burrow
         if (!has_burrow) {
@@ -70,26 +67,11 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             }
         }
         // if it is not in its burrow
-        if (!in_hiding && has_burrow && !being_eaten) {
-            if (distanceTo(world, world.getLocation(my_burrows.get(0))) <= 1) {
+        if (has_burrow && !being_eaten) {
+            if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 isCloseToBurrow = true;
-            }
-            if (isNight) {
-
-                if (isCloseToBurrow && !being_eaten) {
-                    enterBurrow(world);
-
-                } else {
-                    moveCloser(world, world.getLocation(my_burrows.get(0)));
-                }
-
-            } else if (timeToNight(world) < 5 && !being_eaten) {
-                moveCloser(world, world.getLocation(my_burrows.get(0)));
-                return;
-            }
-
-            else if (!in_hiding && !being_eaten) {
-                nextMove(world);
+            } if (timeToNight(world) < 5 && !isCloseToBurrow) {
+                moveCloser(world, world.getLocation(habitat));
             }
         }
     }
@@ -126,19 +108,24 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      */
     @Override
     public void makeHabitat(World world) {
-        if (age < 5) return;
         Location location = world.getLocation(this);
-        habitat = new Burrow(id_generator);
-        world.setTile(location, habitat);
+
+        if(world.containsNonBlocking(location)){
+            if (world.getNonBlocking(location) instanceof Burrow burrow){
+                habitat = burrow;
+            }
+        } else if (age < 5) return;
+
+        if (checkEmptySpace(world, world.getLocation(this))) {
+            habitat = new Burrow(id_generator);
+            world.setTile(location, habitat);
+            id_generator.addBurrowToLocationMap(world.getLocation(this), habitat);
+            id_generator.addLocationToIdMap(world.getLocation(this), habitat.getId());
+        }
 
         my_burrows = new ArrayList<>();
         my_burrows.add(habitat);
         has_burrow = true;
-
-        id_generator.addBurrowToLocationMap(world.getLocation(this), habitat);
-        id_generator.addLocationToIdMap(world.getLocation(this), habitat.getId());
-
-        nextMove(world);
     }
 
     /**
@@ -146,59 +133,11 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      *
      * @param world The simulation world where the burrow is located.
      */
-    public void enterBurrow(World world) {
-        // If it has not been assigned a burrow.
+    @Override
+    public void enterHabitat(World world) {
+        // Gives grace period to avoid animation bug
         grace_period = 1;
-
-        if (my_burrows.isEmpty()) {
-
-            // Sets its personal burrow to be the burrow it enters.
-            my_burrows.add(id_generator.getHabitat(world.getLocation(this)));
-
-            has_burrow = true;
-        }
-        // add burrow to list of residents of burrow
-        my_burrows.get(0).addResident(this);
-
-        // remove rabbit from map
-        world.remove(this);
-
-        // goes into hiding
-        in_hiding = true;
-    }
-
-    /**
-     * The rabbit exits its burrow and reappears in the simulation world at a location near the burrow.
-     *
-     * @param world The simulation world where the burrow is located.
-     */
-    public void exitBurrow(World world) {
-        // Retrieve current location
-
-        Location burrow_location = world.getLocation(my_burrows.get(0));
-
-        // Makes list of possible spawn locations (locations with no blocking elements).
-        ArrayList<Location> possible_spawn_locations = new ArrayList<>();
-        for (Location surroundingTile : world.getSurroundingTiles(burrow_location, 1)) {
-            if (world.isTileEmpty(surroundingTile)) {
-                possible_spawn_locations.add(surroundingTile);
-            }
-        }
-
-        // Removes itself from possible locations to spawn.
-        possible_spawn_locations.remove(burrow_location);
-
-        // Return null value if there is no empty location (to be used in if statement in larger method to check).
-        if (possible_spawn_locations.isEmpty()) {
-            return;
-        }
-        // Finds a random index in this list of locations.
-        Random random = new Random();
-        int random_index = random.nextInt(0, possible_spawn_locations.size());
-
-        world.setTile(possible_spawn_locations.get(random_index), this);
-        // Rabbit is now outside of burrow.
-        in_hiding = false;
+        super.enterHabitat(world);
     }
 
     /**
