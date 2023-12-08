@@ -7,8 +7,8 @@ import itumulator.world.World;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
+import ourcode.Obstacles.Habitat;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -26,8 +26,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     private Wolf my_alpha; // The alpha wolf of the pack.
     private boolean alpha; // Indicates whether this wolf is the alpha of a pack.
-
-    protected Cave my_cave;
     protected boolean has_cave;
 
     protected boolean pack_hunting;
@@ -54,21 +52,16 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         this.has_cordyceps = has_cordyceps;
     }
 
-
-    @Override
-    public void act(World world) {
-        super.act(world);
-
-    }
-
     /**
      * Defines the behavior of a wolf in each simulation step. This includes pack behavior,
      * nighttime activities such as sleeping, and movement during the day.
      *
      * @param world The simulation world in which the wolf exists.
      */
-    /*
-    public void carnivoreAct(World world) throws Exception {
+
+    @Override
+    public void act(World world) {
+        super.act(world);
         // if wolf has an alpha and the pack does not exist, delete pack
         if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
@@ -83,26 +76,24 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
         }
 
-        // if the current time is 1, wolf has a cave, pack isn't hunting, and wolf is not in cave
-            // if cave is nearby, enter
-            // else move closer to cave
-        // else, exit cave if time is 7
-        // else, exit if in cave and the pack is hunting
-        // else, if checkBreed, breed
+        // entrance scenario
+        // checks time and other conditions
         if (world.getCurrentTime() == 1 && has_cave && !pack_hunting && !in_hiding) {
-            if (distanceTo(world, world.getLocation(my_cave)) <= 1) {
+            if (distanceTo(world, world.getLocation(habitat)) <= 1) {
                 enterHabitat(world);
             } else {
-                moveCloser(world, world.getLocation(my_cave));
+                moveCloser(world, world.getLocation(habitat));
             }
-        } else if (in_hiding && world.getCurrentTime() == 7) {
+        }
+
+        // exit scenario 1
+        if (in_hiding && world.getCurrentTime() == 7) {
             exitCave(world);
-        } else if (in_hiding && pack_hunting) {
+        }
+
+        // exit scenario 2
+        if (in_hiding && pack_hunting) {
             exitCave(world);
-        } else if (in_hiding) {
-            if (checkBreed(world)) {
-                breed(world);
-            }
         }
 
         // if not in cave:
@@ -113,41 +104,49 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             // if not alpha
                 // and is pretty hungry, set all wolves in pack in hunting mode
                 //
+
+        // pack hunting method
         if (!in_hiding) {
-            if (pack_hunting && world.getEntities().containsKey(my_alpha)){
-                if (my_alpha != null) {
-                    if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
-                        moveCloser(world, world.getLocation(my_alpha));
-                    }
-                    hunt(world);
-                    nextMove(world);
-                    return;
-                }
+            if (pack_hunting){
+                huntWithPack(world);
             }
-            if (alpha) {
-                if (!has_cave && age > 8) {
-                    createCave(world, id_generator);
-                }
+
+            // sequence for alphas
+            else if (alpha) {
                 if (hunger > 8) {
                     for (Wolf wolf : pack) {
                         wolf.setPackHuntingTrue();
                     }
                 } else nextMove(world);
             }
-            if (!alpha) {
-                if (world.getEntities().containsKey(my_alpha)) {
-                    if (hunger > 15) {
-                        for (Wolf wolf : my_alpha.getPack()) {
-                            wolf.setPackHuntingTrue();
-                        }
-                    } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
-                        moveCloser(world, world.getLocation(my_alpha));
+
+            // sequence for pack wolves
+            else if (my_alpha != null) {
+                if (hunger > 15) {
+                    for (Wolf wolf : my_alpha.getPack()) {
+                        wolf.setPackHuntingTrue();
                     }
+                } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
+                    moveCloser(world, world.getLocation(my_alpha));
+
                 } else nextMove(world);
-            }
+
+                // sequence for lone wolves
+            } else if (hunger > 15) hunt(world);
+
+            else nextMove(world);
         }
     }
-     */
+
+    public void huntWithPack(World world){
+        if (my_alpha != null) {
+            if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
+                moveCloser(world, world.getLocation(my_alpha));
+            }
+            hunt(world);
+        }
+    }
+
 
     /**
      * Attacks a specified animal in the world. If the target is a wolf with significant damage,
@@ -189,25 +188,23 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * Finally, if a cave is created, all wolves in the pack are assigned this cave.
      *
      * @param world         The world in which the cave is to be created.
-     * @param id_generator  An IDGenerator instance for generating unique IDs for the new cave.
      */
-    public void createCave(World world, IDGenerator id_generator) {
+    @Override
+    public void makeHabitat(World world) {
+        if (has_pack && !alpha) return;
+
         Location location = world.getLocation(this);
 
-        if (world.containsNonBlocking(location)) {
-            if (world.getNonBlocking(location) instanceof Grass grass) {
-                //grass.setExists(false)
-                world.delete(grass);
+        if (checkEmptySpace(world, location)) {
+            habitat = new Cave(id_generator);
+            world.setTile(location, habitat);
+            has_cave = true;
+
+            if(alpha) {
+                for (Wolf wolf : pack) {
+                    wolf.setHabitat(habitat);
+                }
             }
-            else return;
-        }
-
-        Cave cave = new Cave(id_generator);
-        world.setTile(location, cave);
-        has_cave = true;
-
-        for (Wolf wolf : pack) {
-            wolf.setHabitat(cave);
         }
     }
 
@@ -225,8 +222,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      *
      * @return The cave where this wolf resides, or null if no cave is associated.
      */
-    public Cave getMyCave() {
-        return my_cave;
+    public Habitat getMyCave() {
+        return habitat;
     }
 
     /**
