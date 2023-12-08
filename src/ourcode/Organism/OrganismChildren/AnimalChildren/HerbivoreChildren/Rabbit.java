@@ -50,6 +50,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         super.act(world);
 
         if (in_hiding) return;
+        if (isBedtime(world)) return;
 
         if (grace_period == 1) {
             grace_period = 0;
@@ -57,20 +58,20 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
         boolean isCloseToBurrow = false;
 
-
         // get a burrow
         if (!has_burrow) {
             if (linkBurrow(world)) {
                 return;
-            }
+            } else nextMove(world);
         }
         // if it is not in its burrow
-        if (has_burrow && !being_eaten) {
+        else if (has_burrow) {
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 isCloseToBurrow = true;
-            } if (timeToNight(world) < 5 && !isCloseToBurrow) {
-                moveCloser(world, world.getLocation(habitat));
             }
+            if (timeToNight(world) < 5 && !isCloseToBurrow) {
+                moveCloser(world, world.getLocation(habitat));
+            } else nextMove(world);
         }
     }
 
@@ -119,7 +120,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             world.setTile(location, habitat);
             id_generator.addBurrowToLocationMap(world.getLocation(this), habitat);
             id_generator.addLocationToIdMap(world.getLocation(this), habitat.getId());
-        }
+        } else return;
 
         my_burrows = new ArrayList<>();
         my_burrows.add(habitat);

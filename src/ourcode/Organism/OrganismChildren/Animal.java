@@ -32,7 +32,6 @@ public abstract class Animal extends Organism {
     protected boolean in_hiding; // Indicates whether the animal is in hiding.
     protected Gender gender; // Gender of the animal.
     protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
-    protected boolean being_hunted;
     protected int damage_taken;
     protected int power; // used to decide how much damage a bear deals.
     protected int max_damage;
@@ -45,6 +44,7 @@ public abstract class Animal extends Organism {
     private final ReentrantLock lock;
     protected int bedtime;
     protected int wakeup;
+    protected boolean pack_hunting;
 
     /**
      * Constructs a new Animal with a unique identifier.
@@ -59,7 +59,6 @@ public abstract class Animal extends Organism {
         steps_since_last_birth = 0;
         in_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
-        being_hunted = false;
         damage_taken = 0;
         grace_period = 0;
         this.has_cordyceps = has_cordyceps;
@@ -69,6 +68,7 @@ public abstract class Animal extends Organism {
         lock = new ReentrantLock();
         bedtime = 0;
         wakeup = 0;
+        pack_hunting = false;
     }
 
     /**
@@ -81,8 +81,11 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (world.getCurrentTime() == 14) {
+            System.out.println("bear bedtime");
+        }
         if (isBedtime(world) && !in_hiding && habitat != null){
-            if (distanceTo(world, world.getLocation(habitat)) > 1){
+            if (distanceTo(world, world.getLocation(habitat)) > 0){
                 moveCloser(world, world.getLocation(habitat));
             }
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
@@ -99,7 +102,7 @@ public abstract class Animal extends Organism {
         // checks if the animal should die
         if (hunger >= max_hunger || age >= max_age) {
             // become carcass
-            return;
+            System.out.println(type + " died");
         }
 
         // Adds one to the counter of how many days since it gave birth to an offspring.
@@ -121,8 +124,10 @@ public abstract class Animal extends Organism {
             // Make habitat if doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
-            } if (!findFoodOrSafety(world)) {
-                nextMove(world);
+            } if (!in_hiding) {
+                if (!findFoodOrSafety(world)) {
+                    nextMove(world);
+                }
             }
         }
         lock.unlock();
@@ -491,7 +496,6 @@ public abstract class Animal extends Organism {
                     if (!friends.contains(animal)) {
                         if (animal.getTrophicLevel() > trophic_level) {
                             moveAway(world, location);
-                            being_hunted = true;
                             return true;
                             // If the organism has a higher trophic level than itself.
                         }
