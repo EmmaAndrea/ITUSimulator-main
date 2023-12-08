@@ -114,6 +114,7 @@ public abstract class Animal extends Organism {
             if (checkBreed(world)) {
                 try {
                     breed(world);
+                    return;
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -326,6 +327,9 @@ public abstract class Animal extends Organism {
      * @param world The world in which the current events are happening.
      */
     public void enterHabitat(World world) {
+        // set grace period to avoid exit glitch
+        grace_period = 1;
+
         // add animal to list of residents of habitat
         habitat.addResident(this);
 
@@ -505,7 +509,7 @@ public abstract class Animal extends Organism {
                             return true;
                             // If the organism has a higher trophic level than itself.
                         }
-                        if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                        if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
                             eat(world, animal);
                         }
                     }

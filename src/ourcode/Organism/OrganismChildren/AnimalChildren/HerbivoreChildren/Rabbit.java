@@ -128,18 +128,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     }
 
     /**
-     * The rabbit enters a burrow, removing itself from the visible world and adding itself to the burrow's list of residents.
-     *
-     * @param world The simulation world where the burrow is located.
-     */
-    @Override
-    public void enterHabitat(World world) {
-        // Gives grace period to avoid animation bug
-        grace_period = 1;
-        super.enterHabitat(world);
-    }
-
-    /**
      * Retrieves the current hunger level of the rabbit. This can be used to determine the rabbit's need for food
      * and possibly influence its behavior in the simulation, such as seeking food sources.
      *

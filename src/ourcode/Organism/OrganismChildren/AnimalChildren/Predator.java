@@ -85,7 +85,7 @@ public abstract class Predator extends Animal {
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
                     if (!friends.contains(animal)) {
-                        if (animal.getTrophicLevel() > trophic_level) {
+                        if (animal.getTrophicLevel() <= trophic_level) {
                             if (consumable_foods.contains(animal.getType())) {
                                 for (int i = 1; i <= distanceTo(world, location); i++) {
                                     moveCloser(world, location);
