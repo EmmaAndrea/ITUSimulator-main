@@ -106,7 +106,6 @@ public abstract class Animal extends Organism {
             if (habitat == null) {
                 if (checkEmptySpace(world, world.getLocation(this))) {
                     makeHabitat(world);
-                    return;
                 }
             } if (!findFoodOrSafety(world)) {
                 nextMove(world);

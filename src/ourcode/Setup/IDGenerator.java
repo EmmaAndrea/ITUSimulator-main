@@ -2,6 +2,7 @@ package ourcode.Setup;
 
 import itumulator.world.Location;
 import ourcode.Obstacles.Burrow;
+import ourcode.Obstacles.Habitat;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 
 import java.util.ArrayList;
@@ -22,9 +23,9 @@ public class IDGenerator {
     protected HashMap<Integer, Entity> map_id_to_entity;
     protected HashMap<Integer, Burrow> map_id_to_burrow;
 
-    protected HashMap<Location, Burrow> map_location_to_burrow;
+    protected HashMap<Location, Habitat> map_location_to_habitat;
 
-    protected ArrayList<Location> locations_of_burrows;
+    protected ArrayList<Location> locations_of_habitats;
 
     protected HashMap<Location, Grass> map_location_to_grass;
 
@@ -37,9 +38,9 @@ public class IDGenerator {
         IDs = new HashSet<>();
         map_location_to_id = new HashMap<>();
         map_id_to_entity = new HashMap<>();
-        map_location_to_burrow = new HashMap<>();
+        map_location_to_habitat = new HashMap<>();
         map_id_to_burrow = new HashMap<>();
-        locations_of_burrows = new ArrayList<>();
+        locations_of_habitats = new ArrayList<>();
         map_id_to_grass = new HashMap<>();
         map_location_to_grass = new HashMap<>();
     }
@@ -79,18 +80,18 @@ public class IDGenerator {
         return map_id_to_entity.get(map_location_to_id.get(location));
     }
 
-    public void addBurrowToLocationMap(Location location, Burrow burrow){
-        map_location_to_burrow.put(location, burrow);
-        locations_of_burrows.add(location);
+    public void addBurrowToLocationMap(Location location, Habitat habitat){
+        map_location_to_habitat.put(location, habitat);
+        locations_of_habitats.add(location);
 
     }
 
-    public Burrow getBurrow(Location location){
-        return map_location_to_burrow.get(location);
+    public Habitat getHabitat(Location location){
+        return map_location_to_habitat.get(location);
     }
 
     public ArrayList<Location> getLocationOfBurrows(){
-        return locations_of_burrows;
+        return locations_of_habitats;
     }
 
     public void addGrassToLocationMap(Location location, Grass grass){

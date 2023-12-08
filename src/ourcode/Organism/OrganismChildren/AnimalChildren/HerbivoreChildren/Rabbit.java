@@ -5,8 +5,8 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
+import ourcode.Obstacles.Habitat;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
-import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -21,7 +21,7 @@ import java.util.Random;
  */
 public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
-    ArrayList <Burrow> my_burrows;
+    ArrayList <Habitat> my_burrows;
     boolean has_burrow; // Indicates whether the rabbit has a burrow.
     /**
      * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
@@ -128,15 +128,15 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     public void makeHabitat(World world) {
         if (age < 5) return;
         Location location = world.getLocation(this);
-        Burrow newBurrow = new Burrow(id_generator);
-        world.setTile(location, newBurrow);
+        habitat = new Burrow(id_generator);
+        world.setTile(location, habitat);
 
         my_burrows = new ArrayList<>();
-        my_burrows.add(newBurrow);
+        my_burrows.add(habitat);
         has_burrow = true;
 
-        id_generator.addBurrowToLocationMap(world.getLocation(this), newBurrow);
-        id_generator.addLocationToIdMap(world.getLocation(this), newBurrow.getId());
+        id_generator.addBurrowToLocationMap(world.getLocation(this), habitat);
+        id_generator.addLocationToIdMap(world.getLocation(this), habitat.getId());
 
         nextMove(world);
     }
@@ -153,7 +153,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         if (my_burrows.isEmpty()) {
 
             // Sets its personal burrow to be the burrow it enters.
-            my_burrows.add(id_generator.getBurrow(world.getLocation(this)));
+            my_burrows.add(id_generator.getHabitat(world.getLocation(this)));
 
             has_burrow = true;
         }
@@ -209,18 +209,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      */
     public int getHunger() {
         return hunger;
-    }
-
-    /**
-     * Acquires a reference to the rabbit's second burrow, if it exists. This method assumes that the rabbit
-     * might have more than one burrow and returns the second one in its list. It's used in scenarios where
-     * the rabbit might need to choose between multiple burrows.
-     *
-     * @return The second Burrow in the rabbit's list of burrows, if it exists; otherwise, it may throw an exception
-     * or return null, depending on how the list is managed.
-     */
-    public Burrow acquireBurrow() {
-        return my_burrows.get(1);
     }
 
     /**
