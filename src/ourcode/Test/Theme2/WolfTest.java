@@ -149,7 +149,7 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        wolf1.createCave(world, id_generator);
+        wolf1.makeHabitat(world);
 
         boolean isCave = false;
 
@@ -177,7 +177,7 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        wolf1.createCave(world, id_generator);
+        wolf1.makeHabitat(world);
 
         wolf1.enterHabitat(world);
         wolf2.enterHabitat(world);
@@ -208,15 +208,15 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        wolf1.createCave(world, id_generator);
+        wolf1.makeHabitat(world);
 
         // should add two wolves to the cave's residents, works from previous testing
         wolf1.enterHabitat(world);
         wolf2.enterHabitat(world);
 
-        wolf1.exitCave(world);
+        wolf1.exitHabitat(world);
         wolf1.nextMove(world);
-        wolf2.exitCave(world);
+        wolf2.exitHabitat(world);
 
         assertEquals(wolf1.getMyCave().getResidents().size(), 0,
                 "the amount of wolves in the cave should be 0, but is: "
@@ -269,7 +269,7 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        wolf1.createCave(world, id_generator);
+        wolf1.makeHabitat(world);
         wolf1.enterHabitat(world);
         wolf2.enterHabitat(world);
         int prev = wolf1.getMyCave().getResidents().size();
