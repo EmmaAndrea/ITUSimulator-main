@@ -53,10 +53,11 @@ public class InputReader {
      * amount of each type of spawn and another for bear territories if specified.
      */
     public void readSpawns() {
-        int bearCount = 0;
-        int totalBearAmount = 0;
+        int bear_count = 0;
+        int total_bear_amount = 0;
         Random random = new Random();
         int pack_count = 0;
+        int wolf_count = 0;
 
         for (int i = 1; i < lines.size(); i++) {
             String[] parts = lines.get(i).split(" ");
@@ -92,24 +93,29 @@ public class InputReader {
             // Handle wolf packs
             if (type.equals("wolf")) {
                 map_of_wolf_packs.put(pack_count++, amount);
-                continue;
+                if (map_of_spawns.containsKey("wolf")){
+                    wolf_count = wolf_count + map_of_spawns.get("wolf");
+                    wolf_count = wolf_count + amount;
+                    map_of_spawns.put("wolf", wolf_count);
+                    continue;
+                }
             }
 
             // Processing for bear spawns
             if (type.equals("bear")) {
-                bearCount++;
-                String bearType = "bear" + bearCount;
-                totalBearAmount += amount;
+                bear_count++;
+                String bear_type = "bear" + bear_count;
+                total_bear_amount += amount;
 
                 // Parses and stores territory information if available
                 if (parts.length > 2 + j) {
                     int x = Integer.parseInt(String.valueOf(parts[2 + j].charAt(1)));
                     int y = Integer.parseInt(String.valueOf(parts[2 + j].charAt(3)));
                     Location territory = new Location(x, y);
-                    map_of_bear_territories.put(bearType, territory);
+                    map_of_bear_territories.put(bear_type, territory);
                 }
 
-                map_of_spawns.put("bear", totalBearAmount);
+                map_of_spawns.put("bear", total_bear_amount);
             } else {
                 map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
             }
