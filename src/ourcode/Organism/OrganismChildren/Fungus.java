@@ -21,34 +21,43 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
 
     @Override
     public void act(World world) {
-        super.act(world);
-
-        if (checkCarcass(world)) {
-            this.spread(myCarcass, id_generator); //There might be an issue in case 'myCarcass' is 'null'
-        }
-
-        if (isInCarcass()) {
+        if (inCarcass) {
             grow++;
+        } else {
+            super.act(world);
+            if (checkCarcass(world)) {
+                spread(myCarcass, id_generator);
+            } else {
+
+            }
         }
+
     }
 
     /**
-     *
+     * when a fungus 'spreads' it will add a new fungus to the found carcass, which will then
      * @param carcass
      * @param idGenerator
      */
     public void spread(Carcass carcass, IDGenerator idGenerator) {
         Fungus fungus = new Fungus(idGenerator);
         carcass.setHasFungus();
+        carcass.addFungus(fungus);
         fungus.setAge(carcass);
         fungus.setInCarcass();
         fungus.setMyCarcass(carcass);
     }
 
+    /**
+     * Checks if a fungus has a carcass in its vicinity and that carcass doesn't already have a fungus inside.
+     * @param world
+     * @return hasCarcass
+     */
     public boolean checkCarcass(World world) {
         boolean hasCarcass = false;
-        for (Location location : world.getSurroundingTiles(2)) {
-            if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass) {
+        Location current = world.getLocation(this);
+        for (Location location : world.getSurroundingTiles(current, 2)) {
+            if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass && !carcass.isHasFungus()) {
                 hasCarcass = true;
                 this.setMyCarcass(carcass);
             }

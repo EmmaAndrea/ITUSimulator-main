@@ -13,6 +13,9 @@ import ourcode.Setup.IDGenerator;
 public class Carcass extends Organism implements DynamicDisplayInformationProvider {
     protected boolean rotten;
     protected boolean hasFungus;
+    protected Fungus myFungus;
+
+
 
     protected int size;
     public Carcass(IDGenerator idGenerator, int nutritionalValue, String type) {
@@ -33,7 +36,18 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             setRotten();
         } else if (age >= max_age) {
             world.delete(this);
+            if (hasFungus && myFungus.getGrow() >= 4) {
+                world.setTile(world.getLocation(this), myFungus);
+            }
         }
+    }
+
+    public void addFungus(Fungus fungus) {
+        myFungus = fungus;
+    }
+
+    public Fungus getMyFungus() {
+        return myFungus;
     }
 
     public void setSize(Animal animal) {
