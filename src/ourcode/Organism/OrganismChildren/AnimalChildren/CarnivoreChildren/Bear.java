@@ -43,33 +43,32 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * The bear will always sleep in its territory.
      * @param world The simulation world in which the omnivore exists.
      */
-    @Override
     public void act(World world) {
 
         super.act(world);
 
         // if not sleeping
-        if (in_hiding) return;
-        if (isBedtime(world)) return;
+        if (!in_hiding && !isBedtime(world)) {
 
-        // if ready to mate and if single, start finding a partner
-        if (gender == Gender.Male && age > 19 && mate == null) {
-            if (findMate(world)) return;
-        }
+            // if ready to mate and if single, start finding a partner
+            if (gender == Gender.Male && age > 19 && mate == null) {
+                if (findMate(world)) return;
+            }
 
-        // if very hungry, go hunt
-        if (hunger >= 20) {
-            hunt(world);
-        }
+            // if very hungry, go hunt
+            if (hunger >= 20) {
+                hunt(world);
+            }
 
-        // stay close to territory
-        else if (distanceTo(world, territory_location) > 3) {
-            moveCloser(world, territory_location);
-        }
+            // stay close to territory
+            else if (distanceTo(world, territory_location) > 3) {
+                moveCloser(world, territory_location);
+            }
 
-        // if it is still alive, and hasn't done anything else move randomly
-        else if (getRandomMoveLocation(world) != null) {
-            world.move(this, getRandomMoveLocation(world));
+            // if it is still alive, and hasn't done anything else move randomly
+            else if (getRandomMoveLocation(world) != null) {
+                world.move(this, getRandomMoveLocation(world));
+            }
         }
 
     }
@@ -132,15 +131,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public boolean checkBreed(World world) {
         if (gender == Gender.Female) {
             if (mate != null) {
-                if (world.getEntities().containsKey(mate)) {
-                    System.out.println("tries to breed");
-                    if (distanceTo(world, world.getLocation(mate)) < 2) {
-                        return true;
-                    } else {
-                        moveCloser(world, world.getLocation(mate));
-                        return false;
-                    }
-                }
+                System.out.println("tries to breed");
+                    return true;
             }
         }
         return false;
