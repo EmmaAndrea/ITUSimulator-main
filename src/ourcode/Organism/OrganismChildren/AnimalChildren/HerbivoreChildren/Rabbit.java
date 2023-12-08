@@ -58,7 +58,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         boolean isNight = timeToNight(world) == 0;
 
         // if it is in the burrow
-        if (!isNight && has_burrow) {
+        if (!isNight && has_burrow && in_hiding) {
             exitBurrow(world);
             return;
         }
