@@ -55,7 +55,7 @@ public class FungusTest {
 
         fungus.act(world);
 
-        boolean state = carcass.getFungus().isInCarcass();
+        boolean state = carcass.getFungus().inCarcass();
 
         System.out.println(state);
     }

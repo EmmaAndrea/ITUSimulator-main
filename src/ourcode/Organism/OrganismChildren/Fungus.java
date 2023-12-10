@@ -10,25 +10,25 @@ import ourcode.Setup.IDGenerator;
 import java.awt.*;
 
 public class Fungus extends Organism implements DynamicDisplayInformationProvider {
-    protected Carcass myCarcass; //
-    protected boolean inCarcass; // a check to see if the fungus is inside a carcass
+    protected Carcass carcass; //
+    protected boolean in_Carcass; // a check to see if the fungus is inside a carcass
     protected int growth; // fungus will grow if it is inside of carcass
     public Fungus(IDGenerator idGenerator) {
         super(idGenerator);
         max_age = 5;
         nutritional_value = 2;
-        inCarcass = false;
+        in_Carcass = false;
         growth = 0;
     }
 
     @Override
     public void act(World world) {
-        if (inCarcass) {
+        if (in_Carcass) {
             growth++;
         } else {
             super.act(world);
             if (checkSurroundingCarcass(world)) {
-                spread(myCarcass, id_generator);
+                spread(carcass, id_generator);
             }
         }
     }
@@ -44,7 +44,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
         carcass.addFungus(fungus);
         fungus.setAge(carcass);
         fungus.setInCarcass();
-        fungus.setMyCarcass(carcass);
+        fungus.setCarcass(carcass);
     }
 
     /**
@@ -58,7 +58,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
         for (Location location : world.getSurroundingTiles(current, 2)) {
             if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass && !carcass.hasFungus()) {
                 hasCarcass = true;
-                this.setMyCarcass(carcass);
+                this.setCarcass(carcass);
             }
         }
         return hasCarcass;
@@ -76,23 +76,23 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * sets 'inCarcass' to 'true'
      */
     public void setInCarcass() {
-        inCarcass = true;
+        in_Carcass = true;
     }
 
     /**
      * returns 'inCarcass' boolean
      * @return inCarcass
      */
-    public boolean isInCarcass() {
-        return inCarcass;
+    public boolean inCarcass() {
+        return in_Carcass;
     }
 
     /**
      *
      * @param carcass
      */
-    public void setMyCarcass(Carcass carcass) {
-        myCarcass = carcass;
+    public void setCarcass(Carcass carcass) {
+        this.carcass = carcass;
     }
 
     public int getGrowth() {

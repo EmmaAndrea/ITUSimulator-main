@@ -18,7 +18,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected boolean has_fungus;
     protected Fungus fungus;
 
-    protected Location my_location; // will store the location of the carcass
+    protected Location carcass_location; // will store the location of the carcass
 
     protected int size;
     public Carcass(IDGenerator idGenerator, int nutritionalValue, String type, boolean has_fungus) {
@@ -52,9 +52,9 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         // Will spawn the fungus at the carcass' location
         if (is_rotten && age >= max_age) {
             if (has_fungus && fungus.getGrowth() >= 4) { // the 'growth' is set to '4' can be changed for 'balance'
-                setMyLocation(world);
+                setLocation(world);
                 world.delete(this);
-                spawnMyFungus(world);
+                spawnFungus(world);
             } else {
                 world.delete(this);
             }
@@ -85,13 +85,13 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         return has_fungus;
     }
 
-    public void spawnMyFungus(World world) {
-        world.setTile(my_location, fungus);
+    public void spawnFungus(World world) {
+        world.setTile(carcass_location, fungus);
     }
 
-    public void setMyLocation(World world) {
-        my_location = world.getLocation(this);
-    }
+    public void setLocation(World world) {
+        carcass_location = world.getLocation(this);
+    } 
 
     /**
      * the carcass display information will have several 'stages' of graphic to illustrate the process of
