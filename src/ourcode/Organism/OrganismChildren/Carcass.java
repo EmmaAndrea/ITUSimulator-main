@@ -2,6 +2,7 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
+import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.Organism;
 import ourcode.Setup.IDGenerator;
@@ -17,7 +18,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected boolean has_fungus;
     protected Fungus fungus;
 
-
+    protected Location my_location; // will store the location of the carcass
 
     protected int size;
     public Carcass(IDGenerator idGenerator, int nutritionalValue, String type, boolean has_fungus) {
@@ -44,6 +45,18 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         if (has_fungus && fungus.getGrowth() >= 4) {
             world.setTile(world.getLocation(this), fungus);
         }
+
+        // If the carcass is too old and has a fungus inside that has 'grown'
+        // Will spawn the fungus at the carcass' location
+        if (is_rotten && age >= max_age) {
+            if (has_fungus && getFungus().getGrowth() > 4) { // the 'growth' is set to '4' can be changed for 'balance'
+                setMyLocation(world);
+                world.delete(this);
+                spawnMyFungus(world);
+            } else {
+                world.delete(this);
+            }
+        }
     }
 
     public void addFungus(Fungus fungus) {
@@ -68,6 +81,14 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
 
     public boolean hasFungus() {
         return has_fungus;
+    }
+
+    public void spawnMyFungus(World world) {
+        world.setTile(my_location, fungus);
+    }
+
+    public void setMyLocation(World world) {
+        my_location = world.getLocation(this);
     }
 
     /**

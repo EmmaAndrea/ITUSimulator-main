@@ -59,4 +59,22 @@ public class FungusTest {
 
         System.out.println(state);
     }
+
+    @Test
+    public void testFungusSurrounding() {
+        world = new World(3);
+        IDGenerator idGenerator = new IDGenerator();
+
+        Carcass carcass = new Carcass(idGenerator,3,"bear",false);
+        carcass.spawn(world);
+
+        Fungus fungus = new Fungus(idGenerator);
+        fungus.spawn(world);
+
+        fungus.checkSurroundingCarcass(world);
+        if (fungus.checkSurroundingCarcass(world)) {
+            System.out.println("true");
+        }
+
+    }
 }
