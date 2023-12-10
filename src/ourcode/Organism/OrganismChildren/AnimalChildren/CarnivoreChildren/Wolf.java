@@ -317,8 +317,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public Wolf getMyAlpha() { return my_alpha; }
 
-
-
     /**
      * Determines the graphic of the wolf based on its current condition and age.
      * @return Returns the graphics information for the wolf.

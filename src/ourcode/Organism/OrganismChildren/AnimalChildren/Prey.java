@@ -37,36 +37,4 @@ public abstract class Prey extends Animal {
     public void spawn(World world) {
         super.spawn(world);
     }
-
-
-    /**
-     * Defines the behavior of a herbivore in each simulation step. Checks if the
-     * herbivore is hungry and eats grass if available on its current location.
-     *
-     * @param world The simulation world in which the herbivore exists.
-     */
-    /*
-    @Override
-    public void herbivoreAct(World world) throws Exception {
-        if (world.getEntities().containsKey(this) && !being_eaten) {
-            // If the herbivore is not currently in a burrow.
-            if (!in_hiding) {
-
-                // If the herbivore is standing on a nonblocking tile
-                if (world.containsNonBlocking(world.getLocation(this))) {
-
-                    // If the non-blocking at this location is grass.
-                    if (world.getNonBlocking(world.getLocation(this)) instanceof Grass) {
-
-                        // If the herbivore is hungrier than how full the grass will make it.
-                        if (hunger >= getStandingOnNutritionalValue(world)) {
-                            eat(world, world.getNonBlocking(world.getLocation(this)));
-                        }
-                    }
-                }
-
-            }
-        }
-    }
-    */
 }
