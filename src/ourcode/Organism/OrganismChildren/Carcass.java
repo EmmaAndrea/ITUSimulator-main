@@ -42,14 +42,16 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             is_rotten = true;
         }
 
-        if (has_fungus && fungus.getGrowth() >= 4) {
-            world.setTile(world.getLocation(this), fungus);
+        // sets the carcass' fungus to be inside the carcass, then makes the fungus act.
+        if (has_fungus) {
+            fungus.setInCarcass();
+            fungus.act(world);
         }
 
         // If the carcass is too old and has a fungus inside that has 'grown'
         // Will spawn the fungus at the carcass' location
         if (is_rotten && age >= max_age) {
-            if (has_fungus && getFungus().getGrowth() > 4) { // the 'growth' is set to '4' can be changed for 'balance'
+            if (has_fungus && fungus.getGrowth() >= 4) { // the 'growth' is set to '4' can be changed for 'balance'
                 setMyLocation(world);
                 world.delete(this);
                 spawnMyFungus(world);
