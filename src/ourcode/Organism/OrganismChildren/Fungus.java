@@ -11,40 +11,44 @@ import java.awt.*;
 
 public class Fungus extends Organism implements DynamicDisplayInformationProvider {
     protected Carcass carcass; //
-    protected boolean in_Carcass; // a check to see if the fungus is inside a carcass
+
+    protected Location fungus_location;
+    protected boolean in_carcass; // a check to see if the fungus is inside a carcass
     protected int growth; // fungus will grow if it is inside of carcass
     public Fungus(IDGenerator idGenerator) {
         super(idGenerator);
         max_age = 5;
         nutritional_value = 2;
-        in_Carcass = false;
+        in_carcass = false;
         growth = 0;
     }
 
     @Override
     public void act(World world) {
-        if (in_Carcass) {
+        super.act(world);
+        if (in_carcass) {
             growth++;
-        } else {
-            super.act(world);
-            if (checkSurroundingCarcass(world)) {
-                spread(carcass, id_generator);
-            }
         }
+        else if (checkSurroundingCarcass(world) != null){
+            spread(checkSurroundingCarcass(world));
+        }
+
     }
 
+    public void giveLocation(Location location) {
+        fungus_location = location;
+    }
     /**
      * when a fungus 'spreads' it will add a new fungus to the found carcass, which will then
      * @param carcass
      * @param idGenerator
      */
-    public void spread(Carcass carcass, IDGenerator idGenerator) {
-        Fungus fungus = new Fungus(idGenerator);
+    public void spread(Carcass carcass) {
+        Fungus fungus = new Fungus(id_generator);
         carcass.setHasFungus();
         carcass.addFungus(fungus);
         fungus.setAge(carcass);
         fungus.setInCarcass();
-        fungus.setCarcass(carcass);
     }
 
     /**
@@ -52,17 +56,22 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * @param world
      * @return hasCarcass
      */
-    public boolean checkSurroundingCarcass(World world) {
-        boolean hasCarcass = false;
+
+
+    public Carcass checkSurroundingCarcass(World world) {
         Location current = world.getLocation(this);
         for (Location location : world.getSurroundingTiles(current, 2)) {
-            if (!world.isTileEmpty(location) && world.getTile(location) instanceof Carcass carcass && !carcass.hasFungus()) {
-                hasCarcass = true;
-                this.setCarcass(carcass);
+            if (!world.isTileEmpty(location)){
+                if (world.getTile(location) instanceof Carcass carcass) {
+                    if (!carcass.hasFungus()) {
+                        return carcass;
+                    }
+                }
             }
-        }
-        return hasCarcass;
+        } return null;
     }
+
+
 
     /**
      * adds the carcass' size to 'max_age'
@@ -76,7 +85,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * sets 'inCarcass' to 'true'
      */
     public void setInCarcass() {
-        in_Carcass = true;
+        in_carcass = true;
     }
 
     /**
@@ -84,19 +93,16 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * @return inCarcass
      */
     public boolean inCarcass() {
-        return in_Carcass;
-    }
-
-    /**
-     *
-     * @param carcass
-     */
-    public void setCarcass(Carcass carcass) {
-        this.carcass = carcass;
+        return in_carcass;
     }
 
     public int getGrowth() {
         return growth;
+    }
+
+    public void leaveCarcass(World world) {
+        world.setTile(fungus_location, this);
+        in_carcass = false;
     }
 
     @Override

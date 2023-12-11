@@ -21,6 +21,8 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected Location carcass_location; // will store the location of the carcass
 
     protected int size;
+
+    private boolean fungus_added;
     public Carcass(IDGenerator idGenerator, int nutritionalValue, String type, boolean has_fungus) {
         super(idGenerator);
         this.nutritional_value = nutritionalValue;
@@ -31,6 +33,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         size = nutritionalValue;
         if (has_fungus) {
             fungus = new Fungus(idGenerator);
+            fungus_added = false;
         }
     }
 
@@ -43,20 +46,19 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         }
 
         // sets the carcass' fungus to be inside the carcass, then makes the fungus act.
-        if (has_fungus) {
+        if (has_fungus && !fungus_added) {
             fungus.setInCarcass();
-            fungus.act(world);
+            world.add(fungus);
+            fungus.giveLocation(world.getLocation(this));
+            fungus_added = true;
         }
 
         // If the carcass is too old and has a fungus inside that has 'grown'
         // Will spawn the fungus at the carcass' location
-        if (is_rotten && age >= max_age) {
+        if (age >= max_age) {
+            world.delete(this);
             if (has_fungus && fungus.getGrowth() >= 4) { // the 'growth' is set to '4' can be changed for 'balance'
-                setLocation(world);
-                world.delete(this);
-                spawnFungus(world);
-            } else {
-                world.delete(this);
+                fungus.leaveCarcass(world);
             }
         }
     }
@@ -85,7 +87,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         return has_fungus;
     }
 
-    public void spawnFungus(World world) {
+    public void leaveFungus(World world) {
         world.setTile(carcass_location, fungus);
     }
 
