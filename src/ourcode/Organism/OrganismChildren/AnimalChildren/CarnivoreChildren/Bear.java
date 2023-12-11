@@ -223,4 +223,9 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         world.setTile(location, new_territory);
         habitat = new_territory;
     }
+
+    @Override
+    public int getNutritionalValue(){
+        return nutritional_value;
+    }
 }

@@ -150,4 +150,8 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             return new DisplayInformation(Color.black, "rabbit-small");
         }
     }
+
+    public int getNutritionalValue(){
+        return nutritional_value;
+    }
 }

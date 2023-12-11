@@ -419,4 +419,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public boolean isAlpha(){
         return alpha;
     }
+
+    public int getNutritionalValue(){
+        return nutritional_value;
+    }
 }

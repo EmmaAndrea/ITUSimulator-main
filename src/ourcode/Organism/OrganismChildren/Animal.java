@@ -567,7 +567,9 @@ public abstract class Animal extends Organism {
                                 // If the organism has a higher trophic level than itself.
                             }
                             if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                                eat(world, animal);
+                                if (hunger >= animal.getNutritionalValue()) {
+                                    eat(world, animal);
+                                }
                             }
                         }
                     }
