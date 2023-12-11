@@ -1,6 +1,7 @@
 12
 rabbit 2-4
 dinosaur egg 5
+carcass 1
 bear 2
 grass 10
 carcass fungi 5-10
