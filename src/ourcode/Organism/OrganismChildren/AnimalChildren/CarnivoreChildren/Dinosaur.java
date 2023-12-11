@@ -36,10 +36,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         wakeup = 18;
     }
 
-    /**
-     * Determines the graphic of the dinosaur based on its current condition and age.
-     * @return Returns the graphics information for the wolf.
-     */
     @Override
     public void act(World world) {
         setPrevious_location(world);
@@ -53,7 +49,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         }
 
         if (getGender() == Gender.Female) { // more parameters
-           if (steps_since_last_birth > 20) {
+           if (steps_since_last_birth > 50) {
                layEgg(world);
            }
         }
@@ -71,6 +67,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         previous_location = world.getLocation(this);
     }
 
+    /**
+     * Determines the graphic of the dinosaur based on its current condition and age.
+     * @return Returns the graphics information for the dinosaur.
+     */
     @Override
     public DisplayInformation getInformation() {
         if (age >= 20) {

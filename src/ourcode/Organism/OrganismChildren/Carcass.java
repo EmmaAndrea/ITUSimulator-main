@@ -18,7 +18,6 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected boolean is_rotten; // Indicates whether the carcass has rotted.
     protected boolean has_fungus; // Flag indicating the presence of fungus on the carcass.
     protected Fungus fungus; // The fungus growing on the carcass, if present.
-
     protected Location carcass_location; // The location of the carcass.
     protected int size; // The size of the carcass, representing its nutritional value.
     protected boolean fungus_added;
