@@ -22,7 +22,6 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected Location carcass_location; // The location of the carcass.
     protected int size; // The size of the carcass, representing its nutritional value.
 
-    private boolean fungus_added;
     /**
      * Constructs a Carcass with a unique identifier, nutritional value, type, and fungus presence.
      * Initializes the carcass properties including maximum age and rotting state.

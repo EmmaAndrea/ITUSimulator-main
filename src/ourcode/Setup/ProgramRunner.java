@@ -4,7 +4,9 @@ import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
+import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
@@ -175,6 +177,12 @@ public class ProgramRunner {
                 break;
             case "fungi":
                 spawnEntities(world, amount, () -> new Fungus(id_generator));
+                break;
+            case "dinosaur":
+                spawnEntities(world, amount, () -> new Dinosaur(id_generator, false)); // Assuming Dinosaur is a class you have
+                break;
+            case "dinosaur egg":
+                spawnEntities(world, amount, () -> new DinosaurEgg(id_generator, false)); // Assuming DinosaurEgg is a class you have
                 break;
             // Include other cases as needed based on your entity types
             default:
