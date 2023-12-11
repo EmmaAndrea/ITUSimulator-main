@@ -37,7 +37,6 @@ public abstract class Organism extends Entity implements Actor {
      */
     public void act(World world) {
         age++;
-        // An organism can die of old age.
     }
 
     /**
@@ -46,7 +45,7 @@ public abstract class Organism extends Entity implements Actor {
      * @return A list of free locations around the organism, or null if none are available.
      */
     public ArrayList<Location> getSurroundingFreeLocations(World world) {
-        // Retrieve current location
+        if (!world.contains(this) || hasBeenKilled) return new ArrayList<Location>();
 
         Location current_location = world.getLocation(this);
 
@@ -83,11 +82,13 @@ public abstract class Organism extends Entity implements Actor {
         Random random = new Random();
         //
         if (getSurroundingFreeLocations(world) != null) {
-            //
-            int random_index = random.nextInt(0, getSurroundingFreeLocations(world).size());
-            //
-            return getSurroundingFreeLocations(world).get(random_index);
-        } else return null;
+            int amount_of_free_surrounding_locations = getSurroundingFreeLocations(world).size();
+
+            if (amount_of_free_surrounding_locations > 0) {
+                int random_index = random.nextInt(0, amount_of_free_surrounding_locations);
+                return getSurroundingFreeLocations(world).get(random_index);
+            }
+        } return null;
     }
 
     /**

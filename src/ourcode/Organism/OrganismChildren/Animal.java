@@ -27,33 +27,34 @@ import static ourcode.Organism.Gender.Male;
  */
 public abstract class Animal extends Organism {
     protected int hunger; // Current hunger level of the animal.
-    protected int max_hunger; // Maximum hunger level before the animal dies.
-    protected int steps_since_last_birth; // Steps since the animal last gave birth.
-    protected boolean in_hiding; // Indicates whether the animal is in hiding.
-    protected Gender gender; // Gender of the animal.
-    protected ArrayList<String> consumable_foods; // List of which classes the animal can eat.
-    protected int damage_taken;
-    protected int power; // used to decide how much damage a bear deals.
-    protected int max_damage;
-    protected boolean being_eaten;
-    protected boolean has_cordyceps;
-    protected int grace_period; // holy period after coming out of burrow such that canvas errors are evaded.
-    protected ArrayList<Animal> friends;
-    protected Habitat habitat;
-    protected boolean has_habitat;
-    private final ReentrantLock lock;
-    protected int bedtime;
-    protected int wakeup;
-    protected boolean pack_hunting;
+    protected int max_hunger; // Maximum hunger level an animal can sustain before dying.
+    protected int steps_since_last_birth; // Number of simulation steps since the animal last gave birth.
+    protected boolean in_hiding; // Flag indicating if the animal is currently in hiding.
+    protected Gender gender; // Gender of the animal, affecting its breeding behaviors.
+    protected ArrayList<String> consumable_foods; // List of food types that the animal can consume.
+    protected int damage_taken; // Amount of damage the animal has taken.
+    protected int power; // Power level of the animal, used in combat scenarios.
+    protected int max_damage; // Maximum amount of damage the animal can sustain before dying.
+    protected boolean has_cordyceps; // Indicates whether the animal is infected with the cordyceps fungus.
+    protected int grace_period; // A grace period used for specific scenarios to avoid simulation errors.
+    protected ArrayList<Animal> friends; // List of other animals considered as friends.
+    protected Habitat habitat; // The habitat associated with the animal.
+    protected boolean has_habitat; // Indicates whether the animal has an associated habitat.
+    private final ReentrantLock lock; // A lock for managing concurrency in multithreaded environments.
+    protected int bedtime; // The simulation step when the animal goes to sleep.
+    protected int wakeup; // The simulation step when the animal wakes up.
+    protected boolean pack_hunting; // Indicates if the animal is currently engaged in pack hunting.
 
     /**
      * Constructs a new Animal with a unique identifier.
      * Initializes hunger levels, breeding steps, hiding state, and randomly assigns gender.
      *
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the animal.
+     * @param has_cordyceps Indicates whether the animal is infected with the cordyceps fungus.
      */
     public Animal(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator); // life_counter = 1;
+
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
@@ -80,6 +81,11 @@ public abstract class Animal extends Organism {
     @Override
     public void act(World world) {
         super.act(world);
+
+        if (this.hasBeenKilled || age >= max_age) {
+            dieAndBecomeCarcass(world);
+            return;
+        }
 
         if (world.getCurrentTime() == 14) {
             System.out.println("bear bedtime");
@@ -122,7 +128,7 @@ public abstract class Animal extends Organism {
         }
         // If the animal is outside its habitat.
         else {
-            // Make habitat if doesn't have one.
+            // Make habitat if it doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
             } if (!in_hiding) {
@@ -134,6 +140,12 @@ public abstract class Animal extends Organism {
         lock.unlock();
     }
 
+    /**
+     * Method for creating a habitat for the animal in the simulation world.
+     * This method should be implemented specifically for each animal subclass.
+     *
+     * @param world The simulation world in which the habitat is created.
+     */
     public void makeHabitat(World world) {
         // individual for each animal
     }
@@ -141,9 +153,10 @@ public abstract class Animal extends Organism {
     /**
      * Method for reducing code duplication of this sequence
      * Used to allow animals to make habitats
-     * @param world
-     * @param location
-     * @return
+     *
+     * @param world The simulation world.
+     * @param location The location to check for available space.
+     * @return true if the space is empty and suitable for habitat creation.
      */
     public boolean checkEmptySpace(World world, Location location) {
         if (world.containsNonBlocking(location)) {
@@ -155,10 +168,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Enables the animal to eat, reducing its hunger based on the nutritional value of the organism consumed.
-     * The consumed organism is removed from the world.
+     * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
+     * Creates and spawns a new entity of the same type as this animal.
      *
-     * @param world The world in which the animal and its food source exist.
+     * @param world The simulation world in which breeding occurs.
      */
     public void eat(World world, Organism organism) {
         // Deducts the animal's hunger with the nutritional value of the eaten organism.
@@ -183,8 +196,8 @@ public abstract class Animal extends Organism {
                         if (this instanceof Wolf thiswolf) {
                             if (wolf.isAlpha()) thiswolf.overtakePack(wolf);
                         }
-                        wolf.deleteMe(world);
-                    } else world.delete(animal);
+                        wolf.dieAndBecomeCarcass(world);
+                    } else animal.dieAndBecomeCarcass(world);
                 }
             }
         }
@@ -201,8 +214,7 @@ public abstract class Animal extends Organism {
 
         // Assuming idGenerator is available in the scope and hasCordyceps is either a field or a parameter
         Constructor<? extends Animal> constructor = animalClass.getDeclaredConstructor(IDGenerator.class, boolean.class);
-        Animal cub = null;
-        cub = constructor.newInstance(id_generator, has_cordyceps);
+        Animal cub = constructor.newInstance(id_generator, has_cordyceps);
 
         world.add(cub);
         habitat.addResident(cub);
@@ -214,7 +226,6 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where breeding might occur.
      * @return true if the animal can breed, false otherwise.
      */
-
     public boolean checkBreed(World world) {
         // Only females can give birth.
         if (gender == Female) {
@@ -267,6 +278,12 @@ public abstract class Animal extends Organism {
         move(world, dx, dy);
     }
 
+    /**
+     * Moves the animal away from a danger location, considering available paths and obstacles.
+     *
+     * @param world The simulation world where the movement occurs.
+     * @param danger_location The location from which the animal moves away.
+     */
     public void moveAway(World world, Location danger_location) {
         Location current_location = world.getLocation(this);
         int dx = -Integer.compare(danger_location.getX(), current_location.getX());
@@ -274,6 +291,13 @@ public abstract class Animal extends Organism {
         move(world, dx, dy);
     }
 
+    /**
+     * Helper method to handle the common logic of moving the animal.
+     *
+     * @param world The simulation world where the movement occurs.
+     * @param dx The movement step in the x-direction.
+     * @param dy The movement step in the y-direction.
+     */
     private void move(World world, int dx, int dy) {
         Location current_location = world.getLocation(this);
 
@@ -310,7 +334,7 @@ public abstract class Animal extends Organism {
      * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
-        if (location != null) {
+        if (location != null && !in_hiding && world.contains(this)) {
             Location currentLocation = world.getLocation(this);
 
             // Calculate the absolute difference in x and y coordinates
@@ -323,8 +347,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Enters the habitat that the animal is standing on, if it is empty, and it's their cave.
-     * @param world The world in which the current events are happening.
+     * Enters the habitat that the animal is standing on, if it is empty and is the animal's habitat.
+     * This action hides the animal from the simulation world.
+     *
+     * @param world The simulation world where the habitat entrance occurs.
      */
     public void enterHabitat(World world) {
         // set grace period to avoid exit glitch
@@ -345,8 +371,9 @@ public abstract class Animal extends Organism {
 
     /**
      * Exits the habitat in which the animal is currently hiding.
+     * This action makes the animal visible and active again in the simulation world.
      *
-     * @param world The world where the cave is located.
+     * @param world The simulation world where the habitat exit occurs.
      */
     public void exitHabitat(World world) {
         habitat.removeResident(this);
@@ -355,6 +382,13 @@ public abstract class Animal extends Organism {
         // overridden by bear
     }
 
+    /**
+     * Determines the spawn location for the animal when exiting its habitat.
+     * This location is chosen from available spots surrounding the habitat.
+     *
+     * @param world The simulation world where the habitat is located.
+     * @return The chosen location for the animal to spawn.
+     */
     public Location getSpawnLocation(World world){
         Location habitat_location = world.getLocation(habitat);
 
@@ -381,8 +415,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Assigns a given cave to a wolf.
-     * @param habitat The cave which is to be assigned a new wolf.
+     * Assigns a habitat to the animal.
+     * This habitat is used for hiding and potential breeding activities.
+     *
+     * @param habitat The habitat to be assigned to the animal.
      */
     public void setHabitat(Habitat habitat) {
         this.habitat = habitat;
@@ -390,29 +426,46 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Retrieves the gender of the animal, which is used in various behavioral and breeding logic.
+     * Retrieves the gender of the animal.
+     * This information is crucial for breeding and other gender-specific behaviors.
      *
-     * @return The gender of the animal, either Male or Female.
+     * @return The gender of the animal.
      */
     public Gender getGender() {
         return gender;
     }
 
-
+    /**
+     * Placeholder method for animal attacks, to be implemented in subclasses.
+     * Defines how an animal attacks another entity in the simulation world.
+     *
+     * @param world The simulation world where the attack occurs.
+     * @param animal The target animal of the attack.
+     */
     public void attack(World world, Animal animal){
 
     }
+
+    /**
+     * Inflicts damage on the animal.
+     * This method increases the damage taken by the animal, affecting its health and survival.
+     *
+     * @param power The amount of damage to be inflicted on the animal.
+     */
     public void damage(int power){
         damage_taken += power;
     }
 
+    /**
+     * Checks if the animal is dead due to sustained damage.
+     * Returns true if the damage taken exceeds the maximum damage threshold.
+     *
+     * @return True if the animal is dead, false otherwise.
+     */
     public boolean ifDeadReturnTrue(){
         return damage_taken >= max_damage;
     }
 
-    public void setBeingEaten(Boolean b){
-        being_eaten = b;
-    }
     /**
      * Calculates and returns the nutritional value of the organism the animal is currently standing on.
      *
@@ -430,22 +483,21 @@ public abstract class Animal extends Organism {
         return 0; // Or handle this scenario appropriately
     }
 
+    /**
+     * Retrieves the grace period of the animal.
+     * This period is used in specific scenarios to avoid simulation errors.
+     *
+     * @return The grace period of the animal.
+     */
     public int getGracePeriod() {
         return grace_period;
     }
 
     /**
-     * Retrieves the days since the last time this animal made a baby.
-     * @return steps_since_last_day
-     */
-    public int getStepsSinceLastBirth() {
-        return steps_since_last_birth;
-    }
-
-    /**
-     * Changes the gender to male or female, depending on the paramter..
-     * This method is created for test purposes!
-     * @param gender String of what gender to transition to.
+     * Manually sets the gender of the animal, typically used for testing purposes.
+     * Changes the gender to either male or female based on the input parameter.
+     *
+     * @param gender The gender to be assigned to the animal.
      */
     public void setGender(String gender) {
         if (gender.equalsIgnoreCase("male")) {
@@ -454,18 +506,27 @@ public abstract class Animal extends Organism {
             this.gender = Gender.Female;
         }
     }
-    public Animal getMate() {
-        return null;
-    }
 
+    /**
+     * Determines if it is currently the animal's bedtime based on the simulation world's time.
+     * This method is used to control the animal's sleep cycle.
+     *
+     * @param world The simulation world where the time is checked.
+     * @return True if it is bedtime for the animal, false otherwise.
+     */
     public boolean isBedtime(World world){
         if (world.getCurrentTime() > bedtime) {
-            if (world.getCurrentTime() < wakeup) {
-                return true;
-            }
+            return world.getCurrentTime() < wakeup;
         }
         return false;
     }
+
+    /**
+     * Adds another animal to the list of friends of this animal.
+     * Friends are typically excluded from predatory behaviors.
+     *
+     * @param animal The animal which is to be added to the list of friends.
+     */
     public void setFriends(Animal animal) {
         friends.add(animal);
     }
@@ -483,76 +544,94 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
         // Validate if the animal is on the map
-        if (!world.getEntities().containsKey(this)) {
+        if (!world.contains(this) || in_hiding) {
             System.out.println("Warning: Animal not on the map");
             return false;
         }
-        
-        // Get surrounding tiles to iterate through them.
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
-        // First, check for blocking organisms.
-        // Though, if there is an animal of higher trophic level, move away from this animal.
-        for (Location location : surrounding_tiles) {
+        try {
+            // Get surrounding tiles to iterate through them.
+            Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
-            // If the tile at given location isn't empty.
-            if (!world.isTileEmpty(location)) {
+            // First, check for blocking organisms.
+            // Though, if there is an animal of higher trophic level, move away from this animal.
+            for (Location location : surrounding_tiles) {
 
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
+                // If the tile at given location isn't empty.
+                if (!world.isTileEmpty(location)) {
 
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Animal animal) {
-                    if (!friends.contains(animal)) {
-                        if (animal.getTrophicLevel() > trophic_level) {
-                            moveAway(world, location);
-                            return true;
-                            // If the organism has a higher trophic level than itself.
-                        }
-                        if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                            eat(world, animal);
-                        }
-                    }
-                }
-            }
-        }
+                    // Declares a new object at given location.
+                    Object object = world.getTile(location);
 
-
-        // Next, check for non-blocking organisms like grass.
-        for (Location location : surrounding_tiles) {
-            if (world.containsNonBlocking(location)) {
-                Object object = world.getNonBlocking(location);
-                if (object instanceof Organism organism) {
-                    if (consumable_foods.contains(organism.getType())) {
-                        moveCloser(world, location);
-                        if (world.containsNonBlocking(world.getLocation(this))) {
-                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                if (hunger >= grass.getNutritionalValue()) {
-                                    eat(world, grass);
-                                    return true;
-                                }
+                    // Casts object to Organism class and checks if the object is an Organism.
+                    if (object instanceof Animal animal) {
+                        if (!friends.contains(animal)) {
+                            if (animal.getTrophicLevel() > trophic_level) {
+                                moveAway(world, location);
+                                return true;
+                                // If the organism has a higher trophic level than itself.
+                            }
+                            if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
+                                eat(world, animal);
                             }
                         }
                     }
                 }
-            } else if (!world.isTileEmpty(location)){
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
+            }
 
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Bush bush) {
-                    if (consumable_foods.contains("bush")) {
-                        if (hunger > 4) bush.eatBerries();
-                        System.out.println(type + " ate berries");
-                        return false;
+            // Next, check for non-blocking organisms like grass.
+            for (Location location : surrounding_tiles) {
+                if (world.containsNonBlocking(location)) {
+                    Object object = world.getNonBlocking(location);
+                    if (object instanceof Organism organism) {
+                        if (consumable_foods.contains(organism.getType())) {
+                            moveCloser(world, location);
+                            if (world.containsNonBlocking(world.getLocation(this))) {
+                                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                                    if (hunger >= grass.getNutritionalValue()) {
+                                        eat(world, grass);
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (!world.isTileEmpty(location)) {
+                    // Declares a new object at given location.
+                    Object object = world.getTile(location);
+
+                    // Casts object to Organism class and checks if the object is an Organism.
+                    if (object instanceof Bush bush) {
+                        if (consumable_foods.contains("bush")) {
+                            if (hunger > 4) bush.eatBerries();
+                            System.out.println(type + " ate berries");
+                            return false;
+                        }
                     }
                 }
             }
-        }
 
-        // If no food or danger is found, return false.
-        return false;
+            // If no food or danger is found, return false.
+            return false;
+        } catch (IllegalArgumentException iae) {
+            return false;
+        }
     }
 
+    /**
+     * Transforms the organism into a carcass upon its death. The organism is replaced by a carcass
+     * at its current location in the simulation world. The new carcass retains the nutritional value,
+     * type, and cordyceps status of the original organism.
+     *
+     * @param world The simulation world where the transformation occurs.
+     */
+    public void dieAndBecomeCarcass(World world) {
+        if (world.contains(this) && !this.in_hiding) {
+            Location current_location = world.getLocation(this);
+            Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
+            world.delete(this);
+            world.setTile(current_location, carcass);
+        }
+    }
 }
 

@@ -103,7 +103,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      *
      * @param world The simulation world where the bear searches for a mate.
      */
-    public boolean findMate(World world){
+    public boolean findMate(World world) {
+        if (!world.contains(this)) return false;
         for (Location location: world.getSurroundingTiles(world.getLocation(this), 7)) {
             if (world.getTile(location) instanceof Bear potential_mate){
                 if (potential_mate.getGender() == Gender.Female){

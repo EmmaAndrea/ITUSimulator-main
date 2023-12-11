@@ -20,21 +20,13 @@ import java.io.File;
  * and controlling the simulation flow based on user-defined parameters and input data.
  */
 public class ProgramRunner {
-    // fields
     private Program p;
-
     private IDGenerator id_generator;
-
     private Grass grass;
-
     private Rabbit rabbit;
-
     private Burrow burrow;
-
     private InputReader input_reader;
-
     private Wolf alpha;
-
     private int pack_number;
 
     /**
@@ -56,7 +48,7 @@ public class ProgramRunner {
         int size = input_reader.readWorldSize();
 
         // create world
-        p = new Program(size, 1000, 500); // creates a new program
+        p = new Program(size, 1000, 100); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.
