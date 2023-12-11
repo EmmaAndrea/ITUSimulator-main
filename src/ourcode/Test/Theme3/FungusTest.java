@@ -25,20 +25,21 @@ public class FungusTest {
     }
 
     @BeforeEach
-    public void startTest() {
+    public void startTest() throws Exception{
         System.out.println("Test started");
+        programRunner.create("./data/fungitest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1); // Run the simulation for one step to spawn entities
+
     }
 
     /**
      * Testing that fungus is spawned correctly into thw world.
-     * The file should spawn five to 8 carcass fungi
+     * The file should spawn five to eight fungi
      * @throws Exception
      */
     @Test
     public void testFungusDeclaration() throws Exception {
-        programRunner.create("./data/fungitest.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(1); // Run the simulation for one step to spawn entities
         int fungus_counter = 0;
 
         for (Object object : world.getEntities().keySet()){
@@ -50,11 +51,12 @@ public class FungusTest {
         assertTrue(fungus_counter >= 5 && fungus_counter <= 8, "The amount of fungus should be between 5 and 8, but is: " + fungus_counter);
     }
 
+    /**
+     * Tests that fungus can spread into a carcass
+     * @throws Exception
+     */
     @Test
     public void testFungusSpread() throws Exception {
-        programRunner.create("./data/fungitest.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(1); // Run the simulation for one step to spawn entities
 
         Location base_location = new Location(0,0);
         Carcass new_carcass = new Carcass(programRunner.getOriginal_id_generator(), 3, "rabbit", false);
@@ -70,22 +72,11 @@ public class FungusTest {
         assertTrue(new_carcass.hasFungus());
     }
 
+
+
     @Test
-    public void testFungusSurrounding() {
-        world = new World(3);
-        IDGenerator idGenerator = new IDGenerator();
+    public void testFungusDiesIfNotSpread() {
 
-        Carcass carcass = new Carcass(idGenerator,3,"bear",false);
-        carcass.spawn(world);
 
-        Fungus fungus = new Fungus(idGenerator);
-        fungus.spawn(world);
-/*
-        fungus.checkSurroundingCarcass(world);
-        if (fungus.checkSurroundingCarcass(world)) {
-            System.out.println("true");
-        }
-
- */
     }
 }

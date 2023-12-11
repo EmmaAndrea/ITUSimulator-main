@@ -15,6 +15,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     protected Location fungus_location;
     protected boolean in_carcass; // a check to see if the fungus is inside a carcass
     protected int growth; // fungus will grow if it is inside of carcass
+
     public Fungus(IDGenerator idGenerator) {
         super(idGenerator);
         max_age = 5;
