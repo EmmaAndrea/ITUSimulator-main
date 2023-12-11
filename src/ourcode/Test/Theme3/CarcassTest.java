@@ -57,7 +57,12 @@ public class CarcassTest {
         assertTrue(carcass_with_fungi_counter == 6, "The amount of fungus should be 6, but is: " + carcass_with_fungi_counter);
     }
 
+    @Test
     public void testFungusReplacesCarcass(){
-        // add testing
+
+        programRunner.runSimulation(21);
+        assertTrue(world.getEntities().containsKey("fungus"));
+
     }
+
 }

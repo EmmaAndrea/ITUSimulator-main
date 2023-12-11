@@ -16,6 +16,8 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     protected boolean in_carcass; // a check to see if the fungus is inside a carcass
     protected int growth; // fungus will grow if it is inside of carcass
 
+    protected int max_age_with_carcass;
+
     public Fungus(IDGenerator idGenerator) {
         super(idGenerator);
         max_age = 5;
@@ -27,14 +29,17 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     @Override
     public void act(World world) {
         super.act(world);
+        if (in_carcass){
+            growth++;
+            return;
+        }
+
         if (age >= max_age){
             world.delete(this);
             return;
         }
-        if (in_carcass) {
-            growth++;
-        }
-        else if (checkSurroundingCarcass(world) != null){
+
+        if (checkSurroundingCarcass(world) != null){
             spread(checkSurroundingCarcass(world));
         }
 
@@ -107,6 +112,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     public void leaveCarcass(World world) {
         world.setTile(fungus_location, this);
         in_carcass = false;
+        age = 0;
     }
 
     @Override

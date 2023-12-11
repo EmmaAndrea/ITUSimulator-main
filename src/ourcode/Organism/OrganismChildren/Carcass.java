@@ -53,6 +53,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
      */
     @Override
     public void act(World world) {
+        System.out.println(world.getCurrentTime());
         super.act(world);
 
         if (age >= 15) {
