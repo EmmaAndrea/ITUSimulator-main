@@ -41,7 +41,6 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     /**
      * when a fungus 'spreads' it will add a new fungus to the found carcass, which will then
      * @param carcass
-     * @param idGenerator
      */
     public void spread(Carcass carcass) {
         Fungus fungus = new Fungus(id_generator);
