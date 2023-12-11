@@ -34,6 +34,11 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
             return;
         }
 
+        if (growth > 0){
+            max_age = max_age + growth;
+            growth = 0;
+        }
+
         if (age >= max_age){
             world.delete(this);
             return;
@@ -56,7 +61,6 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
         Fungus fungus = new Fungus(id_generator);
         carcass.setHasFungus();
         carcass.addFungus(fungus);
-        fungus.setAge(carcass);
         fungus.setInCarcass();
     }
 
@@ -86,9 +90,9 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * adds the carcass' size to 'max_age'
      * @param carcass
      */
-    public void setAge(Carcass carcass) {
-        max_age += carcass.getSize();
-    }
+    //public void setAge(Carcass carcass) {
+        //max_age += carcass.getSize();
+    //}
 
     /**
      * sets 'inCarcass' to 'true'
@@ -117,7 +121,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
 
     @Override
     public DisplayInformation getInformation() {
-        if (age <= 2) {
+        if (nutritional_value <= 4) {
             return new DisplayInformation(Color.PINK, "fungi-small");
         } return new DisplayInformation(Color.PINK, "fungi-large");
     }

@@ -72,6 +72,9 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             fungus_added = true;
         }
 
+        if (nutritional_value <= 0) {
+            world.delete(this);
+        }
         // If the carcass is too old and has a fungus inside that has 'grown'
         // Will spawn the fungus at the carcass' location
         if (age >= max_age) {
@@ -101,12 +104,10 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     }
 
     /**
-     * Sets the size of the carcass based on the trophic level of an animal.
-     *
-     * @param animal The animal whose trophic level determines the carcass size.
+     * Adjust the nutrition after being eaten.
      */
-    public void setSize(Animal animal) {
-        size = animal.getTrophicLevel();
+    public void setNutrition(int eaten) {
+        nutritional_value -= eaten;
     }
 
     /**

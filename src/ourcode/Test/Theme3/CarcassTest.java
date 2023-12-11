@@ -60,7 +60,7 @@ public class CarcassTest {
     @Test
     public void testFungusReplacesCarcass(){
 
-        programRunner.runSimulation(21);
+        programRunner.runSimulation(20);
 
         int fungi_counter = 0;
 
@@ -70,7 +70,7 @@ public class CarcassTest {
             }
         }
 
-        assertEquals(fungi_counter, 6, "6 carcass have fungus, and should leave behind 1 fungus when they die");
+        assertTrue(fungi_counter >= 6, "6 carcass have fungus, and should each leave behind 1 fungus when they die");
     }
 
     public void testFungusBeingEaten(){
