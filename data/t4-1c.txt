@@ -1,0 +1,4 @@
+8
+rabbit 1-2
+dinosaur 1
+dinosaur 2

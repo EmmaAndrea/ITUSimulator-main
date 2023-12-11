@@ -60,64 +60,63 @@ public class InputReader {
         int wolf_count = 0;
 
         for (int i = 1; i < lines.size(); i++) {
+
             String[] parts = lines.get(i).split(" ");
             boolean isCordyceps = parts[0].equalsIgnoreCase("cordyceps");
-            boolean isFungi = parts.length > 1 && parts[1].equalsIgnoreCase("fungi");
+            boolean isFungi = parts.length > 2 && parts[1].equalsIgnoreCase("fungi");
             String type = parts[0];
 
-            if (isCordyceps) {
-                type = "cordyceps " + parts[1];
-            } else if (isFungi) {
-                type = "carcass fungi";
+            // Check for dinosaur or dinosaur egg
+            if (type.equals("dinosaur")) {
+                if (parts.length > 1 && parts[1].equals("egg")) {
+                    type = "dinosaur egg";
+                }
             }
 
-            int j = isCordyceps || isFungi ? 2 : 1;
+            int amountIndex = type.equals("dinosaur egg") ? 2 : 1;
+            if (isCordyceps) {
+                type = "cordyceps " + parts[1];
+                j = 2;
+                amountIndex = 2;
+            } else if (isFungi) {
+                type = "carcass fungi";
+                amountIndex = 2;
+                j = 2;
+            }
+
             int amount;
 
-            // Determines the amount, handling both single values and ranges
-            if (parts[j].contains("-")) {
-                String[] range = parts[j].split("-");
+            // Handle range or single value for amount
+            if (parts[amountIndex].contains("-")) {
+                String[] range = parts[amountIndex].split("-");
                 int min = Integer.parseInt(range[0]);
                 int max = Integer.parseInt(range[1]);
                 amount = random.nextInt(max - min + 1) + min; // Random amount within the specified range
             } else {
-                amount = Integer.parseInt(parts[j]); // Fixed amount
+                amount = Integer.parseInt(parts[amountIndex]); // Fixed amount
             }
 
-            // Handle special "cordyceps" case
-            if (isCordyceps) {
-                map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
-                continue;
-            }
+            // Updating the map for each type
+            map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
 
-            // Handle wolf packs
+            // Additional processing for specific types
             if (type.equals("wolf")) {
                 map_of_wolf_packs.put(pack_count++, amount);
-                if (map_of_spawns.containsKey("wolf")){
-                    wolf_count = wolf_count + map_of_spawns.get("wolf");
-                    wolf_count = wolf_count + amount;
-                    map_of_spawns.put("wolf", wolf_count);
-                    continue;
-                }
-            }
-
-            // Processing for bear spawns
-            if (type.equals("bear")) {
+                wolf_count += amount;
+            } else if (type.startsWith("bear")) {
                 bear_count++;
                 String bear_type = "bear" + bear_count;
                 total_bear_amount += amount;
 
                 // Parses and stores territory information if available
-                if (parts.length > 2 + j) {
-                    int x = Integer.parseInt(String.valueOf(parts[2 + j].charAt(1)));
-                    int y = Integer.parseInt(String.valueOf(parts[2 + j].charAt(3)));
+                if (parts.length > 2 + amountIndex) {
+                    int x = Integer.parseInt(String.valueOf(parts[2 + amountIndex].charAt(1)));
+                    int y = Integer.parseInt(String.valueOf(parts[2 + amountIndex].charAt(3)));
                     Location territory = new Location(x, y);
                     map_of_bear_territories.put(bear_type, territory);
                 }
 
                 map_of_spawns.put("bear", total_bear_amount);
-            } else {
-                map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
             }
         }
     }
