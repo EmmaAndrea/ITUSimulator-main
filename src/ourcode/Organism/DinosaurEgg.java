@@ -35,8 +35,9 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
      *
      * @param world The simulation world in which the egg exists.
      */
+    @Override
     public void act(World world) {
-        super.act(world);
+        age++;
 
         if (age >= max_age) {
             becomeDinosaur(world);

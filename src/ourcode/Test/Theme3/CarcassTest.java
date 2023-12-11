@@ -56,4 +56,8 @@ public class CarcassTest {
         assertTrue(carcass_without_fungi_counter == 5, "The amount of fungus should be 5, but is: " + carcass_without_fungi_counter);
         assertTrue(carcass_with_fungi_counter == 6, "The amount of fungus should be 6, but is: " + carcass_with_fungi_counter);
     }
+
+    public void testFungusReplacesCarcass(){
+        // add testing
+    }
 }

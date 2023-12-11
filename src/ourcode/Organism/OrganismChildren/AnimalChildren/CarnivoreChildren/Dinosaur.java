@@ -43,10 +43,13 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     @Override
     public void act(World world) {
         setPrevious_location(world);
+        Location current_location = world.getLocation(this);
         super.act(world);
 
-        if (checkEmptySpace(world, world.getLocation(this))) {
-            world.setTile(previous_location, new Footprint(id_generator));
+        if (checkEmptySpace(world, current_location)) {
+            if (!world.containsNonBlocking(current_location)) {
+                world.setTile(previous_location, new Footprint(id_generator));
+            }
         }
 
         if (getGender() == Gender.Female) { // more parameters
@@ -58,9 +61,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     public void layEgg(World world) {
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
-        world.setTile(previous_location, dinosaurEgg);
-
-        steps_since_last_birth = 0;
+        if (world.isTileEmpty(previous_location)) {
+            world.setTile(previous_location, dinosaurEgg);
+            steps_since_last_birth = 0;
+        }
     }
 
     public void setPrevious_location(World world) {

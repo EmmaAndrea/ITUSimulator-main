@@ -27,6 +27,10 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
     @Override
     public void act(World world) {
         super.act(world);
+        if (age >= max_age){
+            world.delete(this);
+            return;
+        }
         if (in_carcass) {
             growth++;
         }

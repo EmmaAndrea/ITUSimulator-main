@@ -629,6 +629,7 @@ public abstract class Animal extends Organism {
      */
     public void dieAndBecomeCarcass(World world) {
         if (world.contains(this) && !this.in_hiding) {
+            System.out.println("i, " + type + id + ", became a carcass");
             Location current_location = world.getLocation(this);
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             world.delete(this);
