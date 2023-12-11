@@ -6,6 +6,7 @@ import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
@@ -180,7 +181,7 @@ public abstract class Animal extends Organism {
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
             // check
-            System.out.println(this.getType() + " " + this.getId() + " ate " + grass.getId());
+            System.out.println(this.getType() + " " + this.getId() + " ate grass " + grass.getId());
 
         } else if (organism instanceof Animal animal) {
             synchronized (animal) {
@@ -574,7 +575,11 @@ public abstract class Animal extends Organism {
                                 // If the organism has a higher trophic level than itself.
                             }
                             if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                                eat(world, animal);
+                                if (hunger >= animal.getNutritionalValue()) {
+                                    if (this instanceof Predator predator) {
+                                        attack(world, animal);
+                                    }
+                                }
                             }
                         }
                     }

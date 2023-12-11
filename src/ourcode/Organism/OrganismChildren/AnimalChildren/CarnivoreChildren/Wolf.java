@@ -49,6 +49,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         this.has_cordyceps = has_cordyceps;
         bedtime = 1;
         wakeup = 7;
+        nutritional_value = 8;
     }
 
     /**

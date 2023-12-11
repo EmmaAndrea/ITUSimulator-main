@@ -31,6 +31,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
         bedtime = 12;
         wakeup = 18;
+        nutritional_value = 12;
     }
 
 
