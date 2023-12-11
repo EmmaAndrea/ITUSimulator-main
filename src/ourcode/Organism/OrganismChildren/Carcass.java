@@ -91,7 +91,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
 
     public void setLocation(World world) {
         carcass_location = world.getLocation(this);
-    } 
+    }
 
     /**
      * the carcass display information will have several 'stages' of graphic to illustrate the process of
