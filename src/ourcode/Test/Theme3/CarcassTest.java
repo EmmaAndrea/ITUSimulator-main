@@ -61,8 +61,19 @@ public class CarcassTest {
     public void testFungusReplacesCarcass(){
 
         programRunner.runSimulation(21);
-        assertTrue(world.getEntities().containsKey("fungus"));
 
+        int fungi_counter = 0;
+
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Fungus fungus) {
+                fungi_counter++;
+            }
+        }
+
+        assertEquals(fungi_counter, 6, "6 carcass have fungus, and should leave behind 1 fungus when they die");
     }
 
+    public void testFungusBeingEaten(){
+        // create code first
+    }
 }
