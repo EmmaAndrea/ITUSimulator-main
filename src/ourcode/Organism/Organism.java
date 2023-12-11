@@ -20,6 +20,9 @@ public abstract class Organism extends Entity implements Actor {
 
     protected int trophic_level = 0;
 
+    protected int grace_period; // A grace period used for specific scenarios to avoid simulation errors.
+
+
     /**
      * Constructor for Organism, initializing common attributes for all organisms in the world.
      * @param original_id_generator The IDGenerator used for assigning unique IDs to the organism.
@@ -106,5 +109,13 @@ public abstract class Organism extends Entity implements Actor {
      */
     public int getNutritionalValue() {
         return nutritional_value;
+    }
+
+    public void setGracePeriod(int i){
+        grace_period = i;
+    }
+
+    public int getGrace_period(){
+        return grace_period;
     }
 }

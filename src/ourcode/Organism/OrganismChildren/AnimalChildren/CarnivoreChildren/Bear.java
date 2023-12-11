@@ -96,6 +96,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public void exitHabitat(World world){
         habitat.removeResident(this);
         in_hiding = false;
+        grace_period = 0;
     }
 
     /**

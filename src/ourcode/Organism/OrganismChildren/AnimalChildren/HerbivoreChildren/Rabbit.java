@@ -52,10 +52,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         if (in_hiding) return;
         if (isBedtime(world)) return;
 
-        if (grace_period == 1) {
-            grace_period = 0;
-        }
-
         boolean isCloseToBurrow = false;
 
         // get a burrow

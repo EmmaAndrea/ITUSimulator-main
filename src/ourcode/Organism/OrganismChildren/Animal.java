@@ -37,7 +37,6 @@ public abstract class Animal extends Organism {
     protected int power; // Power level of the animal, used in combat scenarios.
     protected int max_damage; // Maximum amount of damage the animal can sustain before dying.
     protected boolean has_cordyceps; // Indicates whether the animal is infected with the cordyceps fungus.
-    protected int grace_period; // A grace period used for specific scenarios to avoid simulation errors.
     protected ArrayList<Animal> friends; // List of other animals considered as friends.
     protected Habitat habitat; // The habitat associated with the animal.
     protected boolean has_habitat; // Indicates whether the animal has an associated habitat.
@@ -83,6 +82,10 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (world.getCurrentTime() == 14){
+            System.out.println("hi");
+        }
+
         steps_since_last_birth++;
 
         if (!in_hiding) {
@@ -99,7 +102,10 @@ public abstract class Animal extends Organism {
                 moveCloser(world, world.getLocation(habitat));
             }
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
-                enterHabitat(world);
+                if (grace_period == 0){
+                    grace_period = 1;
+                    return;
+                } else enterHabitat(world);
             } else return;
 
         } else if (!isBedtime(world) && in_hiding){
@@ -211,6 +217,10 @@ public abstract class Animal extends Organism {
 
         world.add(cub);
         habitat.addResident(cub);
+        cub.setGracePeriod(1);
+        cub.setHabitat(habitat);
+        cub.enterHabitat(world);
+        System.out.println("made cub");
 
         steps_since_last_birth = 0;
     }
@@ -348,8 +358,6 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the habitat entrance occurs.
      */
     public void enterHabitat(World world) {
-        // set grace period to avoid exit glitch
-        grace_period = 1;
 
         // add animal to list of residents of habitat
         habitat.addResident(this);
@@ -544,6 +552,7 @@ public abstract class Animal extends Organism {
             return false;
         }
 
+        lock.lock();
         try {
             // Get surrounding tiles to iterate through them.
             Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
@@ -560,15 +569,21 @@ public abstract class Animal extends Organism {
 
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Animal animal) {
-                        if (!friends.contains(animal)) {
-                            if (animal.getTrophicLevel() > trophic_level) {
-                                moveAway(world, location);
-                                return true;
-                                // If the organism has a higher trophic level than itself.
-                            }
-                            if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger >= animal.getNutritionalValue()) {
-                                    eat(world, animal);
+                        System.out.println(type + " tries to eat " + animal.getType());
+                        if (animal.getGrace_period() == 0) {
+                            if (!friends.contains(animal)) {
+                                if (animal.getTrophicLevel() > trophic_level) {
+                                    moveAway(world, location);
+                                    lock.unlock();
+                                    return true;
+                                    // If the organism has a higher trophic level than itself.
+                                }
+                                if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
+                                    if (hunger >= animal.getNutritionalValue()) {
+                                        eat(world, animal);
+                                        lock.unlock();
+                                        return true;
+                                    }
                                 }
                             }
                         }
@@ -587,6 +602,7 @@ public abstract class Animal extends Organism {
                                 if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
                                     if (hunger >= grass.getNutritionalValue()) {
                                         eat(world, grass);
+                                        lock.unlock();
                                         return true;
                                     }
                                 }
@@ -602,6 +618,7 @@ public abstract class Animal extends Organism {
                         if (consumable_foods.contains("bush")) {
                             if (hunger > 4) bush.eatBerries();
                             System.out.println(type + " ate berries");
+                            lock.unlock();
                             return false;
                         }
                     }
@@ -609,8 +626,10 @@ public abstract class Animal extends Organism {
             }
 
             // If no food or danger is found, return false.
+            lock.unlock();
             return false;
         } catch (IllegalArgumentException iae) {
+            lock.unlock();
             return false;
         }
     }
@@ -624,9 +643,11 @@ public abstract class Animal extends Organism {
      */
     public void dieAndBecomeCarcass(World world) {
         if (world.contains(this) && !this.in_hiding) {
+            grace_period = 2;
             System.out.println("i, " + type + id + ", became a carcass");
             Location current_location = world.getLocation(this);
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
+            carcass.setGracePeriod(1);
             world.delete(this);
             world.setTile(current_location, carcass);
         }
