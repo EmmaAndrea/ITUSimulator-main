@@ -44,7 +44,6 @@ public abstract class Predator extends Animal {
      */
 
     public void act(World world) {
-
         super.act(world);
     }
 

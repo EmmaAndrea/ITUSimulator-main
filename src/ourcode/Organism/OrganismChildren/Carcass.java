@@ -21,6 +21,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
 
     protected Location carcass_location; // The location of the carcass.
     protected int size; // The size of the carcass, representing its nutritional value.
+    protected boolean fungus_added;
 
     /**
      * Constructs a Carcass with a unique identifier, nutritional value, type, and fungus presence.
@@ -40,7 +41,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         this.has_fungus = has_fungus;
         size = nutritional_value;
         if (has_fungus) {
-            fungus = new Fungus(idGenerator);
+            fungus = new Fungus(id_generator);
             fungus_added = false;
         }
     }
@@ -134,7 +135,6 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
      *
      * @param world The simulation world where the fungus is spawned.
      */
-    public void spawnFungus(World world) {
     public void leaveFungus(World world) {
         world.setTile(carcass_location, fungus);
     }

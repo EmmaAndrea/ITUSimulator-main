@@ -218,6 +218,8 @@ public abstract class Animal extends Organism {
 
         world.add(cub);
         habitat.addResident(cub);
+
+        steps_since_last_birth = 0;
     }
 
     /**
