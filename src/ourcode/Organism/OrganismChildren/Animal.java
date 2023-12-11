@@ -54,6 +54,7 @@ public abstract class Animal extends Organism {
      */
     public Animal(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator); // life_counter = 1;
+
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
@@ -80,6 +81,11 @@ public abstract class Animal extends Organism {
     @Override
     public void act(World world) {
         super.act(world);
+
+        if (this.hasBeenKilled || age >= max_age) {
+            dieAndBecomeCarcass(world);
+            return;
+        }
 
         if (world.getCurrentTime() == 14) {
             System.out.println("bear bedtime");
@@ -183,8 +189,8 @@ public abstract class Animal extends Organism {
                         if (this instanceof Wolf thiswolf) {
                             if (wolf.isAlpha()) thiswolf.overtakePack(wolf);
                         }
-                        wolf.deleteMe(world);
-                    } else world.delete(animal);
+                        wolf.dieAndBecomeCarcass(world);
+                    } else animal.dieAndBecomeCarcass(world);
                 }
             }
         }
@@ -310,7 +316,7 @@ public abstract class Animal extends Organism {
      * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
-        if (location != null) {
+        if (location != null && !in_hiding && world.contains(this)) {
             Location currentLocation = world.getLocation(this);
 
             // Calculate the absolute difference in x and y coordinates
@@ -460,9 +466,7 @@ public abstract class Animal extends Organism {
 
     public boolean isBedtime(World world){
         if (world.getCurrentTime() > bedtime) {
-            if (world.getCurrentTime() < wakeup) {
-                return true;
-            }
+            return world.getCurrentTime() < wakeup;
         }
         return false;
     }
@@ -483,76 +487,94 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
         // Validate if the animal is on the map
-        if (!world.getEntities().containsKey(this)) {
+        if (!world.contains(this) || in_hiding) {
             System.out.println("Warning: Animal not on the map");
             return false;
         }
-        
-        // Get surrounding tiles to iterate through them.
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
-        // First, check for blocking organisms.
-        // Though, if there is an animal of higher trophic level, move away from this animal.
-        for (Location location : surrounding_tiles) {
+        try {
+            // Get surrounding tiles to iterate through them.
+            Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
 
-            // If the tile at given location isn't empty.
-            if (!world.isTileEmpty(location)) {
+            // First, check for blocking organisms.
+            // Though, if there is an animal of higher trophic level, move away from this animal.
+            for (Location location : surrounding_tiles) {
 
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
+                // If the tile at given location isn't empty.
+                if (!world.isTileEmpty(location)) {
 
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Animal animal) {
-                    if (!friends.contains(animal)) {
-                        if (animal.getTrophicLevel() > trophic_level) {
-                            moveAway(world, location);
-                            return true;
-                            // If the organism has a higher trophic level than itself.
-                        }
-                        if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                            eat(world, animal);
-                        }
-                    }
-                }
-            }
-        }
+                    // Declares a new object at given location.
+                    Object object = world.getTile(location);
 
-
-        // Next, check for non-blocking organisms like grass.
-        for (Location location : surrounding_tiles) {
-            if (world.containsNonBlocking(location)) {
-                Object object = world.getNonBlocking(location);
-                if (object instanceof Organism organism) {
-                    if (consumable_foods.contains(organism.getType())) {
-                        moveCloser(world, location);
-                        if (world.containsNonBlocking(world.getLocation(this))) {
-                            if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                if (hunger >= grass.getNutritionalValue()) {
-                                    eat(world, grass);
-                                    return true;
-                                }
+                    // Casts object to Organism class and checks if the object is an Organism.
+                    if (object instanceof Animal animal) {
+                        if (!friends.contains(animal)) {
+                            if (animal.getTrophicLevel() > trophic_level) {
+                                moveAway(world, location);
+                                return true;
+                                // If the organism has a higher trophic level than itself.
+                            }
+                            if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
+                                eat(world, animal);
                             }
                         }
                     }
                 }
-            } else if (!world.isTileEmpty(location)){
-                // Declares a new object at given location.
-                Object object = world.getTile(location);
+            }
 
-                // Casts object to Organism class and checks if the object is an Organism.
-                if (object instanceof Bush bush) {
-                    if (consumable_foods.contains("bush")) {
-                        if (hunger > 4) bush.eatBerries();
-                        System.out.println(type + " ate berries");
-                        return false;
+            // Next, check for non-blocking organisms like grass.
+            for (Location location : surrounding_tiles) {
+                if (world.containsNonBlocking(location)) {
+                    Object object = world.getNonBlocking(location);
+                    if (object instanceof Organism organism) {
+                        if (consumable_foods.contains(organism.getType())) {
+                            moveCloser(world, location);
+                            if (world.containsNonBlocking(world.getLocation(this))) {
+                                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
+                                    if (hunger >= grass.getNutritionalValue()) {
+                                        eat(world, grass);
+                                        return true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } else if (!world.isTileEmpty(location)) {
+                    // Declares a new object at given location.
+                    Object object = world.getTile(location);
+
+                    // Casts object to Organism class and checks if the object is an Organism.
+                    if (object instanceof Bush bush) {
+                        if (consumable_foods.contains("bush")) {
+                            if (hunger > 4) bush.eatBerries();
+                            System.out.println(type + " ate berries");
+                            return false;
+                        }
                     }
                 }
             }
-        }
 
-        // If no food or danger is found, return false.
-        return false;
+            // If no food or danger is found, return false.
+            return false;
+        } catch (IllegalArgumentException iae) {
+            return false;
+        }
     }
 
+    /**
+     * Transforms the organism into a carcass upon its death. The organism is replaced by a carcass
+     * at its current location in the simulation world. The new carcass retains the nutritional value,
+     * type, and cordyceps status of the original organism.
+     *
+     * @param world The simulation world where the transformation occurs.
+     */
+    public void dieAndBecomeCarcass(World world) {
+        if (world.contains(this) && !this.in_hiding) {
+            Location current_location = world.getLocation(this);
+            Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
+            world.delete(this);
+            world.setTile(current_location, carcass);
+        }
+    }
 }
 
