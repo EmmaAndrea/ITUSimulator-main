@@ -23,7 +23,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      * @param original_id_generator The IDGenerator instance for generating the unique ID of the predator.
      */
     public Dinosaur(IDGenerator original_id_generator, boolean has_cordyceps) {
-
         super(original_id_generator, has_cordyceps);
         trophic_level = 6;
         type = "dinosaur";
@@ -43,6 +42,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
         super.act(world);
+
+        if (!world.contains(this)) {
+            return;
+        }
 
         if (checkEmptySpace(world, current_location)) {
             if (!world.containsNonBlocking(current_location)) {
