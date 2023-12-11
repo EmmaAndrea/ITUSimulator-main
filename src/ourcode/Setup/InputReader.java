@@ -60,18 +60,22 @@ public class InputReader {
         int wolf_count = 0;
 
         for (int i = 1; i < lines.size(); i++) {
+
             String[] parts = lines.get(i).split(" ");
             boolean isCordyceps = parts[0].equalsIgnoreCase("cordyceps");
-            boolean isFungi = parts.length > 1 && parts[1].equalsIgnoreCase("fungi");
+            boolean isFungi = parts.length > 2 && parts[1].equalsIgnoreCase("fungi");
             String type = parts[0];
+
+            int j = 1;
 
             if (isCordyceps) {
                 type = "cordyceps " + parts[1];
+                j = 2;
             } else if (isFungi) {
                 type = "carcass fungi";
+                j = 2;
             }
 
-            int j = isCordyceps || isFungi ? 2 : 1;
             int amount;
 
             // Determines the amount, handling both single values and ranges
