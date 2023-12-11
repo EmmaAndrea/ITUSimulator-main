@@ -50,7 +50,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         }
 
         if (getGender() == Gender.Female) { // more parameters
-           if (steps_since_last_birth > 20) {
+           if (steps_since_last_birth > 50) {
                layEgg(world);
            }
         }
