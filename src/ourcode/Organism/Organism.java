@@ -8,7 +8,6 @@ import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Represents a generic organism in a simulation environment.

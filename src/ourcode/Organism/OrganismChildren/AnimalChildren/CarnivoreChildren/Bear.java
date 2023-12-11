@@ -29,7 +29,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         power = 6;
         max_damage = 16;
         consumable_foods = new ArrayList<>(List.of("grass", "wolf", "bear", "rabbit", "bush"));
-        this.has_cordyceps = has_cordyceps;
         bedtime = 12;
         wakeup = 18;
     }
