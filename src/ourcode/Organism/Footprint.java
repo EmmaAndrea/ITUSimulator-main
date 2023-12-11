@@ -2,6 +2,7 @@ package ourcode.Organism;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
+import itumulator.world.NonBlocking;
 import itumulator.world.World;
 import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
@@ -13,7 +14,7 @@ import java.awt.*;
  * and implements 'DynamicDisplayInformationProvider' for graphical representation.
  * Footprints are created as a trace of an animal's movement and disappear after a certain age.
  */
-public class Footprint extends Entity implements DynamicDisplayInformationProvider {
+public class Footprint extends Entity implements DynamicDisplayInformationProvider, NonBlocking {
 
     /**
      * Constructs a Footprint with a unique identifier. Initializes the maximum age
@@ -23,7 +24,7 @@ public class Footprint extends Entity implements DynamicDisplayInformationProvid
      */
     public Footprint(IDGenerator original_id_generator) {
         super(original_id_generator);
-        max_age = 30;
+        max_age = 2;
     }
 
     /**
@@ -33,8 +34,10 @@ public class Footprint extends Entity implements DynamicDisplayInformationProvid
      * @param world The simulation world in which the footprint exists.
      */
     public void act(World world) {
+        age++;
+
         if (age >= max_age) {
-            world.remove(this);
+            world.delete(this);
         }
     }
 
