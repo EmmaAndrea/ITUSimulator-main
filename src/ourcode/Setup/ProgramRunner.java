@@ -50,7 +50,7 @@ public class ProgramRunner {
         int size = input_reader.readWorldSize();
 
         // create world
-        p = new Program(size, 1000, 100); // creates a new program
+        p = new Program(size, 1000, 2000); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.

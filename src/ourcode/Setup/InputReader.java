@@ -73,6 +73,7 @@ public class InputReader {
             }
 
             int amountIndex = type.equals("dinosaur egg") ? 2 : 1;
+
             if (isCordyceps) {
                 type = "cordyceps " + parts[1];
                 amountIndex = 2;
