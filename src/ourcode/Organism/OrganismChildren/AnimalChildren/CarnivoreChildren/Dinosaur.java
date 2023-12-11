@@ -31,7 +31,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         max_hunger = 50;
         power = 7;
         max_damage = 30;
-        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit"));
+        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass"));
         bedtime = 12;
         wakeup = 18;
     }
