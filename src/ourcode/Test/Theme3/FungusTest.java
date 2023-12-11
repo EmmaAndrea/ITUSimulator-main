@@ -39,7 +39,7 @@ public class FungusTest {
      * @throws Exception
      */
     @Test
-    public void testFungusDeclaration() throws Exception {
+    public void testFungusSpawnBasedOnFile() throws Exception {
         int fungus_counter = 0;
 
         for (Object object : world.getEntities().keySet()){
@@ -56,7 +56,7 @@ public class FungusTest {
      * @throws Exception
      */
     @Test
-    public void testFungusSpread() throws Exception {
+    public void testFungusCanSpread() throws Exception {
 
         Location base_location = new Location(0,0);
         Carcass new_carcass = new Carcass(programRunner.getOriginal_id_generator(), 3, "rabbit", false);
@@ -73,10 +73,16 @@ public class FungusTest {
     }
 
 
-
+    /**
+     * Tests that no fungus is left in the world after 6 steps
+     * Since the only thing in the world is the fungus.
+     */
     @Test
-    public void testFungusDiesIfNotSpread() {
+    public void testFungusDiesIfDoesntFindCarcass() {
 
+        programRunner.runSimulation(6);
 
+        assertTrue(world.getEntities().size() == 0);
     }
+
 }
