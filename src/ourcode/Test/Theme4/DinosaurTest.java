@@ -26,7 +26,6 @@ public class DinosaurTest {
     }
 
     @Test
-    public void testDinosaurdeclaration() {
-
+    public void testDinosaurDeclaration() {
     }
 }

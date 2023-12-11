@@ -31,16 +31,12 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         max_hunger = 50;
         power = 7;
         max_damage = 30;
-        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit"));
+        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass"));
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 20;
     }
 
-    /**
-     * Determines the graphic of the dinosaur based on its current condition and age.
-     * @return Returns the graphics information for the wolf.
-     */
     @Override
     public void act(World world) {
         System.out.println("i am " + this + " time is " + world.getCurrentTime());
@@ -55,7 +51,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         }
 
         if (getGender() == Gender.Female) { // more parameters
-           if (steps_since_last_birth > 20) {
+           if (steps_since_last_birth > 50) {
                layEgg(world);
            }
         }
@@ -73,6 +69,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         previous_location = world.getLocation(this);
     }
 
+    /**
+     * Determines the graphic of the dinosaur based on its current condition and age.
+     * @return Returns the graphics information for the dinosaur.
+     */
     @Override
     public DisplayInformation getInformation() {
         if (age >= 20) {

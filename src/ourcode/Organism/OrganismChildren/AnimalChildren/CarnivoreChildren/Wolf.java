@@ -41,7 +41,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         max_age = 130;
         max_hunger = 28;
         has_pack = false;
-        consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf"));
+        consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf", "carcass"));
         alpha = false;
         has_cave = false;
         power = 4;

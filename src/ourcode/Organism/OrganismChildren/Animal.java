@@ -83,14 +83,17 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
-        if (this.hasBeenKilled || age >= max_age) {
+        steps_since_last_birth++;
+
+        if (!in_hiding) {
+            hunger++;
+        }
+
+        if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
             dieAndBecomeCarcass(world);
             return;
         }
 
-        if (world.getCurrentTime() == 14) {
-            System.out.println("bear bedtime");
-        }
         if (isBedtime(world) && !in_hiding && habitat != null){
             if (distanceTo(world, world.getLocation(habitat)) > 0){
                 moveCloser(world, world.getLocation(habitat));
@@ -102,20 +105,9 @@ public abstract class Animal extends Organism {
         } else if (!isBedtime(world) && in_hiding){
             exitHabitat(world);
         }
-        // Adds hunger if it is not sleeping/hiding.
-        if (!in_hiding) {
-            hunger++;
-        }
-        // checks if the animal should die
-        if (hunger >= max_hunger || age >= max_age) {
-            // become carcass
-            System.out.println(type + " died");
-        }
-
-        // Adds one to the counter of how many days since it gave birth to an offspring.
-        steps_since_last_birth++;
 
         lock.lock();
+
         // If the animal is currently inside its habitat.
         if (in_hiding) {
             if (checkBreed(world)) {
@@ -181,7 +173,7 @@ public abstract class Animal extends Organism {
             // Deletes the eaten organism from the world.
             world.delete(world.getNonBlocking(world.getLocation(this)));
             // check
-            System.out.println(this.getType() + " " + this.getId() + " ate grass " + grass.getId());
+            System.out.println(this.getType() + " " + this.getId() + " ate " + "grass" + grass.getId());
 
         } else if (organism instanceof Animal animal) {
             synchronized (animal) {
@@ -575,11 +567,7 @@ public abstract class Animal extends Organism {
                                 // If the organism has a higher trophic level than itself.
                             }
                             if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                                if (hunger >= animal.getNutritionalValue()) {
-                                    if (this instanceof Predator predator) {
-                                        attack(world, animal);
-                                    }
-                                }
+                                eat(world, animal);
                             }
                         }
                     }
