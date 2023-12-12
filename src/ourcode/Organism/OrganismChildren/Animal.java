@@ -185,11 +185,11 @@ public abstract class Animal extends Organism {
             // synchronized (animal) {
 
         } else if (organism instanceof Carcass carcass) {
-            synchronized (carcass){
-                if (damage_taken >= carcass.getNutritionalValue()){
+            synchronized (carcass) {
+                if (damage_taken >= carcass.getNutritionalValue()) {
                     damage_taken -= 4;
                 }
-                if (carcass.getGrace_period() == 0){
+                if (carcass.getGrace_period() == 0) {
                     if (pack_hunting) {
                         hunger -=2;
                         carcass.setNutrition(2);
