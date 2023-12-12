@@ -61,7 +61,9 @@ public class Bush extends Plant implements DynamicDisplayInformationProvider {
      * Consumes a portion of the berries on the bush, reducing their count.
      */
     public void eatBerries() {
-        berries_amount -= 3;
+        if (berries_amount>=3) {
+            berries_amount -= 3;
+        }
     }
 
     /**
