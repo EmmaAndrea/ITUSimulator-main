@@ -10,6 +10,7 @@ import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * This class tests the functionalities of the Bush class.
@@ -55,6 +56,8 @@ public class BushTest {
      */
     @Test
     public void testSpawn() {
+        programRunner.create("./data/");
+
         assertEquals(world.getEntities().size(), 1,
                 "the amount of bush in the world should be 1, but it is: " + world.getEntities().size());
     }
@@ -64,7 +67,7 @@ public class BushTest {
      * Checks if the number of berries increases after the grow method is called.
      */
     @Test
-    public void testGrowBerries() {
+    public void testGrowBerriesMethod() {
         Bush bush = null;
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;
@@ -79,7 +82,7 @@ public class BushTest {
      * Ensures that the number of berries decreases after the eatBerries method is called.
      */
     @Test
-    public void testEatBerries() {
+    public void testEatBerriesMethod() {
         Bush bush = null;
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;
@@ -105,5 +108,48 @@ public class BushTest {
         }
         assert bush != null;
         assertEquals(3, bush.getBerriesAmount(), "bushAct should grow the amount of berries");
+    }
+
+    @Test
+    public void testBushGrowth() throws Exception {
+        programRunner.create("./data/t2-7a.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(2);
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Bush) {
+                System.out.println(((Bush) o).getBerriesAmount());
+            }
+        }
+    }
+
+    @Test
+    public void testBushAmount() throws Exception {
+        programRunner.create("./data/t2-7a.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(0);
+        int counter = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Bush) {
+                counter++;
+            }
+        }
+
+        assertTrue(counter <= 12 && counter >= 7);
+    }
+
+    @Test
+    public void testEatingBerriesInSimulation() throws Exception {
+        programRunner.create("./data/test-bush.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(10);
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Bush) {
+
+                System.out.println(((Bush) o).getBerriesAmount()); //bears can eat more berries than bush has berries
+                assertTrue(((Bush) o).getBerriesAmount() >= 0);
+            }
+        }
     }
 }

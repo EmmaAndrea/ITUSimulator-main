@@ -30,7 +30,6 @@ public class FungusTest {
         programRunner.create("./data/fungitest.txt");
         world = programRunner.getWorld();
         programRunner.runSimulation(1); // Run the simulation for one step to spawn entities
-
     }
 
     /**
