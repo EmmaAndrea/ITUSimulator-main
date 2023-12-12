@@ -15,7 +15,6 @@ import ourcode.Setup.IDGenerator;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -83,6 +82,10 @@ public abstract class Animal extends Organism {
     @Override
     public void act(World world) {
         super.act(world);
+
+        if (world.getCurrentTime() == 14){
+            System.out.println("hi");
+        }
 
         steps_since_last_birth++;
 
@@ -222,7 +225,7 @@ public abstract class Animal extends Organism {
         habitat.addResident(cub);
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
-        cub.setInHiding();
+        cub.enterHabitat(world);
         System.out.println("made cub");
 
         steps_since_last_birth = 0;
@@ -677,6 +680,10 @@ public abstract class Animal extends Organism {
         // overridden by wolf
     }
 
+    public void setIn_hiding() {
+        in_hiding = true;
+    }
+
     /**
      * Transforms the organism into a carcass upon its death. The organism is replaced by a carcass
      * at its current location in the simulation world. The new carcass retains the nutritional value,
@@ -699,6 +706,7 @@ public abstract class Animal extends Organism {
             System.out.println("i, " + type + id + ", became a carcass");
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
+            world.delete(this);
             world.setTile(current_location, carcass);
         }
     }
