@@ -247,7 +247,7 @@ public class RabbitTest {
             Grass grass = new Grass (programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
-        programRunner.runSimulation(11);
+        programRunner.runSimulation(13);
         int rabbits_in_burrows = 0;
         for (Object entity : world.getEntities().keySet()) {
             if (world.getEntities().get(entity) == null) {
