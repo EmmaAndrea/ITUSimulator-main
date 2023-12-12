@@ -320,21 +320,41 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 12) {
-            if (is_sleeping) {
-                return new DisplayInformation(Color.cyan, "wolf-large-sleeping");
-            } else if (damage_taken > 0) {
-                return new DisplayInformation(Color.cyan, "wolf-large-wounded");
+        if (!has_cordyceps) {
+            if (age >= 12) {
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.cyan, "wolf-large-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.cyan, "wolf-large-wounded");
+                } else {
+                    return new DisplayInformation(Color.cyan, "wolf-large");
+                }
             } else {
-                return new DisplayInformation(Color.cyan, "wolf-large");
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.cyan, "wolf-small-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.cyan, "wolf-small-wounded");
+                } else {
+                    return new DisplayInformation(Color.cyan, "wolf-small");
+                }
             }
         } else {
-            if (is_sleeping) {
-                return new DisplayInformation(Color.cyan, "wolf-small-sleeping");
-            } else if (damage_taken > 0) {
-                return new DisplayInformation(Color.cyan, "wolf-small-wounded");
+            if (age >= 12) {
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.cyan, "wolf-large-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.cyan, "wolf-large-wounded-cordyceps");
+                } else {
+                    return new DisplayInformation(Color.cyan, "wolf-large-cordyceps");
+                }
             } else {
-                return new DisplayInformation(Color.cyan, "wolf-small");
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.cyan, "wolf-small-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.cyan, "wolf-small-wounded-cordyceps");
+                } else {
+                    return new DisplayInformation(Color.cyan, "wolf-small-cordyceps");
+                }
             }
         }
     }
@@ -346,7 +366,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param world The simulation world from which the wolf is removed.
      */
     public void deleteMe(World world) {
-        if(alpha){
+        if (alpha) {
             if (!pack.isEmpty()) {
                 int i = 0;
                 while (pack.get(i) == this) {
@@ -385,15 +405,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Retrieves the amount of damage this wolf has taken.
-     *
-     * @return The damage taken.
-     */
-    public int getDamageTaken() {
-        return damage_taken;
-    }
-
-    /**
      * Sets the pack hunting status of this wolf to true, indicating it is part of a hunting pack.
      */
     public void setPackHuntingTrue(){
@@ -414,9 +425,5 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public boolean isAlpha(){
         return alpha;
-    }
-
-    public int getNutritionalValue(){
-        return nutritional_value;
     }
 }

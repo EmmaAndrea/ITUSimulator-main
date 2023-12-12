@@ -58,10 +58,10 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         if (!has_burrow) {
             if (linkBurrow(world)) {
                 return;
-            } else nextMove(world);
+            }
         }
         // if it is not in its burrow
-        else if (has_burrow) {
+        else {
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 isCloseToBurrow = true;
             }
@@ -140,14 +140,18 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 15) {
-            return new DisplayInformation(Color.black, "rabbit-large");
+        if (has_cordyceps) {
+            if (age >= 15) {
+                return new DisplayInformation(Color.black, "rabbit-large");
+            } else {
+                return new DisplayInformation(Color.black, "rabbit-small");
+            }
         } else {
-            return new DisplayInformation(Color.black, "rabbit-small");
+            if (age >= 15) {
+                return new DisplayInformation(Color.black, "rabbit-large-cordyceps");
+            } else {
+                return new DisplayInformation(Color.black, "rabbit-small-cordyceps");
+            }
         }
-    }
-
-    public int getNutritionalValue(){
-        return nutritional_value;
     }
 }

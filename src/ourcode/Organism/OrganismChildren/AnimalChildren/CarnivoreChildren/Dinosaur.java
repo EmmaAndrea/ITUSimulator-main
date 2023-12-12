@@ -78,21 +78,41 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      */
     @Override
     public DisplayInformation getInformation() {
-        if (age >= 20) {
-            if (is_sleeping) {
-                return new DisplayInformation(Color.black, "dinosaur-adult-sleeping");
-            } else if (damage_taken > 0) {
-                return new DisplayInformation(Color.black, "dinosaur-adult-wounded");
+        if (!has_cordyceps) {
+            if (age >= 20) {
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.black, "dinosaur-adult-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.black, "dinosaur-adult-wounded");
+                } else {
+                    return new DisplayInformation(Color.black, "dinosaur-adult");
+                }
             } else {
-                return new DisplayInformation(Color.black, "dinosaur-adult");
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.black, "dinosaur-baby-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.black, "dinosaur-baby-wounded");
+                } else {
+                    return new DisplayInformation(Color.black, "dinosaur-baby");
+                }
             }
         } else {
-            if (is_sleeping) {
-                return new DisplayInformation(Color.black, "dinosaur-baby-sleeping");
-            } else if (damage_taken > 0) {
-                return new DisplayInformation(Color.black, "dinosaur-baby-wounded");
+            if (age >= 20) {
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.black, "dinosaur-adult-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.black, "dinosaur-adult-wounded-cordyceps");
+                } else {
+                    return new DisplayInformation(Color.black, "dinosaur-adult-cordyceps");
+                }
             } else {
-                return new DisplayInformation(Color.black, "dinosaur-baby");
+                if (is_sleeping) {
+                    return new DisplayInformation(Color.black, "dinosaur-baby-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.black, "dinosaur-baby-wounded-cordyceps");
+                } else {
+                    return new DisplayInformation(Color.black, "dinosaur-baby-cordyceps");
+                }
             }
         }
     }

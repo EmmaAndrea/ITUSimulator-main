@@ -6,7 +6,6 @@ import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.Entity;
@@ -632,6 +631,15 @@ public abstract class Animal extends Organism {
             lock.unlock();
             return false;
         }
+    }
+
+    /**
+     * Retrieves the amount of damage this wolf has taken.
+     *
+     * @return The damage taken.
+     */
+    public int getDamageTaken() {
+        return damage_taken;
     }
 
     /**
