@@ -74,6 +74,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
 
         if (nutritional_value <= 0) {
             world.delete(this);
+            return;
         }
         // If the carcass is too old and has a fungus inside that has 'grown'
         // Will spawn the fungus at the carcass' location

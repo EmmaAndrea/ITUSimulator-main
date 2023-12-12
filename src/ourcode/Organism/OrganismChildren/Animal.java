@@ -82,6 +82,10 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (world.getCurrentTime() == 14){
+            System.out.println("hi");
+        }
+
         steps_since_last_birth++;
 
         if (!in_hiding) {
@@ -177,29 +181,24 @@ public abstract class Animal extends Organism {
             // check
             System.out.println(this.getType() + " " + this.getId() + " ate " + "grass" + grass.getId());
 
-        } else if (organism instanceof Animal animal) {
-            synchronized (animal) {
-                if (animal.getGracePeriod() == 0) {
-                    // takes off hunger by eating
-                    hunger -= animal.getNutritionalValue();
-                    // gives back damage by eating
-                    if (damage_taken >= animal.getNutritionalValue()) damage_taken -= animal.getNutritionalValue();
-                    // check
-                    System.out.println(this.getType() + this.getId() + " ate " + animal.getType() + animal.getId());
-                    // makes sure wolf is deleted properly
-                    if (animal instanceof Wolf wolf) {
-                        if (this instanceof Wolf thiswolf) {
-                            if (wolf.isAlpha()) thiswolf.overtakePack(wolf);
-                        }
-                        wolf.dieAndBecomeCarcass(world);
-                    } else animal.dieAndBecomeCarcass(world);
-                }
-            }
+        // else if (organism instanceof Animal animal) {
+            // synchronized (animal) {
+
         } else if (organism instanceof Carcass carcass) {
-            synchronized (carcass) {
+            synchronized (carcass){
+                if (damage_taken >= carcass.getNutritionalValue()){
+                    damage_taken -= 4;
+                }
                 if (carcass.getGrace_period() == 0){
-                    hunger -= 4;
-                    carcass.setNutrition(4);
+                    if (pack_hunting) {
+                        hunger -=2;
+                        carcass.setNutrition(2);
+                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
+                    } else {
+                        hunger -= 4;
+                        carcass.setNutrition(4);
+                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
+                    }
                 }
             }
         } else if (organism instanceof Bush bush){
@@ -450,8 +449,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the attack occurs.
      * @param animal The target animal of the attack.
      */
-    public void attack(World world, Animal animal){
-
+    public void attack(World world, Animal animal) {
     }
 
     /**
@@ -470,7 +468,7 @@ public abstract class Animal extends Organism {
      *
      * @return True if the animal is dead, false otherwise.
      */
-    public boolean ifDeadReturnTrue(){
+    public boolean isDead() {
         return damage_taken >= max_damage;
     }
 
@@ -574,7 +572,6 @@ public abstract class Animal extends Organism {
 
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Animal animal) {
-                        System.out.println(type + " tries to eat " + animal.getType());
                         if (animal.getGrace_period() == 0) {
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() > trophic_level) {
