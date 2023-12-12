@@ -631,7 +631,9 @@ public abstract class Animal extends Organism {
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Bush bush) {
                         if (consumable_foods.contains("bush")) {
-                            if (hunger > 4) bush.eatBerries();
+                            if (hunger > 2 && bush.getBerriesAmount()>2) {
+                                bush.eatBerries();
+                            }
                             System.out.println(type + " ate berries");
                             lock.unlock();
                             return false;
