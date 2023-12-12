@@ -57,7 +57,23 @@ public class CarcassTest {
         assertTrue(carcass_with_fungi_counter == 6, "The amount of fungus should be 6, but is: " + carcass_with_fungi_counter);
     }
 
+    @Test
     public void testFungusReplacesCarcass(){
-        // add testing
+
+        programRunner.runSimulation(20);
+
+        int fungi_counter = 0;
+
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Fungus fungus) {
+                fungi_counter++;
+            }
+        }
+
+        assertTrue(fungi_counter >= 6, "6 carcass have fungus, and should each leave behind 1 fungus when they die");
+    }
+
+    public void testFungusBeingEaten(){
+        // create code first
     }
 }
