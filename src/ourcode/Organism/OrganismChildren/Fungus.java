@@ -46,6 +46,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
 
         if (checkSurroundingCarcass(world) != null){
             spread(checkSurroundingCarcass(world));
+            max_age++;
         }
 
     }
@@ -58,10 +59,12 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
      * @param carcass
      */
     public void spread(Carcass carcass) {
-        Fungus fungus = new Fungus(id_generator);
-        carcass.setHasFungus();
-        carcass.addFungus(fungus);
-        fungus.setInCarcass();
+        if (!carcass.has_fungus) {
+            Fungus fungus = new Fungus(id_generator);
+            carcass.setHasFungus();
+            carcass.addFungus(fungus);
+            fungus.setInCarcass();
+        }
     }
 
     /**
@@ -76,9 +79,7 @@ public class Fungus extends Organism implements DynamicDisplayInformationProvide
         for (Location location : world.getSurroundingTiles(current, 2)) {
             if (!world.isTileEmpty(location)){
                 if (world.getTile(location) instanceof Carcass carcass) {
-                    if (!carcass.hasFungus()) {
-                        return carcass;
-                    }
+                    return carcass;
                 }
             }
         } return null;
