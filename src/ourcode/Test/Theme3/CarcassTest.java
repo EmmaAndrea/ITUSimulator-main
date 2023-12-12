@@ -27,9 +27,6 @@ public class CarcassTest {
     @BeforeEach
     public void startTest() throws Exception{
         System.out.println("Test started");
-        programRunner.create("./data/carcasstest.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(1);
     }
 
     /**
@@ -37,7 +34,11 @@ public class CarcassTest {
      * The file should spawn five to eight fungi
      */
     @Test
-    public void testCarcassSpawnsCorrectlyIntoWorld() {
+    public void testCarcassSpawnsCorrectlyIntoWorld() throws Exception {
+
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
 
         int carcass_with_fungi_counter = 0;
         int carcass_without_fungi_counter = 0;
@@ -57,7 +58,11 @@ public class CarcassTest {
     }
 
     @Test
-    public void testFungusReplacesCarcass(){
+    public void testFungusReplacesCarcass() throws Exception {
+
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
 
         programRunner.runSimulation(20);
 
@@ -78,6 +83,10 @@ public class CarcassTest {
      */
     @Test
     public void testCarcassSpawnsWithFungus() throws Exception {
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
+
         programRunner.create("data/carcasstest2.txt");
         world = programRunner.getWorld();
         int counter = 0;
