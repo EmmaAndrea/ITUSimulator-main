@@ -38,7 +38,9 @@ public class Bush extends Plant implements DynamicDisplayInformationProvider {
     @Override
     public void act(World world) {
         super.act(world);
-        grow();
+        if (world.getCurrentTime()%4 == 0){
+            grow();
+        }
     }
 
     /**

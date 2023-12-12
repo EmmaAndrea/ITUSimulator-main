@@ -55,7 +55,7 @@ public class BushTest {
      * Verifies that a Bush is correctly added to the world.
      */
     @Test
-    public void testSpawn() {
+    public void testSpawn() throws Exception {
         programRunner.create("./data/");
 
         assertEquals(world.getEntities().size(), 1,

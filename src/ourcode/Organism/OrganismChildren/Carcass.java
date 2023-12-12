@@ -60,7 +60,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             is_rotten = true;
         }
 
-        if(grace_period == 1){
+        if (grace_period == 1) {
             grace_period = 0;
         }
 
@@ -133,6 +133,10 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
      */
     public boolean hasFungus() {
         return has_fungus;
+    }
+
+    public boolean isRotten() {
+        return is_rotten;
     }
 
     /**
