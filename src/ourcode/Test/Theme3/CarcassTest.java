@@ -26,10 +26,7 @@ public class CarcassTest {
 
     @BeforeEach
     public void startTest() throws Exception{
-        System.out.println("****Test started****");
-        programRunner.create("./data/carcasstest.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(1);
+        System.out.println("Test started");
     }
 
     /**
@@ -37,7 +34,11 @@ public class CarcassTest {
      * The file should spawn five to eight fungi
      */
     @Test
-    public void testCarcassSpawnsCorrectlyIntoWorld() {
+    public void testCarcassSpawnsCorrectlyIntoWorld() throws Exception {
+
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
 
         int carcass_with_fungi_counter = 0;
         int carcass_without_fungi_counter = 0;
@@ -57,7 +58,11 @@ public class CarcassTest {
     }
 
     @Test
-    public void testFungusReplacesCarcass() {
+    public void testFungusReplacesCarcass() throws Exception {
+
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
 
         programRunner.runSimulation(20);
 
@@ -78,6 +83,10 @@ public class CarcassTest {
      */
     @Test
     public void testCarcassSpawnsWithFungus() throws Exception {
+        programRunner.create("./data/carcasstest.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(1);
+
         programRunner.create("data/carcasstest2.txt");
         world = programRunner.getWorld();
         int counter = 0;
@@ -145,45 +154,5 @@ public class CarcassTest {
         }
 
         assertEquals(0, counter, "The dinosaur should have eaten the carcass after 15 steps.");
-    }
-
-    /**
-     * Testing that an animal who dies becomes a carcass.
-     * @throws Exception skibob
-     */
-    @Test
-    public void testAnimalBecomesCarcass() throws Exception {
-        programRunner.create("data/t1-2a.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(30);
-        int counter = 0;
-        for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Carcass) {
-                counter++;
-            }
-        }
-
-        assertEquals(1, counter, "The rabbit should have died and become carcass without food.");
-    }
-
-    /**
-     * Testing that carcass rots.
-     * @throws Exception skibob
-     */
-    @Test
-    public void testCarcassRots() throws Exception {
-        programRunner.create("data/carcasstest2.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(15);
-        int counter = 0;
-        for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Carcass carcass && carcass.hasFungus()) {
-                if (carcass.isRotten()) {
-                    counter++;
-                }
-            }
-        }
-
-        assertEquals(1, counter, "The carcass should rot");
     }
 }

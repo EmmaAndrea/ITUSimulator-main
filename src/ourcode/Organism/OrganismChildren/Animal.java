@@ -206,6 +206,8 @@ public abstract class Animal extends Organism {
                     carcass.setNutrition(4);
                 }
             }
+        } else if (organism instanceof Bush bush){
+            hunger = hunger - 3;
         }
     }
 
@@ -633,6 +635,7 @@ public abstract class Animal extends Organism {
                         if (consumable_foods.contains("bush")) {
                             if (hunger > 2 && bush.getBerriesAmount()>2) {
                                 bush.eatBerries();
+                                eat(world, bush);
                             }
                             System.out.println(type + " ate berries");
                             lock.unlock();
