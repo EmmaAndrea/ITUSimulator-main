@@ -135,12 +135,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void eatWithPack(World world){
         while (!world.isTileEmpty(killed_animal_location)) {
             if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
-                if (getHungriestWolf().getHunger() < 4){
+                if (getHungriestWolf().getHunger() < 2){
                     pack_is_done_eating = true;
-                    break;
+                    return;
                 }
                 getHungriestWolf().eat(world, carcass);
-                if (carcass.getNutritionalValue() == 0){
+                if (carcass.getNutritionalValue() < 1){
                     world.delete(carcass);
                 }
             } else killed_animal_location = null;
@@ -205,12 +205,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     public boolean shareCarcass(Animal animal){
-        if (alpha) {
-            if(hunger>=animal.getNutritionalValue()){
-                return false;
-            }
+        if (my_alpha!=null) {
+            return true;
         }
-        return true;
+        else return false;
     }
 
     /**
