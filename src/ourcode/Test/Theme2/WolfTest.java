@@ -1,6 +1,7 @@
 package ourcode.Test.Theme2;
 
 import itumulator.executable.Program;
+import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -36,7 +37,7 @@ public class WolfTest {
     public void testWolfDeclaration() throws Exception {
         programRunner.create("./data/t2-1ab.txt");
 
-        programRunner.runSimulation(1);
+        programRunner.runSimulation(0);
 
         world = programRunner.getWorld();
         assertEquals(world.getEntities().size(), 1,
@@ -48,7 +49,7 @@ public class WolfTest {
      * and adding a wolf to the list
      */
     @Test
-    public void testWolfPackDeclaration() {
+    public void testWolfPackDeclarationMethod() {
         world = new World(4);
         IDGenerator id = new IDGenerator();
 
@@ -74,7 +75,7 @@ public class WolfTest {
      * This will ensure
      */
     @Test
-    public void testRemovingWolfFromPack() {
+    public void testRemovingWolfFromPackMethod() {
         world = new World(3);
         IDGenerator idGenerator = new IDGenerator();
 
@@ -107,7 +108,7 @@ public class WolfTest {
      * to check if the correct information is displayed
      */
     @Test
-    public void testOvertakePack() {
+    public void testOvertakePackMethod() {
         world = new World(3);
         IDGenerator idGenerator = new IDGenerator();
 
@@ -137,7 +138,7 @@ public class WolfTest {
      * Tests if wolves can create caves.
      */
     @Test
-    public void testCreateCave() {
+    public void testCreateCaveMethod() {
         world = new World(3);
         IDGenerator id_generator = new IDGenerator();
 
@@ -164,7 +165,7 @@ public class WolfTest {
     }
 
     @Test
-    public void testEnterCave() {
+    public void testEnterCaveMethod() {
         world = new World(4);
         IDGenerator id_generator = new IDGenerator();
 
@@ -277,5 +278,38 @@ public class WolfTest {
         int post = wolf1.getMyCave().getResidents().size();
 
         assertTrue(prev < post, "the amount of residents in the cave should increase post breed");
+    }
+
+    @Test
+    public void testWolfBreedSimulation() {
+        Program p = new Program(3,500,1000);
+        world = p.getWorld();
+        IDGenerator idGenerator = new IDGenerator();
+
+        Location location0 = new Location(0,0);
+        Location location1 = new Location(1,1);
+        Wolf wolfMALE = new Wolf(idGenerator, false);
+        wolfMALE.setGender("Male");
+        Wolf wolfFEMALE = new Wolf(idGenerator, false);
+        wolfFEMALE.setGender("Female");
+        wolfMALE.createPack();
+        wolfMALE.addWolfToPack(wolfFEMALE);
+        System.out.println(wolfFEMALE.getGender());
+        System.out.println(wolfMALE.getGender());
+
+        wolfMALE.setAge(20);
+        System.out.println(wolfMALE.getAge());
+        wolfFEMALE.setAge(20);
+        System.out.println(wolfFEMALE.getAge());
+
+        world.setTile(location0, wolfMALE);
+        world.setTile(location1, wolfFEMALE);
+
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+            System.out.println(wolfMALE.isIn_hiding());
+            System.out.println(wolfMALE.getMyCave().getResidents().size());
+        }
     }
 }

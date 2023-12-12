@@ -80,6 +80,7 @@ public class FungusTest {
         Program p = new Program(3,500,800);
         world = p.getWorld();
 
+        // Adds fungus, carcass and specified location for fungus and carcass to spawn on.
         Fungus fungus = new Fungus(idGenerator);
         Carcass carcass = new Carcass(idGenerator,4,"bear",false);
         Location location_0 = new Location(0,2);

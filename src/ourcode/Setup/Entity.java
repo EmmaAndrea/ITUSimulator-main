@@ -81,6 +81,18 @@ public abstract class Entity {
         return id;
     }
 
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public boolean isHasBeenKilled() {
+        return hasBeenKilled;
+    }
+
     /**
      * Returns 0 if it is currently night.
      * Else, returns how many steps until it is night.

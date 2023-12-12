@@ -82,10 +82,6 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
-        if (world.getCurrentTime() == 14){
-            System.out.println("hi");
-        }
-
         steps_since_last_birth++;
 
         if (!in_hiding) {
@@ -108,7 +104,7 @@ public abstract class Animal extends Organism {
                 } else enterHabitat(world);
             } else return;
 
-        } else if (!isBedtime(world) && in_hiding){
+        } else if (!isBedtime(world) && in_hiding) {
             exitHabitat(world);
         }
 
@@ -200,7 +196,7 @@ public abstract class Animal extends Organism {
                 }
             }
         } else if (organism instanceof Carcass carcass) {
-            synchronized (carcass){
+            synchronized (carcass) {
                 if (carcass.getGrace_period() == 0){
                     hunger -= 4;
                     carcass.setNutrition(4);
@@ -661,6 +657,10 @@ public abstract class Animal extends Organism {
      */
     public int getDamageTaken() {
         return damage_taken;
+    }
+
+    public boolean isIn_hiding() {
+        return in_hiding;
     }
 
     /**
