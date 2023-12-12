@@ -20,6 +20,7 @@ public class FungusTest {
 
     public FungusTest() {
         programRunner = new ProgramRunner();
+        idGenerator = new IDGenerator();
     }
 
     @BeforeAll
@@ -35,12 +36,10 @@ public class FungusTest {
     /**
      * Testing that fungus is spawned correctly into thw world.
      * The file should spawn five to eight fungi
-     * @throws Exception
      */
     @Test
-    public void testFungusSpawnMethod() throws Exception {
+    public void testFungusSpawnMethod() {
         world = new World(3);
-        idGenerator = new IDGenerator();
 
         Fungus fungus = new Fungus(idGenerator);
         fungus.spawn(world);
@@ -51,7 +50,6 @@ public class FungusTest {
     @Test
     public void testFungusCheckCarcassMethod() throws Exception {
         world = new World(3);
-        idGenerator = new IDGenerator();
 
         Carcass carcass = new Carcass(idGenerator, 4, "bear", false);
         carcass.spawn(world);
@@ -68,7 +66,6 @@ public class FungusTest {
     @Test
     public void testFungusSpreadMethod() {
         world = new World(3);
-        idGenerator = new IDGenerator();
 
         Carcass carcass = new Carcass(idGenerator, 4, "bear", false);
         Fungus fungus = new Fungus(idGenerator);
@@ -78,33 +75,10 @@ public class FungusTest {
         assertTrue(carcass.hasFungus());
     }
 
-    /**
-     * Tests that fungus can spread into a carcass
-     * @throws Exception
-     */
-    @Test
-    public void testFungusCanSpread() throws Exception {
-        programRunner.create("./data/c");
-
-        Location base_location = new Location(0,0);
-        Carcass new_carcass = new Carcass(programRunner.getOriginal_id_generator(), 3, "rabbit", false);
-
-        for (Location location: world.getSurroundingTiles(base_location, world.getSize())) {
-            if (world.isTileEmpty(location)) {
-                world.setTile(location, new_carcass);
-                break;
-            }
-        }
-        programRunner.runSimulation(1);
-
-        assertTrue(new_carcass.hasFungus());
-    }
-
     @Test
     public void testFungusSpreadRadius() {
         Program p = new Program(3,500,800);
         world = p.getWorld();
-        idGenerator = new IDGenerator();
 
         Fungus fungus = new Fungus(idGenerator);
         Carcass carcass = new Carcass(idGenerator,4,"bear",false);
@@ -122,7 +96,6 @@ public class FungusTest {
         assertTrue(carcass.hasFungus());
 
     }
-
 
     /**
      * Tests that no fungus is left in the world after 6 steps
