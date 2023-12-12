@@ -66,8 +66,10 @@ public class RabbitTest {
     }
 
     /**
-     * Test to see if all rabbits die after expected amount of days without eating.
-     * Spawns 4 rabbits and no grass
+     * Test to see if all rabbits die after expected amount of steps without eating.
+     * Rabbits dont loose hunger during the time when they are in their burrows
+     * File spawns 4 rabbits and no grass
+     * Spawns one rabbit to track
      */
     @org.testng.annotations.Test
     public void testRabbitDeath() throws Exception {
@@ -77,7 +79,7 @@ public class RabbitTest {
         rabbit0.spawn(world);
 
         // Run the simulation for a certain number of steps that would lead to the rabbit's death.
-        programRunner.runSimulation(18); // Adjust the number of steps based on your simulation's logic
+        programRunner.runSimulation(30); // Adjust the number of steps based on your simulation's logic
 
         // After running the simulation, check if the rabbit is removed from the world.
         assertFalse(world.getEntities().containsKey(rabbit0), "Rabbit should be removed from the world after death");
@@ -131,7 +133,7 @@ public class RabbitTest {
         rabbit.eat(world, grass);
 
         // Assert that hunger level has decreased
-        assertThrows(Exception.class, () -> assertNull(world.getNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten."));
+        assertFalse(world.containsNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten.");
     }
 
     @Test
@@ -154,7 +156,7 @@ public class RabbitTest {
         int initialRabbitCount = countRabbits(world);
 
         // Run the simulation for a number of steps to allow breeding
-        programRunner.runSimulation(23);
+        programRunner.runSimulation(30);
 
         // Get the count of rabbits after running the simulation
         int postSimulationRabbitCount = countRabbits(world);
@@ -205,15 +207,17 @@ public class RabbitTest {
     public void testRabbitAgeDeath() throws Exception{
         programRunner.create("./data/t1-2a.txt");
         world = programRunner.getWorld();
-        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator(), false);
-        rabbit1.spawn(world);
+
         for (int i =0 ; i<25 ; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
-        assertTrue(world.getEntities().containsKey(rabbit1));
-        programRunner.runSimulation(101);
-        assertFalse(world.getEntities().containsKey(rabbit1), "checks rabbit dies of old age");
+
+        programRunner.runSimulation(115);
+
+        int postsim = countRabbits(world);
+
+        assertTrue(postsim == 0, "checks rabbit dies of old age");
     }
 
     /**

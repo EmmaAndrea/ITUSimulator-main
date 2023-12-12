@@ -84,10 +84,6 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
-        if (world.getCurrentTime() == 14){
-            System.out.println("hi");
-        }
-
         steps_since_last_birth++;
 
         if (!in_hiding) {
@@ -226,6 +222,7 @@ public abstract class Animal extends Organism {
         habitat.addResident(cub);
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
+        cub.setInHiding();
         cub.enterHabitat(world);
         System.out.println("made cub");
 
@@ -693,7 +690,17 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public void dieAndBecomeCarcass(World world) {
-        if (world.contains(this) && !this.in_hiding) {
+        if (in_hiding){
+            if (this instanceof Wolf wolf){
+                try{
+                    wolf.deleteMe(world);
+                } catch (ConcurrentModificationException e){
+                    System.out.println(e.getMessage());
+                    world.delete(this);
+                }
+            } else world.delete(this);
+        }
+        if (world.contains(this) && !in_hiding) {
             grace_period = 1;
             Location current_location = world.getLocation(this);
             if (this instanceof Wolf wolf){
@@ -707,7 +714,6 @@ public abstract class Animal extends Organism {
             System.out.println("i, " + type + id + ", became a carcass");
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
-            world.delete(this);
             world.setTile(current_location, carcass);
         }
     }
