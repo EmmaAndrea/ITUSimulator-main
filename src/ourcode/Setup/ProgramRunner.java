@@ -114,7 +114,7 @@ public class ProgramRunner {
                 wolf.createPack();
                 alpha = wolf;
             }
-            if (i > 0){
+            if (i > 0) {
                 alpha.addWolfToPack(wolf);
             }
         } else if (input_reader.getMap_of_wolf_packs().size() > 1) {
