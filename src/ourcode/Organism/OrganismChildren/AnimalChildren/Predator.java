@@ -2,6 +2,7 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 public abstract class Predator extends Animal {
     protected boolean is_sleeping;
 
+    protected Location carcass_location;
     /**
      * Constructs a Predator instance. Calls the constructor of the superclass Animal
      * and initializes specific attributes for a predator.
@@ -56,9 +58,12 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void attack(World world, Animal animal) {
+        carcass_location = world.getLocation(animal);
+        Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
         animal.damage(power);
-        if (animal.ifDeadReturnTrue()) {
-            if (hunger >= animal.getNutritionalValue()) eat(world, animal);
+        if (animal.isDead()) {
+            animal.dieAndBecomeCarcass(world);
+            eat(world, carcass_to_eat);
         }
     }
 
@@ -92,6 +97,7 @@ public abstract class Predator extends Animal {
                                     for (int i = 1; i <= distanceTo(world, location); i++) {
                                         moveCloser(world, location);
                                     }
+                                    System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
                                     attack(world, animal);
                                 }
                             }

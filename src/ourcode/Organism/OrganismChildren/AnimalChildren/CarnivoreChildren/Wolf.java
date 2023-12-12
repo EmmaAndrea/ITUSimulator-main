@@ -5,8 +5,10 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
+import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
+import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Obstacles.Habitat;
 
@@ -27,6 +29,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     private Wolf my_alpha; // The alpha wolf of the pack.
     private boolean alpha; // Indicates whether this wolf is the alpha of a pack.
     protected boolean has_cave;
+
+    protected Location killed_animal_location;
 
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
@@ -65,6 +69,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         // if wolf has an alpha and the pack does not exist, delete pack
         if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
+            System.out.println("pack deleted");
         }
 
         if (in_hiding) return;
@@ -81,7 +86,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
         // pack hunting method
         if (pack_hunting && my_alpha != null){
-            huntWithPack(world);
+            if (killed_animal_location != null) {
+                eatWithPack(world);
+            } else huntWithPack(world);
         }
 
         // sequence for alphas
@@ -111,6 +118,32 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     }
 
+    /**
+     * Method to ensure all wolves in the pack have a chance to eat the carcass of an animal,
+     * which a wolf from the pack has killed.
+     * @param world
+     */
+    public void eatWithPack(World world){
+        while (!world.isTileEmpty(killed_animal_location)) {
+            if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
+                getHungriestWolf().eat(world, carcass);
+            } else killed_animal_location = null;
+        } killed_animal_location = null;
+    }
+    public Wolf getHungriestWolf(){
+        Wolf hungriest_wolf = new Wolf(id_generator, false);
+        for (Wolf wolf_in_pack : my_alpha.getPack()){
+            if (wolf_in_pack.getHunger() > hungriest_wolf.getHunger()){
+                hungriest_wolf = wolf_in_pack;
+            }
+        }
+        return hungriest_wolf;
+    }
+    /**
+     * pack huts together
+     * @param world
+     */
+
     public void huntWithPack(World world){
         if (my_alpha != null && world.getEntities().get(my_alpha) != null) {
             if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
@@ -131,13 +164,32 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     @Override
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
+            animal.damage(power);
             if (animal instanceof Wolf wolf) {
                 if(wolf.getDamageTaken() > 7) {
-                    if (alpha) this.overtakePack(wolf);
+                    if (wolf.isAlpha()) this.overtakePack(wolf);
+                    else addWolfToPack(wolf);
                 }
+            } if (animal.isDead()) {
+                carcass_location = world.getLocation(animal);
+                Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
+                animal.dieAndBecomeCarcass(world);
+                if (pack_hunting) {
+                    if (shareCarcass(animal)){
+                        killed_animal_location = carcass_location;
+                    }
+                } else if (hunger >= 4) eat(world, carcass_to_eat);
             }
-            else super.attack(world, animal);
         }
+    }
+
+    public boolean shareCarcass(Animal animal){
+        if (alpha) {
+            if(hunger>=animal.getNutritionalValue()){
+                return false;
+            }
+        }
+        return true;
     }
 
     /**
@@ -425,5 +477,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public boolean isAlpha(){
         return alpha;
+    }
+
+    public int getHunger(){
+        return hunger;
     }
 }
