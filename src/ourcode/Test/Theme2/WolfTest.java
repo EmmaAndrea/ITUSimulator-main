@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
@@ -280,6 +281,12 @@ public class WolfTest {
         assertTrue(prev < post, "the amount of residents in the cave should increase post breed");
     }
 
+    /**
+     * This test checks if wolves breed in caves
+     * Certain elements have been tampered to focus the test case.
+     * Tampered elements are: setGender 'Male' and 'Female' for wolves, Carcass with unlimited health and nutrition
+     * so wolves don't starve.
+     */
     @Test
     public void testWolfBreedSimulation() {
         Program p = new Program(3,500,1000);
@@ -288,6 +295,8 @@ public class WolfTest {
 
         Location location0 = new Location(0,0);
         Location location1 = new Location(1,1);
+        Location location2 = new Location(0,1);
+        Carcass carcass = new Carcass(idGenerator,20,"bear",false);
         Wolf wolfMALE = new Wolf(idGenerator, false);
         wolfMALE.setGender("Male");
         Wolf wolfFEMALE = new Wolf(idGenerator, false);
@@ -304,12 +313,20 @@ public class WolfTest {
 
         world.setTile(location0, wolfMALE);
         world.setTile(location1, wolfFEMALE);
+        world.setTile(location2, carcass);
+        wolfMALE.makeHabitat(world);
+
+        wolfFEMALE.enterHabitat(world);
+        wolfMALE.enterHabitat(world);
 
         p.show();
-        for (int i = 0; i < 20; i++) {
+        for (int i = 0; i < 200; i++) {
             p.simulate();
-            System.out.println(wolfMALE.isIn_hiding());
-            System.out.println(wolfMALE.getMyCave().getResidents().size());
+            carcass.setNutrition(-5);
+            carcass.setAge(0);
+            if (wolfMALE.isIn_hiding()) {
+                System.out.println("the amount of residents in the cave are: " + wolfMALE.getMyCave().getResidents().size());
+            }
         }
     }
 }
