@@ -65,9 +65,10 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 moveCloser(world, territory_location);
             }
 
-            // if it is still alive, and hasn't done anything else move randomly
-            else if (getRandomMoveLocation(world) != null) {
-                world.move(this, getRandomMoveLocation(world));
+            else if (!enemyHabitatNearby(world)){
+                if (getRandomMoveLocation(world) != null) {
+                    world.move(this, getRandomMoveLocation(world));
+                }
             }
         }
 

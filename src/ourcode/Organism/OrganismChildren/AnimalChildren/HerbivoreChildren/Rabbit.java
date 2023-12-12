@@ -6,12 +6,16 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Obstacles.Habitat;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
+
+import static ourcode.Organism.Gender.Female;
+import static ourcode.Organism.Gender.Male;
 
 /**
  * Represents a Rabbit entity in the simulated world.
@@ -21,6 +25,9 @@ import java.util.List;
 public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
     ArrayList <Habitat> my_burrows;
+
+    Rabbit mate;
+
     boolean has_burrow; // Indicates whether the rabbit has a burrow.
     /**
      * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
@@ -43,6 +50,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         this.has_cordyceps = has_cordyceps;
         bedtime = 9;
         wakeup = 19;
+        mate = null;
     }
 
     @Override
@@ -54,21 +62,17 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
         boolean isCloseToBurrow = false;
 
-        // get a burrow
-        if (!has_burrow) {
-            if (linkBurrow(world)) {
-                return;
-            }
-        }
         // if it is not in its burrow
-        else {
+        if (has_burrow){
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 isCloseToBurrow = true;
             }
             if (timeToNight(world) < 5 && !isCloseToBurrow) {
                 moveCloser(world, world.getLocation(habitat));
-            } else nextMove(world);
+                return;
+            }
         }
+        nextMove(world);
     }
 
     /**
@@ -93,6 +97,36 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             }
         } return false;
     }
+
+    @Override
+    public boolean checkBreed(World world) {
+        // Only females can give birth.
+        if (gender == Female) {
+
+            // If animal is in breeding age.
+            if (age >= max_age * 0.15 && age <= max_age * 0.85) {
+
+                // If it's not too much time since they last gave birthed.
+                if (steps_since_last_birth >= 12) {
+
+                    while (mate == null) {
+                        for (Object object : world.getEntities().keySet()) {
+                            if (object instanceof Rabbit rabbit) {
+                                if (rabbit.getGender() == Male) {
+                                    mate = rabbit;
+                                    return true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        // If any of these are false, return false.
+        return false;
+    }
+
+
 
     /**
      * Creates a new burrow at the specified location and updates the animal's state accordingly.

@@ -251,17 +251,16 @@ public class WolfTest {
         world = p.getWorld();
     }
 
+
     @Test
     public void testWolfBreedingMethod() throws Exception {
-        Program p = new Program(20,800,500);
-        IDGenerator id_generator = new IDGenerator();
-        world = p.getWorld();
+        programRunner.create("./data/wolf-test1.txt");
+        world = programRunner.getWorld();
 
-        Wolf wolf1 = new Wolf(id_generator, false);
-        Wolf wolf2 = new Wolf(id_generator, false);
+        Wolf wolf1 = new Wolf(programRunner.getOriginal_id_generator(), false);
+        Wolf wolf2 = new Wolf(programRunner.getOriginal_id_generator(), false);
 
         wolf1.setGender("MALE");
-        System.out.println(wolf1.getGender());
         wolf2.setGender("FEMALE");
 
         wolf1.spawn(world);
@@ -270,14 +269,16 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        wolf1.makeHabitat(world);
-        wolf1.enterHabitat(world);
-        wolf2.enterHabitat(world);
-        int prev = wolf1.getMyCave().getResidents().size();
-        wolf1.breed(world);
-        int post = wolf1.getMyCave().getResidents().size();
+        programRunner.runSimulation(27);
 
-        assertTrue(prev < post, "the amount of residents in the cave should increase post breed");
+        int wolf_count = 0;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Wolf) {
+                wolf_count++;
+            }
+        }
+
+        assertTrue(wolf_count == 3, "the amount of wolves should be 3 post breed");
     }
 
     @Test

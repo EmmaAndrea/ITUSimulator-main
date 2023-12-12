@@ -2,6 +2,7 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Cave;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
@@ -14,6 +15,7 @@ import ourcode.Setup.IDGenerator;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -82,10 +84,6 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
-        if (world.getCurrentTime() == 14){
-            System.out.println("hi");
-        }
-
         steps_since_last_birth++;
 
         if (!in_hiding) {
@@ -93,6 +91,7 @@ public abstract class Animal extends Organism {
         }
 
         if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
+            grace_period = 1;
             dieAndBecomeCarcass(world);
             return;
         }
@@ -223,7 +222,7 @@ public abstract class Animal extends Organism {
         habitat.addResident(cub);
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
-        cub.enterHabitat(world);
+        cub.setInHiding();
         System.out.println("made cub");
 
         steps_since_last_birth = 0;
@@ -243,7 +242,7 @@ public abstract class Animal extends Organism {
             if (age >= max_age * 0.15 && age <= max_age * 0.85) {
 
                 // If it's not too much time since they last gave birthed.
-                if (steps_since_last_birth >= 120) {
+                if (steps_since_last_birth >= 12) {
 
                     for (Animal animal : habitat.getResidents()) {
                         if (animal.getGender() == Male) {
@@ -574,22 +573,36 @@ public abstract class Animal extends Organism {
                     if (object instanceof Animal animal) {
                         if (animal.getGrace_period() == 0) {
                             if (!friends.contains(animal)) {
+
+                                // wolves act differently than other animals when interacting with each other.
+                                if (animal.getType().equals(type)) {
+                                    sameTypeInteraction(world, animal);
+                                    continue;
+                                }
+
+                                // If the organism has a higher trophic level than itself, this will move away.
                                 if (animal.getTrophicLevel() > trophic_level) {
                                     moveAway(world, location);
                                     lock.unlock();
                                     return true;
-                                    // If the organism has a higher trophic level than itself.
+
                                 }
-                                if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
+                                // Otherwise this will attack.
+                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
                                     if (hunger >= animal.getNutritionalValue()) {
-                                        attack(world, animal);
-                                        lock.unlock();
-                                        return true;
+                                        if (animal.getGracePeriod() == 0) {
+                                            animal.setGracePeriod(1);
+                                            attack(world, animal);
+                                            lock.unlock();
+                                            return true;
+                                        } else continue;
                                     }
                                 }
                             }
                         }
-                    } if (object instanceof Carcass carcass){
+                    }
+                    // if the object is a carcass this will eat part of it.
+                    if (object instanceof Carcass carcass){
                         if (this instanceof Predator){
                             if (hunger >= 4) {
                                 eat(world, carcass);
@@ -660,6 +673,10 @@ public abstract class Animal extends Organism {
         return in_hiding;
     }
 
+    public void sameTypeInteraction(World world, Animal animal){
+        // overridden by wolf
+    }
+
     /**
      * Transforms the organism into a carcass upon its death. The organism is replaced by a carcass
      * at its current location in the simulation world. The new carcass retains the nutritional value,
@@ -669,14 +686,56 @@ public abstract class Animal extends Organism {
      */
     public void dieAndBecomeCarcass(World world) {
         if (world.contains(this) && !this.in_hiding) {
-            grace_period = 2;
-            System.out.println("i, " + type + id + ", became a carcass");
+            grace_period = 1;
             Location current_location = world.getLocation(this);
+            if (this instanceof Wolf wolf){
+                try{
+                    wolf.deleteMe(world);
+                } catch (ConcurrentModificationException e){
+                    System.out.println(e.getMessage());
+                    world.delete(this);
+                }
+            } else world.delete(this);
+            System.out.println("i, " + type + id + ", became a carcass");
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
-            world.delete(this);
             world.setTile(current_location, carcass);
         }
     }
+
+    public void setInHiding(){
+        in_hiding = true;
+    }
+
+    public boolean enemyHabitatNearby(World world){
+        Location current = world.getLocation(this);
+
+        // checks standing on location for enemy habitat
+        if(world.containsNonBlocking(current)){
+            if (world.getNonBlocking(current) instanceof Habitat other_habitat){
+                if(habitat != other_habitat){
+                    moveAway(world, current);
+                    moveAway(world, current);
+                    moveAway(world, current);
+                    return true;
+                }
+            }
+        }
+
+        // check surrounding locations for enemy habitat
+        for (Location potential_enemy_location: world.getSurroundingTiles(current,  2)){
+            if (world.containsNonBlocking(potential_enemy_location)){
+                if (world.getNonBlocking(potential_enemy_location) instanceof Habitat other_habitat){
+                    if(habitat != other_habitat){
+                        moveAway(world, potential_enemy_location);
+                        moveAway(world, potential_enemy_location);
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
 }
+
 

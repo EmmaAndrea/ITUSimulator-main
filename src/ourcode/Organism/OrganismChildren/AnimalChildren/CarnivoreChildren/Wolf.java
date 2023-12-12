@@ -79,10 +79,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (isBedtime(world)) return;
 
 
-        if (pack_is_done_eating){
-            for (Wolf wolf : my_alpha.getPack()) {
-                wolf.setPackHuntingFalse();
-            }
+        if (pack_is_done_eating && pack_hunting){
+            if (my_alpha != null) {
+                for (Wolf wolf : my_alpha.getPack()) {
+                    wolf.setPackHuntingFalse();
+                }
+            } else pack_hunting = false;
         }
         // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
         if (alpha) {
@@ -106,7 +108,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 for (Wolf wolf : pack) {
                     wolf.setPackHuntingTrue();
                 }
-            } else nextMove(world);
+            } else if (!enemyHabitatNearby(world)){
+                nextMove(world);
+            }
         }
 
         // sequence for pack wolves
@@ -127,21 +131,36 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     }
 
+    @Override
+    public void sameTypeInteraction(World world, Animal animal){
+        if(animal instanceof Wolf wolf){
+            if (wolf.getMyAlpha() != null){
+                moveAway(world, world.getLocation(animal));
+            } else attack(world, animal);
+        }
+    }
+
     /**
      * Method to ensure all wolves in the pack have a chance to eat the carcass of an animal,
      * which a wolf from the pack has killed.
      * @param world
      */
     public void eatWithPack(World world){
+        grace_period = 1;
         while (!world.isTileEmpty(killed_animal_location)) {
             if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
                 if (getHungriestWolf().getHunger() < 2){
                     pack_is_done_eating = true;
                     return;
                 }
-                getHungriestWolf().eat(world, carcass);
-                if (carcass.getNutritionalValue() < 1){
-                    world.delete(carcass);
+                Wolf hungriest_wolf = getHungriestWolf();
+                if (world.getEntities().containsKey(hungriest_wolf)){
+                    if (hungriest_wolf.getGracePeriod() == 0) {
+                        hungriest_wolf.eat(world, carcass);
+                    } else return;
+                    if (carcass.getNutritionalValue() < 1){
+                        return;
+                    }
                 }
             } else killed_animal_location = null;
         } killed_animal_location = null;
@@ -153,9 +172,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public Wolf getHungriestWolf(){
         Wolf hungriest_wolf = new Wolf(id_generator, false);
-        for (Wolf wolf_in_pack : my_alpha.getPack()){
-            if (wolf_in_pack.getHunger() > hungriest_wolf.getHunger()){
-                hungriest_wolf = wolf_in_pack;
+        for (Wolf wolf_in_pack : my_alpha.getPack()) {
+            synchronized (wolf_in_pack) {
+                if (wolf_in_pack.getHunger() > hungriest_wolf.getHunger()) {
+                    hungriest_wolf = wolf_in_pack;
+                }
             }
         }
         return hungriest_wolf;
@@ -185,21 +206,25 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     @Override
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
-            animal.damage(power);
-            if (animal instanceof Wolf wolf) {
-                if(wolf.getDamageTaken() > 7) {
-                    if (wolf.isAlpha()) this.overtakePack(wolf);
-                    else addWolfToPack(wolf);
-                }
-            } if (animal.isDead()) {
-                carcass_location = world.getLocation(animal);
-                Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
-                animal.dieAndBecomeCarcass(world);
-                if (pack_hunting) {
-                    if (shareCarcass(animal)){
-                        killed_animal_location = carcass_location;
+            if (friends.contains(animal)) return;
+            if (animal.getGracePeriod() == 0) {
+                animal.damage(power);
+                if (animal instanceof Wolf wolf_to_take) {
+                    if (wolf_to_take.getDamageTaken() > 7) {
+                        if (alpha && wolf_to_take.isAlpha()) overtakePack(wolf_to_take);
+                        else if (my_alpha!= null) my_alpha.addWolfToPack(wolf_to_take);
                     }
-                } else if (hunger >= 4) eat(world, carcass_to_eat);
+                }
+                if (animal.isDead()) {
+                    carcass_location = world.getLocation(animal);
+                    animal.dieAndBecomeCarcass(world);
+                    Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
+                    if (pack_hunting) {
+                        if (shareCarcass(animal)) {
+                            killed_animal_location = carcass_location;
+                        }
+                    } else if (hunger >= 4) eat(world, carcass_to_eat);
+                }
             }
         }
     }
@@ -275,17 +300,21 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param new_wolf The wolf to be added to the pack.
      */
     public void addWolfToPack(Wolf new_wolf) {
-        if (!new_wolf.getHasPack()) {
-            pack.add(new_wolf);
-            new_wolf.setAlpha(this);
-            new_wolf.setHasPack();
-            for (Wolf wolf : pack) {
-                wolf.setFriends(new_wolf);
-                if (pack.size() == 5) {
-                    wolf.setTrophicLevel(5);
-                }
+        if (new_wolf.getHasPack() && pack != null) {
+            new_wolf.getMyAlpha().removeWolfFromPack(new_wolf);
+        }
+        pack.add(new_wolf);
+        new_wolf.setAlpha(this);
+        new_wolf.setHasPack();
+        new_wolf.setHabitat(habitat);
+        for (Wolf wolf : pack) {
+            wolf.setFriends(new_wolf);
+            new_wolf.setFriends(wolf);
+            if (pack.size() == 5) {
+                wolf.setTrophicLevel(5);
             }
         }
+
     }
 
     /**
@@ -356,16 +385,20 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public void overtakePack(Wolf oldwolf) {
         if (oldwolf.getPack() != null) {
-            pack = new ArrayList<>();
-            for (Wolf wolf : oldwolf.getPack()) {
-                addWolfToPack(wolf);
+            if (pack == null && my_alpha == null){
+                createPack();
             }
-            addWolfToPack(this);
-            has_pack = true;
-            alpha = true;
-            removeWolfFromPack(oldwolf);
-            oldwolf.setHasNotPack();
-            oldwolf.setAlpha(this);
+            if (pack != null && my_alpha == null){
+                for (Wolf wolf: pack){
+                    setAlpha(this);
+                }
+            }
+            for (Wolf wolf : oldwolf.getPack()) {
+                if (wolf.getGracePeriod() == 0) {
+                    oldwolf.removeWolfFromPack(wolf);
+                    my_alpha.addWolfToPack(wolf);
+                }
+            }
         }
     }
 
@@ -437,18 +470,32 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param world The simulation world from which the wolf is removed.
      */
     public void deleteMe(World world) {
+
         if (alpha) {
-            if (!pack.isEmpty()) {
+            if (pack.size() > 1) {
                 int i = 0;
                 while (pack.get(i) == this) {
                     i++;
                 }
                 Wolf next_alpha = pack.get(i);
 
-                for (Wolf wolf : pack) {
-                    wolf.setAlpha(next_alpha);
-                    wolf.overtakePack(this);
-                }
+                next_alpha.setGracePeriod(1);
+
+                    removeWolfFromPack(next_alpha);
+                    next_alpha.createPack();
+
+
+                    for (int j = 1 ; j < pack.size() ; j++) {
+                        if (pack.get(j).getGracePeriod() == 0){
+                            next_alpha.addWolfToPack(pack.get(j));
+                            removeWolfFromPack(pack.get(j));
+                        }
+                    }
+
+
+                    next_alpha.removeWolfFromPack(this);
+
+                next_alpha.setGracePeriod(0);
             }
         } else if (has_pack && pack != null) {
             my_alpha.removeWolfFromPack(this);

@@ -59,12 +59,12 @@ public abstract class Predator extends Animal {
     @Override
     public void attack(World world, Animal animal) {
         carcass_location = world.getLocation(animal);
-        Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
         animal.damage(power);
         if (animal.isDead()) {
             animal.dieAndBecomeCarcass(world);
+            Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
             eat(world, carcass_to_eat);
-        }
+        } else animal.setGracePeriod(0);
     }
 
     /**
@@ -90,15 +90,17 @@ public abstract class Predator extends Animal {
 
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
-                    if (animal.getGracePeriod() == 0) {
-                        if (!friends.contains(animal)) {
-                            if (animal.getTrophicLevel() <= trophic_level) {
-                                if (consumable_foods.contains(animal.getType())) {
-                                    for (int i = 1; i <= distanceTo(world, location); i++) {
-                                        moveCloser(world, location);
+                    synchronized (animal) {
+                        if (animal.getGracePeriod() == 0) {
+                            if (!friends.contains(animal)) {
+                                if (animal.getTrophicLevel() <= trophic_level) {
+                                    if (consumable_foods.contains(animal.getType())) {
+                                        for (int i = 1; i <= distanceTo(world, location); i++) {
+                                            moveCloser(world, location);
+                                        }
+                                        System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
+                                        attack(world, animal);
                                     }
-                                    System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
-                                    attack(world, animal);
                                 }
                             }
                         }
