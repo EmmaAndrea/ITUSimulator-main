@@ -59,7 +59,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             is_rotten = true;
         }
 
-        if(grace_period == 1){
+        if (grace_period == 1) {
             grace_period = 0;
         }
 
