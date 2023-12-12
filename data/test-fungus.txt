@@ -1,0 +1,3 @@
+3
+fungi 1
+carcass 1

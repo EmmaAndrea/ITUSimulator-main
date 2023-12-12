@@ -135,6 +135,10 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         return has_fungus;
     }
 
+    public boolean isRotten() {
+        return is_rotten;
+    }
+
     /**
      * Spawns the fungus at the carcass' location in the world.
      *

@@ -55,16 +55,16 @@ public class BushTest {
      * Verifies that a Bush is correctly added to the world.
      */
     @Test
-    public void testSpawn() throws Exception{
-        programRunner.create("./data/");
+    public void testSpawn() throws Exception {
+        programRunner.create("./data/test-bush-2.txt");
 
         assertEquals(world.getEntities().size(), 1,
                 "the amount of bush in the world should be 1, but it is: " + world.getEntities().size());
     }
 
     /**
-     * Tests the grow method of Bush.
-     * Checks if the number of berries increases after the grow method is called.
+     * Tests the 'grow' method of Bush.
+     * Checks if the number of berries increases after the 'grow' method is called.
      */
     @Test
     public void testGrowBerriesMethod() {
@@ -98,7 +98,7 @@ public class BushTest {
      * Verifies that the act method affects the bush's state correctly.
      */
     @Test
-    public void testBushAct() throws Exception {
+    public void testBushAct() {
         Bush bush = null;
         for (Object object : world.getEntities().keySet()) {
             bush = (Bush) object;

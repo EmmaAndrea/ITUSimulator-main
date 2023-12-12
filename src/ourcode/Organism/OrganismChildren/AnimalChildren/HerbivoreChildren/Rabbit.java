@@ -140,7 +140,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
      */
     @Override
     public DisplayInformation getInformation() {
-        if (has_cordyceps) {
+        if (!has_cordyceps) {
             if (age >= 15) {
                 return new DisplayInformation(Color.black, "rabbit-large");
             } else {

@@ -39,6 +39,11 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
     public void act(World world) {
         super.act(world);
 
+        if (age >= max_age) {
+            world.delete(this);
+            return;
+        }
+
         // After a given amount of steps, the grass will spread
         if (age % 8 == 0) {
             spread(world);

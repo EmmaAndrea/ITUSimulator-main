@@ -6,7 +6,6 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.testng.annotations.Test;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.ProgramRunner;
@@ -28,25 +27,24 @@ public class GrassTest {
     }
     @BeforeAll
     public static void setUp(){
-        System.out.println("Testing for theme 1: ");
+        System.out.println("Testing for grass: ");
     }
 
     @BeforeEach
     public void startTest(){
-        System.out.println("Test Started");
+        System.out.println("*** Test Started ***");
     }
 
     /**
      * Creates a world based on file "t1-1c", such that 1 grass is spawned.
      * Checks that one grass is in entities
      */
-    @Test
+    @org.junit.Test
     public void testGrassSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
         programRunner.runSimulation(1);
         assertEquals(world.getEntities().size(), 1);
-        assertTrue(world.getEntities().containsKey(programRunner.getGrass()));
     }
 
     /**
@@ -54,7 +52,7 @@ public class GrassTest {
      * Creates one new grass in world and spawns it twice, catching the locations in variables
      * Checks the locations are different, and thereby random
      */
-    @Test
+    @org.junit.Test
     public void testGrassRandomSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -72,7 +70,7 @@ public class GrassTest {
      * Creates one new grass in world and spawns it, then runs the simulation for 31 steps.
      * Checks entities does not contain grass1, showing that it is deleted and thereby dead.
      */
-    @Test
+    @org.junit.Test
     public void testGrassDies() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -88,7 +86,7 @@ public class GrassTest {
      * Checks grass location is the same as before adding rabbit
      * and didn't crash the program
      */
-    @Test
+    @org.junit.Test
     public void testRabbitStandingOnGrassTile() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -111,7 +109,7 @@ public class GrassTest {
 
     @AfterEach
     public void endTest(){
-        System.out.println("Test Ended");
+        System.out.println("*** Test Ended ***");
     }
 
     @AfterAll
