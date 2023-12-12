@@ -126,10 +126,21 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void eatWithPack(World world){
         while (!world.isTileEmpty(killed_animal_location)) {
             if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
+                if (getHungriestWolf().getHunger() < 4){
+                    break;
+                }
                 getHungriestWolf().eat(world, carcass);
+                if (carcass.getNutritionalValue() == 0){
+                    world.delete(carcass);
+                }
             } else killed_animal_location = null;
         } killed_animal_location = null;
     }
+
+    /**
+     * Finds the hungriest wolf at each stage
+     * @return
+     */
     public Wolf getHungriestWolf(){
         Wolf hungriest_wolf = new Wolf(id_generator, false);
         for (Wolf wolf_in_pack : my_alpha.getPack()){
