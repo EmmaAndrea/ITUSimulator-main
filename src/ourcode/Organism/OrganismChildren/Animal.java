@@ -189,14 +189,17 @@ public abstract class Animal extends Organism {
                 if (damage_taken >= carcass.getNutritionalValue()){
                     damage_taken -= 4;
                 }
-
                 if (carcass.getGrace_period() == 0){
-                    hunger -= 4;
-                    carcass.setNutrition(4);
+                    if (pack_hunting) {
+                        hunger -=2;
+                        carcass.setNutrition(2);
+                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
+                    } else {
+                        hunger -= 4;
+                        carcass.setNutrition(4);
+                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
+                    }
                 }
-
-                System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
-
             }
         } else if (organism instanceof Bush bush){
             hunger = hunger - 3;

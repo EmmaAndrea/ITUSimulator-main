@@ -32,6 +32,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     protected Location killed_animal_location;
 
+    protected boolean pack_is_done_eating;
+
     /**
      * Constructs a Wolf with specific characteristics and initializes its pack-related properties.
      *
@@ -54,6 +56,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         bedtime = 1;
         wakeup = 7;
         nutritional_value = 8;
+        pack_is_done_eating = true;
     }
 
     /**
@@ -75,6 +78,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (in_hiding) return;
         if (isBedtime(world)) return;
 
+
+        if (pack_is_done_eating){
+            for (Wolf wolf : my_alpha.getPack()) {
+                wolf.setPackHuntingFalse();
+            }
+        }
         // if the wolf is the alpha and its hungry enough, set pack_hunting to false for all wolves in pack
         if (alpha) {
             if (hunger < 5) {
@@ -126,10 +135,22 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void eatWithPack(World world){
         while (!world.isTileEmpty(killed_animal_location)) {
             if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
+                if (getHungriestWolf().getHunger() < 2){
+                    pack_is_done_eating = true;
+                    return;
+                }
                 getHungriestWolf().eat(world, carcass);
+                if (carcass.getNutritionalValue() < 1){
+                    world.delete(carcass);
+                }
             } else killed_animal_location = null;
         } killed_animal_location = null;
     }
+
+    /**
+     * Finds the hungriest wolf at each stage
+     * @return
+     */
     public Wolf getHungriestWolf(){
         Wolf hungriest_wolf = new Wolf(id_generator, false);
         for (Wolf wolf_in_pack : my_alpha.getPack()){
@@ -184,12 +205,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     public boolean shareCarcass(Animal animal){
-        if (alpha) {
-            if(hunger>=animal.getNutritionalValue()){
-                return false;
-            }
+        if (my_alpha!=null) {
+            return true;
         }
-        return true;
+        else return false;
     }
 
     /**
@@ -460,6 +479,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * Sets the pack hunting status of this wolf to true, indicating it is part of a hunting pack.
      */
     public void setPackHuntingTrue(){
+        pack_is_done_eating = false;
         pack_hunting = true;
     }
 
@@ -467,6 +487,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * Sets the pack hunting status of this wolf to false, indicating it is not part of a hunting pack.
      */
     public void setPackHuntingFalse(){
+        pack_is_done_eating = true;
         pack_hunting = false;
     }
 
