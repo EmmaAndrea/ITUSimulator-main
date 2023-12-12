@@ -198,6 +198,13 @@ public abstract class Animal extends Organism {
                     } else animal.dieAndBecomeCarcass(world);
                 }
             }
+        } else if (organism instanceof Carcass carcass) {
+            synchronized (carcass){
+                if (carcass.getGrace_period() == 0){
+                    hunger -= 4;
+                    carcass.setNutrition(4);
+                }
+            }
         }
     }
 
@@ -579,11 +586,19 @@ public abstract class Animal extends Organism {
                                 }
                                 if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
                                     if (hunger >= animal.getNutritionalValue()) {
-                                        eat(world, animal);
+                                        attack(world, animal);
                                         lock.unlock();
                                         return true;
                                     }
                                 }
+                            }
+                        }
+                    } if (object instanceof Carcass carcass){
+                        if (this instanceof Predator){
+                            if (hunger >= 4) {
+                                eat(world, carcass);
+                                lock.unlock();
+                                return true;
                             }
                         }
                     }
@@ -615,7 +630,9 @@ public abstract class Animal extends Organism {
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Bush bush) {
                         if (consumable_foods.contains("bush")) {
-                            if (hunger > 4) bush.eatBerries();
+                            if (hunger > 2 && bush.getBerriesAmount()>2) {
+                                bush.eatBerries();
+                            }
                             System.out.println(type + " ate berries");
                             lock.unlock();
                             return false;
