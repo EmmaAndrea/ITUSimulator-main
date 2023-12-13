@@ -14,6 +14,7 @@ import ourcode.Obstacles.Habitat;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 
 /**
@@ -510,6 +511,34 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         has_pack = false;
         alpha = false;
         my_alpha = null;
+    }
+
+    @Override
+    public void dieAndBecomeCarcass(World world) {
+        if (in_hiding) {
+                try {
+                    deleteMe(world);
+                } catch (ConcurrentModificationException e) {
+                    System.out.println(e.getMessage());
+                    world.delete(this);
+            }
+            world.delete(this);
+            return;
+        }
+
+        if (world.contains(this) && !in_hiding) {
+            grace_period = 1;
+            Location current_location = world.getLocation(this);
+            try {
+                deleteMe(world);
+            } catch (ConcurrentModificationException e) {
+                System.out.println(e.getMessage());
+                world.delete(this);
+                Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
+                carcass.setGracePeriod(1);
+                world.setTile(current_location, carcass);
+            }
+        }
     }
 
     /**

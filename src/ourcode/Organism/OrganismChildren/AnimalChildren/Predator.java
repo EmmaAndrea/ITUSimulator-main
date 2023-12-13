@@ -58,11 +58,10 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void attack(World world, Animal animal) {
-        carcass_location = world.getLocation(animal);
         animal.damage(power);
         if (animal.isDead()) {
             animal.dieAndBecomeCarcass(world);
-            Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
+            Organism carcass_to_eat = (Organism) world.getTile(world.getLocation(animal));
             eat(world, carcass_to_eat);
         } else animal.setGracePeriod(0);
     }

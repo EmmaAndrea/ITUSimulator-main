@@ -5,7 +5,6 @@ import itumulator.world.World;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -14,7 +13,6 @@ import ourcode.Setup.IDGenerator;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantLock;
@@ -84,6 +82,7 @@ public abstract class Animal extends Organism {
         super.act(world);
 
         steps_since_last_birth++;
+        if (damage_taken > 0) damage_taken--;
 
         if (!in_hiding) {
             hunger++;
@@ -676,7 +675,7 @@ public abstract class Animal extends Organism {
     }
 
     public void sameTypeInteraction(World world, Animal animal) {
-        // overridden by wolf
+        attack(world, animal);
     }
 
     public void setIn_hiding() {
@@ -692,32 +691,10 @@ public abstract class Animal extends Organism {
      */
     public void dieAndBecomeCarcass(World world) {
         if (in_hiding) {
-            if (this instanceof Wolf wolf) {
-                try {
-                    wolf.deleteMe(world);
-                } catch (ConcurrentModificationException e) {
-                    System.out.println(e.getMessage());
-                    world.delete(this);
-                }
-            } else {
-                world.delete(this);
-                return;
-            }
-        }
-
-        if (world.contains(this) && !in_hiding) {
-            grace_period = 1;
+            world.delete(this);
+        } else if (world.contains(this) && !in_hiding) {
             Location current_location = world.getLocation(this);
-
-            if (this instanceof Wolf wolf) {
-                try {
-                    wolf.deleteMe(world);
-                } catch (ConcurrentModificationException e) {
-                    System.out.println(e.getMessage());
-                    world.delete(this);
-                }
-            } else world.delete(this);
-            System.out.println(type + id + " became a carcass");
+            world.delete(this);
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
             world.setTile(current_location, carcass);
