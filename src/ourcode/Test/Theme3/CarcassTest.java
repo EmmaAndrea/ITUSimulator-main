@@ -155,4 +155,23 @@ public class CarcassTest {
 
         assertEquals(0, counter, "The dinosaur should have eaten the carcass after 15 steps.");
     }
+
+    /**
+     * Testing that a dead animal becomes a carcass.
+     * @throws Exception skibob
+     */
+    @Test
+    public void testAnimalBecomesCarcass() throws Exception {
+        programRunner.create("data/carcasstest4.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(50);
+        int counter = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Carcass) {
+                counter++;
+            }
+        }
+
+        assertEquals(1, counter, "Wolf should have eaten the carcass, then died and become carcass.");
+    }
 }

@@ -115,7 +115,7 @@ public abstract class Organism extends Entity implements Actor {
         grace_period = i;
     }
 
-    public int getGrace_period(){
+    public int getGracePeriod(){
         return grace_period;
     }
 }

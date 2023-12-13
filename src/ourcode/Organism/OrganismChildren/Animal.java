@@ -66,7 +66,7 @@ public abstract class Animal extends Organism {
         this.has_cordyceps = has_cordyceps;
         friends = new ArrayList<>();
         habitat = null;
-        has_habitat = false; // watch out for problem with this when spawning wolves in packs.
+        has_habitat = false;
         lock = new ReentrantLock();
         bedtime = 0;
         wakeup = 0;
@@ -87,6 +87,15 @@ public abstract class Animal extends Organism {
 
         if (!in_hiding) {
             hunger++;
+
+            // Spread cordyceps
+            if (has_cordyceps) {
+                for (Location location : world.getSurroundingTiles(world.getLocation(this))) {
+                    if (world.getTile(location) instanceof Animal animal) {
+                        animal.infect();
+                    }
+                }
+            }
         }
 
         if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
@@ -96,10 +105,12 @@ public abstract class Animal extends Organism {
         }
 
         if (isBedtime(world) && !in_hiding && habitat != null){
-            if (distanceTo(world, world.getLocation(habitat)) > 0){
-                moveCloser(world, world.getLocation(habitat));
+            Location habitat_location = world.getLocation(habitat);
+
+            if (distanceTo(world, habitat_location) > 0){
+                moveCloser(world, habitat_location);
             }
-            if (distanceTo(world, world.getLocation(habitat)) < 1) {
+            if (distanceTo(world, habitat_location) < 1) {
                 if (grace_period == 0){
                     grace_period = 1;
                     return;
@@ -168,39 +179,34 @@ public abstract class Animal extends Organism {
      * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
      * Creates and spawns a new entity of the same type as this animal.
      *
-     * @param world The simulation world in which breeding occurs.
+     * @param world    The simulation world in which breeding occurs.
+     * @param organism The organism to be eaten.
      */
     public void eat(World world, Organism organism) {
-        // Deducts the animal's hunger with the nutritional value of the eaten organism.
-        if (organism instanceof Grass grass) {
-            hunger -= 2;
-            // Deletes the eaten organism from the world.
-            world.delete(world.getNonBlocking(world.getLocation(this)));
-            // check
-            System.out.println(this.getType() + " " + this.getId() + " ate " + "grass" + grass.getId());
+        int nutrition = organism.getNutritionalValue();
 
-        // else if (organism instanceof Animal animal) {
-            // synchronized (animal) {
-
+        if (organism instanceof Grass || organism instanceof Bush) {
+            hunger -= nutrition;
+            if (organism.getType().equals("grass")) {
+                world.delete(world.getNonBlocking(world.getLocation(this)));
+            }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                if (damage_taken >= carcass.getNutritionalValue()) {
+                if (damage_taken >= nutrition) {
+                    damage_taken -= nutrition;
+                }
+                if (carcass.getGracePeriod() == 0) {
+                    int nutritionChange = pack_hunting ? 2 : 4;
+                    hunger -= nutritionChange;
+                    carcass.setNutrition(nutritionChange);
+                }
+                if (carcass.has_fungus) {
+                    has_cordyceps = true;
+                }
+                if (carcass.isRotten) {
                     damage_taken -= 4;
                 }
-                if (carcass.getGrace_period() == 0) {
-                    if (pack_hunting) {
-                        hunger -=2;
-                        carcass.setNutrition(2);
-                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
-                    } else {
-                        hunger -= 4;
-                        carcass.setNutrition(4);
-                        System.out.println(this.getType() + " " + this.getId() + " ate " + "carcass" + carcass.getId());
-                    }
-                }
             }
-        } else if (organism instanceof Bush bush){
-            hunger = hunger - 3;
         }
     }
 
@@ -571,7 +577,7 @@ public abstract class Animal extends Organism {
 
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Animal animal) {
-                        if (animal.getGrace_period() == 0) {
+                        if (animal.getGracePeriod() == 0) {
                             if (!friends.contains(animal)) {
 
                                 // wolves act differently than other animals when interacting with each other.
@@ -724,6 +730,14 @@ public abstract class Animal extends Organism {
 
     public void setInHiding(){
         in_hiding = true;
+    }
+
+    public boolean hasCordyceps() {
+        return has_cordyceps;
+    }
+
+    public void infect() {
+        has_cordyceps = true;
     }
 
     public boolean enemyHabitatNearby(World world) {
