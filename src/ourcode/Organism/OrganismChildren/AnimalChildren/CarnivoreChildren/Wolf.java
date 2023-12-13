@@ -71,7 +71,10 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void act(World world) {
         super.act(world);
         // if wolf has an alpha and the pack does not exist, delete pack
-        if (my_alpha != null && my_alpha.getPack() == null) {
+        if (my_alpha != null && my_alpha.getPack() == null){
+            deletePack();
+        }
+        if (my_alpha != null && my_alpha.getPack().size() < 2) {
             deletePack();
             System.out.println("pack deleted");
         }
@@ -123,21 +126,31 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                 moveCloser(world, world.getLocation(my_alpha));
 
-            } else nextMove(world);
+            } else if (!enemyHabitatNearby(world)) {
+                nextMove(world);
+            }
 
             // sequence for lone wolves
-        } else if (hunger > 15) hunt(world);
-
-        else nextMove(world);
-
+        } else if (hunger > 15) {
+            hunt(world);
+        } else if (!enemyHabitatNearby(world)) {
+            nextMove(world);
+        }
     }
 
+    /**
+     * When two wolves meet, they assess each other
+     * @param world
+     * @param animal
+     */
     @Override
     public void sameTypeInteraction(World world, Animal animal){
         if(animal instanceof Wolf wolf){
-            if (wolf.getMyAlpha() != null){
-                moveAway(world, world.getLocation(animal));
-            } else attack(world, animal);
+            if (wolf.getMyAlpha() != null) {
+                if (wolf.getMyAlpha().getPack().size() == 1) {
+                    attack(world, animal);
+                }
+            }
         }
     }
 
@@ -209,6 +222,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
             if (friends.contains(animal)) return;
             if (animal.getGracePeriod() == 0) {
+                animal.setGracePeriod(1);
                 animal.damage(power);
                 if (animal instanceof Wolf wolf_to_take) {
                     if (wolf_to_take.getDamageTaken() > 7) {
@@ -217,15 +231,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     }
                 }
                 if (animal.isDead()) {
-                    carcass_location = world.getLocation(animal);
-                    animal.dieAndBecomeCarcass(world);
+                    carcass_location = world.getLocation(animal.dieAndBecomeCarcass(world));
                     Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
                     if (pack_hunting) {
                         if (shareCarcass(animal)) {
                             killed_animal_location = carcass_location;
                         }
                     } else if (hunger >= 4) eat(world, carcass_to_eat);
-                }
+                } else animal.setGracePeriod(0);
             }
         }
     }
@@ -394,8 +407,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     setAlpha(this);
                 }
             }
-            for (Wolf wolf : oldwolf.getPack()) {
-                if (wolf.getGracePeriod() == 0) {
+            if (oldwolf.getPack().size() == 1) {
+                oldwolf.deletePack();
+                my_alpha.addWolfToPack(oldwolf);
+            }
+            else {
+                for (Wolf wolf : oldwolf.getPack()) {
                     oldwolf.removeWolfFromPack(wolf);
                     my_alpha.addWolfToPack(wolf);
                 }
@@ -492,7 +509,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                         }
                     }
 
-
                     next_alpha.removeWolfFromPack(this);
 
                 next_alpha.setGracePeriod(0);
@@ -514,16 +530,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     @Override
-    public void dieAndBecomeCarcass(World world) {
+    public Carcass dieAndBecomeCarcass(World world) {
         if (in_hiding) {
                 try {
                     deleteMe(world);
                 } catch (ConcurrentModificationException e) {
-                    System.out.println(e.getMessage());
-                    world.delete(this);
+                    System.out.println(e.getMessage() + "concurrent");
             }
-            world.delete(this);
-            return;
+            return null;
         }
 
         if (world.contains(this) && !in_hiding) {
@@ -533,12 +547,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 deleteMe(world);
             } catch (ConcurrentModificationException e) {
                 System.out.println(e.getMessage());
-                world.delete(this);
-                Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
-                carcass.setGracePeriod(1);
-                world.setTile(current_location, carcass);
+                return null;
             }
+            Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
+            carcass.setGracePeriod(1);
+            world.setTile(current_location, carcass);
+            return carcass;
         }
+        return null;
     }
 
     /**
