@@ -172,13 +172,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     killed_animal_location = null;
                     return;
                 }
-                System.out.println("try eating together");
 
                     while (!world.isTileEmpty(killed_animal_location)) {
                         if (carcass.getNutritionalValue()<2) return;
                         hungriest_wolf.eat(world, carcass);
                         hungriest_wolf = getHungriestWolf();
-                        System.out.println("eating together");
                     }
 
             } else killed_animal_location = null;
