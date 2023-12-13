@@ -404,15 +404,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     /**
-     * Sets the trophic level of this wolf.
-     *
-     * @param i The new trophic level to be set for the wolf.
-     */
-    public void setTrophicLevel(int i) {
-        trophic_level = i;
-    }
-
-    /**
      * Retrieves the alpha wolf of the pack to which this wolf belongs.
      *
      * @return The alpha wolf of the pack, or null if this wolf has no pack.

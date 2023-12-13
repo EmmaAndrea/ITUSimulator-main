@@ -101,7 +101,7 @@ public abstract class Animal extends Organism {
                 moveCloser(world, habitat_location);
             }
             if (distanceTo(world, habitat_location) < 1) {
-                if (grace_period == 0){
+                if (grace_period == 0) {
                     grace_period = 1;
                     return;
                 } else enterHabitat(world);
@@ -712,6 +712,10 @@ public abstract class Animal extends Organism {
     public void infect() {
         has_cordyceps = true;
         max_age = max_age - 18;
+    }
+
+    public void setPower(int i) {
+        power = i;
     }
 
     public boolean enemyHabitatNearby(World world) {

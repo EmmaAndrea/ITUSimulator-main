@@ -24,11 +24,11 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      */
     public Dinosaur(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        trophic_level = 6;
+        trophic_level = 3;
         type = "dinosaur";
         max_age = 250;
         max_hunger = 50;
-        power = 7;
+        power = 4;
         max_damage = 30;
         consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass", "dinosaur"));
         bedtime = 12;
@@ -41,6 +41,11 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
         super.act(world);
+
+        if (age >= 20) {
+            setTrophicLevel(6);
+            setPower(7);
+        }
 
         // Stop at once if something happened that killed the dinosaur.
         if (!world.contains(this)) {

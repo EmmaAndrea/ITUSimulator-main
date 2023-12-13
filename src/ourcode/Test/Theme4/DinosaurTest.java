@@ -8,6 +8,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
+import ourcode.Organism.OrganismChildren.Animal;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -205,5 +207,34 @@ public class DinosaurTest {
         }
 
         assertEquals(0, counter, "The male should not have laid an agg.");
+    }
+
+    @Test
+    public void testDinosaurTrophicLevel() {
+        Program p = new Program(3,500,800);
+        world = p.getWorld();
+        IDGenerator idGenerator = new IDGenerator();
+
+        Bear bear = new Bear(idGenerator, false);
+        Dinosaur dino = new Dinosaur(idGenerator, false);
+
+        bear.spawn(world);
+        dino.spawn(world);
+
+        p.show();
+        for (int i = 0; i < 100; i++) {
+            p.simulate();
+            System.out.println(dino.getTrophicLevel());
+        }
+
+        int counter = 0;
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Animal) {
+                counter++;
+            }
+        }
+
+        assertEquals(1, counter);
     }
 }

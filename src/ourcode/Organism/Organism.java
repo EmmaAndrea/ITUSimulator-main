@@ -118,4 +118,13 @@ public abstract class Organism extends Entity implements Actor {
     public int getGracePeriod(){
         return grace_period;
     }
+
+    /**
+     * Sets the trophic level of an organism.
+     *
+     * @param i The new trophic level to be set for the wolf.
+     */
+    public void setTrophicLevel(int i) {
+        trophic_level = i;
+    }
 }
