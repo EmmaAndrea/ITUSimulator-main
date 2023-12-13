@@ -87,15 +87,6 @@ public abstract class Animal extends Organism {
 
         if (!in_hiding) {
             hunger++;
-
-            // Spread cordyceps
-            if (has_cordyceps) {
-                for (Location location : world.getSurroundingTiles(world.getLocation(this))) {
-                    if (world.getTile(location) instanceof Animal animal) {
-                        animal.infect();
-                    }
-                }
-            }
         }
 
         if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
@@ -201,7 +192,7 @@ public abstract class Animal extends Organism {
                     carcass.setNutrition(nutritionChange);
                 }
                 if (carcass.has_fungus) {
-                    has_cordyceps = true;
+                    infect();
                 }
                 if (carcass.isRotten) {
                     damage_taken -= 4;
@@ -738,6 +729,7 @@ public abstract class Animal extends Organism {
 
     public void infect() {
         has_cordyceps = true;
+        max_age = max_age - 18;
     }
 
     public boolean enemyHabitatNearby(World world) {

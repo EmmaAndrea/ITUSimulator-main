@@ -30,7 +30,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         max_hunger = 50;
         power = 7;
         max_damage = 30;
-        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass"));
+        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass", "dinosaur"));
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 20;
@@ -42,18 +42,20 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         Location current_location = world.getLocation(this);
         super.act(world);
 
+        // Stop at once if something happened that killed the dinosaur.
         if (!world.contains(this)) {
             return;
         }
 
+        // Make footprint
         if (checkEmptySpace(world, current_location)) {
             if (!world.containsNonBlocking(current_location)) {
                 world.setTile(previous_location, new Footprint(id_generator));
             }
         }
 
-        if (getGender() == Gender.Female) { // more parameters
-           if (steps_since_last_birth > 50) {
+        if (gender == Gender.Female) { // more parameters
+           if (steps_since_last_birth > 48) {
                layEgg(world);
            }
         }
