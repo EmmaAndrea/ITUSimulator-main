@@ -2,7 +2,6 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Obstacles.Cave;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
@@ -603,8 +602,8 @@ public abstract class Animal extends Organism {
                         }
                     }
                     // if the object is a carcass this will eat part of it.
-                    if (object instanceof Carcass carcass){
-                        if (this instanceof Predator){
+                    if (object instanceof Carcass carcass) {
+                        if (this instanceof Predator) {
                             if (hunger >= 4) {
                                 eat(world, carcass);
                                 lock.unlock();
@@ -674,7 +673,7 @@ public abstract class Animal extends Organism {
         return in_hiding;
     }
 
-    public void sameTypeInteraction(World world, Animal animal){
+    public void sameTypeInteraction(World world, Animal animal) {
         // overridden by wolf
     }
 
@@ -690,28 +689,33 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public void dieAndBecomeCarcass(World world) {
-        if (in_hiding){
-            if (this instanceof Wolf wolf){
-                try{
+        if (in_hiding) {
+            if (this instanceof Wolf wolf) {
+                try {
                     wolf.deleteMe(world);
-                } catch (ConcurrentModificationException e){
+                } catch (ConcurrentModificationException e) {
                     System.out.println(e.getMessage());
                     world.delete(this);
                 }
-            } else world.delete(this);
+            } else {
+                world.delete(this);
+                return;
+            }
         }
+
         if (world.contains(this) && !in_hiding) {
             grace_period = 1;
             Location current_location = world.getLocation(this);
-            if (this instanceof Wolf wolf){
-                try{
+
+            if (this instanceof Wolf wolf) {
+                try {
                     wolf.deleteMe(world);
-                } catch (ConcurrentModificationException e){
+                } catch (ConcurrentModificationException e) {
                     System.out.println(e.getMessage());
                     world.delete(this);
                 }
             } else world.delete(this);
-            System.out.println("i, " + type + id + ", became a carcass");
+            System.out.println(type + id + " became a carcass");
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
             world.setTile(current_location, carcass);
@@ -722,13 +726,13 @@ public abstract class Animal extends Organism {
         in_hiding = true;
     }
 
-    public boolean enemyHabitatNearby(World world){
+    public boolean enemyHabitatNearby(World world) {
         Location current = world.getLocation(this);
 
         // checks standing on location for enemy habitat
-        if(world.containsNonBlocking(current)){
-            if (world.getNonBlocking(current) instanceof Habitat other_habitat){
-                if(habitat != other_habitat){
+        if (world.containsNonBlocking(current)) {
+            if (world.getNonBlocking(current) instanceof Habitat other_habitat) {
+                if (habitat != other_habitat) {
                     moveAway(world, current);
                     moveAway(world, current);
                     moveAway(world, current);
@@ -738,10 +742,10 @@ public abstract class Animal extends Organism {
         }
 
         // check surrounding locations for enemy habitat
-        for (Location potential_enemy_location: world.getSurroundingTiles(current,  2)){
-            if (world.containsNonBlocking(potential_enemy_location)){
-                if (world.getNonBlocking(potential_enemy_location) instanceof Habitat other_habitat){
-                    if(habitat != other_habitat){
+        for (Location potential_enemy_location: world.getSurroundingTiles(current,  2)) {
+            if (world.containsNonBlocking(potential_enemy_location)) {
+                if (world.getNonBlocking(potential_enemy_location) instanceof Habitat other_habitat) {
+                    if (habitat != other_habitat) {
                         moveAway(world, potential_enemy_location);
                         moveAway(world, potential_enemy_location);
                         return true;

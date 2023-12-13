@@ -38,7 +38,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     @Override
     public void act(World world) {
-        System.out.println("i am " + this + " time is " + world.getCurrentTime());
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
         super.act(world);
