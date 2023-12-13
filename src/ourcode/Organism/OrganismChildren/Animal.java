@@ -5,6 +5,7 @@ import itumulator.world.World;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -226,6 +227,12 @@ public abstract class Animal extends Organism {
         cub.setHabitat(habitat);
         cub.setInHiding();
         System.out.println("made cub");
+
+        if (cub instanceof Wolf wolf_cub) {
+            if (this instanceof Wolf this_wolf){
+                this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
+            }
+        }
 
         steps_since_last_birth = 0;
     }
