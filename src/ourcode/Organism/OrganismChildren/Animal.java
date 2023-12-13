@@ -82,7 +82,7 @@ public abstract class Animal extends Organism {
         super.act(world);
 
         steps_since_last_birth++;
-        if (damage_taken > 0) damage_taken--;
+        if (damage_taken > 0) damage_taken -= 1;
 
         if (!in_hiding) {
             hunger++;
@@ -109,6 +109,8 @@ public abstract class Animal extends Organism {
 
         } else if (!isBedtime(world) && in_hiding) {
             exitHabitat(world);
+            System.out.println("left habitat");
+            return;
         }
 
         lock.lock();
@@ -689,16 +691,18 @@ public abstract class Animal extends Organism {
      *
      * @param world The simulation world where the transformation occurs.
      */
-    public void dieAndBecomeCarcass(World world) {
+    public Carcass dieAndBecomeCarcass(World world) {
         if (in_hiding) {
             world.delete(this);
-        } else if (world.contains(this) && !in_hiding) {
+        } else {
             Location current_location = world.getLocation(this);
             world.delete(this);
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
             world.setTile(current_location, carcass);
+            return carcass;
         }
+        return null;
     }
 
     public void setInHiding(){
