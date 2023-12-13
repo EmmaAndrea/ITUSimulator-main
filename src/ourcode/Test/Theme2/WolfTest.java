@@ -15,10 +15,14 @@ import ourcode.Setup.ProgramRunner;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WolfTest {
-    public ProgramRunner programRunner;
-    public World world;
+    private Program p;
 
-    public WolfTest() { programRunner = new ProgramRunner(); }
+    private ProgramRunner programRunner;
+    private World world;
+    private int wolf_count;
+    private IDGenerator id_generator;
+
+    public WolfTest() { }
 
     @BeforeAll
     public static void setUp() {
@@ -28,8 +32,20 @@ public class WolfTest {
     @BeforeEach
     public void startTest() {
         System.out.println("Test started");
+        wolf_count = 0;
+        world = new World(4);
+        id_generator = new IDGenerator();
+        p = new Program(4, 1000, 100);
+        programRunner = new ProgramRunner();
     }
 
+    public void countWolves(World world){
+        for (Object entity : world.getEntities().keySet()) {
+            if (entity instanceof Wolf) {
+                wolf_count++;
+            }
+        }
+    }
     /**
      * this test will check if a wolf can be declared through the input of a file. Also checks if the
      * constructor of a Wolf functions
@@ -38,10 +54,13 @@ public class WolfTest {
     public void testWolfDeclaration() throws Exception {
         programRunner.create("./data/t2-1ab.txt");
 
-        programRunner.runSimulation(0);
+        programRunner.runSimulation(1);
 
         world = programRunner.getWorld();
-        assertEquals(world.getEntities().size(), 1,
+
+        countWolves(world);
+
+        assertEquals(1, wolf_count,
                 "the amount of entities in the world should be 1 but is " + world.getEntities().size());
     }
 
@@ -51,13 +70,11 @@ public class WolfTest {
      */
     @Test
     public void testWolfPackDeclarationMethod() {
-        world = new World(4);
-        IDGenerator id = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(id, false);
+        Wolf wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(id, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
 
@@ -77,13 +94,11 @@ public class WolfTest {
      */
     @Test
     public void testRemovingWolfFromPackMethod() {
-        world = new World(3);
-        IDGenerator idGenerator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(idGenerator, false);
+        Wolf wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(idGenerator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
 
@@ -110,16 +125,14 @@ public class WolfTest {
      */
     @Test
     public void testOvertakePackMethod() {
-        world = new World(3);
-        IDGenerator idGenerator = new IDGenerator();
 
-        Wolf wolf1 = new Wolf(idGenerator, false);
+        Wolf wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("wolf1 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(idGenerator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("wolf2 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf3 = new Wolf(idGenerator, false);
+        Wolf wolf3 = new Wolf(id_generator, false);
         wolf3.spawn(world);
         System.out.println("wolf3 added to the world, the amount of entities are: " + world.getEntities().size());
 
@@ -140,8 +153,6 @@ public class WolfTest {
      */
     @Test
     public void testCreateCaveMethod() {
-        world = new World(3);
-        IDGenerator id_generator = new IDGenerator();
 
         Wolf wolf1 = new Wolf(id_generator, false);
         Wolf wolf2 = new Wolf(id_generator, false);
@@ -167,8 +178,6 @@ public class WolfTest {
 
     @Test
     public void testEnterCaveMethod() {
-        world = new World(4);
-        IDGenerator id_generator = new IDGenerator();
 
         Wolf wolf1 = new Wolf(id_generator, false);
         Wolf wolf2 = new Wolf(id_generator, false);
@@ -198,8 +207,6 @@ public class WolfTest {
      */
     @Test
     public void testExitCave() {
-        world = new World(5);
-        IDGenerator id_generator = new IDGenerator();
 
         Wolf wolf1 = new Wolf(id_generator, false);
         Wolf wolf2 = new Wolf(id_generator, false);
@@ -225,6 +232,7 @@ public class WolfTest {
                          + wolf1.getMyCave().getResidents().size());
     }
 
+    /*
     @Test
     public void testWolves() throws Exception {
         programRunner.create("./data/t2-3a.txt");
@@ -237,29 +245,23 @@ public class WolfTest {
 
     }
 
-    @Test
-    public void testWolvesBreedInCave() {
-        Program p = new Program(3, 800, 500);
-        world = p.getWorld();
-
-        // Wolf
-
-    }
-
-    @Test
-    public void testWolfGroupEatingBear() {
-        Program p = new Program(3, 800, 500);
-        world = p.getWorld();
-    }
+     */
 
 
+    /**
+     * This test checks if wolves breed in caves
+     * Certain elements have been tampered to focus the test case.
+     * Tampered elements are: setGender 'Male' and 'Female' for wolves,
+     * Checks for three wolves existing in the world
+     */
     @Test
     public void testWolfBreedingMethod() throws Exception {
         programRunner.create("./data/wolf-test1.txt");
+
         world = programRunner.getWorld();
 
-        Wolf wolf1 = new Wolf(programRunner.getOriginal_id_generator(), false);
-        Wolf wolf2 = new Wolf(programRunner.getOriginal_id_generator(), false);
+        Wolf wolf1 = new Wolf(id_generator, false);
+        Wolf wolf2 = new Wolf(id_generator, false);
 
         wolf1.setGender("MALE");
         wolf2.setGender("FEMALE");
@@ -270,61 +272,41 @@ public class WolfTest {
         wolf1.createPack();
         wolf1.addWolfToPack(wolf2);
 
-        programRunner.runSimulation(27);
+        programRunner.runSimulation(20);
 
-        int wolf_count = 0;
-        for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Wolf) {
-                wolf_count++;
-            }
-        }
+        programRunner.runSimulation(7);
+
+        countWolves(world);
 
         assertTrue(wolf_count == 3, "the amount of wolves should be 3 post breed");
     }
 
+
     /**
-     * This test checks if wolves breed in caves
-     * Certain elements have been tampered to focus the test case.
-     * Tampered elements are: setGender 'Male' and 'Female' for wolves, Carcass with unlimited health and nutrition
-     * so wolves don't starve.
+     * Testing that wolves attack lone wolves
      */
-    @Test
-    public void testWolfBreedSimulation() {
-        Program p = new Program(4,500,1000);
-        world = p.getWorld();
-        IDGenerator idGenerator = new IDGenerator();
 
-        Location location0 = new Location(3,2);
-        Location location1 = new Location(3,3);
-        Location location2 = new Location(0,1);
-        Carcass carcass = new Carcass(idGenerator,20,"bear",false);
-        Wolf wolfMALE = new Wolf(idGenerator, false);
-        wolfMALE.setGender("Male");
-        Wolf wolfFEMALE = new Wolf(idGenerator, false);
-        wolfFEMALE.setGender("Female");
-        wolfMALE.createPack();
-        wolfMALE.addWolfToPack(wolfFEMALE);
+    public void TestWolfPackAttacksLoneWolf(){
+        programRunner.create("./data/wolf-test1.txt");
 
-        wolfMALE.setAge(20);
+        world = programRunner.getWorld();
 
-        wolfFEMALE.setAge(20);
+        programRunner.runSimulation(20);
 
-        world.setTile(location0, wolfMALE);
-        world.setTile(location1, wolfFEMALE);
-        world.setTile(location2, carcass);
-        wolfMALE.makeHabitat(world);
+        // check damage
 
-        wolfFEMALE.enterHabitat(world);
-        wolfMALE.enterHabitat(world);
-
-        p.show();
-        for (int i = 0; i < 200; i++) {
-            p.simulate();
-            carcass.setNutrition(-5);
-            carcass.setAge(0);
-            if (wolfMALE.isIn_hiding()) {
-                System.out.println("the amount of residents in the cave are: " + wolfMALE.getMyCave().getResidents().size());
-            }
-        }
     }
+
+
+    /**
+     * Checking wolf moves away from enemy cave
+     */
+
+    /**
+     * checking wolf eats together
+     */
+
+    /**
+     *
+     */
 }

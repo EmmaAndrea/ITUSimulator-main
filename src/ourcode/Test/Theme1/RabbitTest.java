@@ -55,12 +55,7 @@ public class RabbitTest {
         world = programRunner.getWorld();
         programRunner.runSimulation(1); // Run the simulation for one step to spawn entities
 
-        int rabbitCount = 0;
-        for (Object entity : world.getEntities().keySet()) {
-            if (entity instanceof Rabbit) {
-                rabbitCount++;
-            }
-        }
+        int rabbitCount = countRabbits(world);
 
         assertTrue(rabbitCount >= 2 && rabbitCount <= 4, "between 2 and 4 rabbits should be spawned");
     }

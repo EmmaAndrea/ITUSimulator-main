@@ -119,11 +119,11 @@ public abstract class Animal extends Organism {
             if (checkBreed(world)) {
                 try {
                     breed(world);
-                    return;
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
             }
+            return;
         }
         // If the animal is outside its habitat.
         else {
@@ -219,7 +219,6 @@ public abstract class Animal extends Organism {
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
         cub.setInHiding();
-        cub.enterHabitat(world);
         System.out.println("made cub");
 
         steps_since_last_birth = 0;
@@ -380,7 +379,13 @@ public abstract class Animal extends Organism {
      */
     public void exitHabitat(World world) {
         habitat.removeResident(this);
-        world.setTile(getSpawnLocation(world), this);
+        Location spawn_location = getSpawnLocation(world);
+        try {
+            world.setTile(spawn_location, this);
+        } catch (Exception e) {
+            e.getMessage();
+            return;
+        }
         in_hiding = false;
         // overridden by bear
     }
