@@ -15,7 +15,7 @@ import java.awt.*;
  * Carcasses can also host fungi, affecting their state and appearance over time.
  */
 public class Carcass extends Organism implements DynamicDisplayInformationProvider {
-    protected boolean is_rotten; // Indicates whether the carcass has rotted.
+    protected boolean isRotten; // Indicates whether the carcass has rotted.
     protected boolean has_fungus; // Flag indicating the presence of fungus on the carcass.
     protected Fungus fungus; // The fungus growing on the carcass, if present.
     protected Location carcass_location; // The location of the carcass.
@@ -36,7 +36,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         this.nutritional_value = nutritional_value;
         this.type = type;
         max_age = 20;
-        is_rotten = false;
+        isRotten = false;
         this.has_fungus = has_fungus;
         size = nutritional_value;
         if (has_fungus) {
@@ -56,7 +56,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         super.act(world);
 
         if (age >= 15) {
-            is_rotten = true;
+            isRotten = true;
         }
 
         if (grace_period == 1) {
@@ -136,7 +136,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     }
 
     public boolean isRotten() {
-        return is_rotten;
+        return isRotten;
     }
 
     /**
@@ -166,13 +166,13 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     @Override
     public DisplayInformation getInformation() {
         if (has_fungus) {
-            if (is_rotten) {
+            if (isRotten) {
                 return new DisplayInformation(Color.ORANGE, "carcass-rotten-fungi");
             } else {
                 return new DisplayInformation(Color.ORANGE, "carcass-fungi");
             }
         } else {
-            if (is_rotten) {
+            if (isRotten) {
                 return new DisplayInformation(Color.ORANGE, "carcass-rotten");
             } else {
                 return new DisplayInformation(Color.ORANGE, "carcass");
