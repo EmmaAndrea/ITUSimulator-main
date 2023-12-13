@@ -173,6 +173,10 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         return list;
     }
 
+    public int amountGottenEatenBy(){
+        return eaten_by.size();
+    }
+
     /**
      * Provides the display information for the carcass. The appearance changes based on the carcass' state,
      * such as the presence of fungus and whether it is rotten, to illustrate the process of decomposition.

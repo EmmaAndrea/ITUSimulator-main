@@ -414,12 +414,26 @@ public class WolfTest {
             programRunner.runSimulation(1);
             programRunner.runSimulation(1);
             programRunner.runSimulation(1);
+
             System.out.println(bear_carcass.getEatenBy());
-            //assertTrue(bear_carcass.getEatenBy() > 1);
+            assertTrue(bear_carcass.amountGottenEatenBy() > 1);
 
         }
 
     /**
-     *
+     * Testing that wolves move away from each other
      */
+
+    @Test
+    public void TestWolfPacksMoveAwayFromEachOther() throws Exception{
+        programRunner.create("./data/wolf-test5.txt");
+
+        world = programRunner.getWorld();
+
+        world.setNight();
+
+        programRunner.runSimulation(7);
+
+        // visual check
+    }
 }

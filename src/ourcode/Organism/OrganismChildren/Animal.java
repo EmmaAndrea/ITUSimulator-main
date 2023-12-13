@@ -585,7 +585,7 @@ public abstract class Animal extends Organism {
                                 // wolves act differently than other animals when interacting with each other.
                                 if (animal.getType().equals(type)) {
                                     sameTypeInteraction(world, animal);
-                                    continue;
+                                    return true;
                                 }
 
                                 // If the organism has a higher trophic level than itself, this will move away.
