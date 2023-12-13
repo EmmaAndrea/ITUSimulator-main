@@ -6,7 +6,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
@@ -20,7 +23,8 @@ public class WolfTest {
     private int wolf_count;
     private IDGenerator id_generator;
 
-    public WolfTest() { }
+    public WolfTest() {
+    }
 
     @BeforeAll
     public static void setUp() {
@@ -37,13 +41,14 @@ public class WolfTest {
         programRunner = new ProgramRunner();
     }
 
-    public void countWolves(World world){
+    public void countWolves(World world) {
         for (Object entity : world.getEntities().keySet()) {
             if (entity instanceof Wolf) {
                 wolf_count++;
             }
         }
     }
+
     /**
      * this test will check if a wolf can be declared through the input of a file. Also checks if the
      * constructor of a Wolf functions
@@ -193,7 +198,7 @@ public class WolfTest {
 
         assertEquals(wolf1.getMyCave().getResidents().size(), 2,
                 "the amount of wolfs in the cave should be 2, but there is: "
-                         + wolf1.getMyCave().getResidents().size());
+                        + wolf1.getMyCave().getResidents().size());
 
 
     }
@@ -227,24 +232,8 @@ public class WolfTest {
 
         assertEquals(wolf1.getMyCave().getResidents().size(), 0,
                 "the amount of wolves in the cave should be 0, but is: "
-                         + wolf1.getMyCave().getResidents().size());
+                        + wolf1.getMyCave().getResidents().size());
     }
-
-    /*
-    @Test
-    public void testWolves() throws Exception {
-        programRunner.create("./data/t2-3a.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(10);
-
-        for (int i = 0; i < 10; i++) {
-            System.out.println(world.getEntities().size());
-        }
-
-    }
-
-     */
-
 
     /**
      * This test checks if wolves breed in caves
@@ -283,26 +272,113 @@ public class WolfTest {
     /**
      * Testing that wolves attack lone wolves
      */
-
+    @Test
     public void TestWolfPackAttacksLoneWolf() throws Exception {
-        programRunner.create("./data/wolf-test1.txt");
+        programRunner.create("./data/wolf-test2.txt");
 
         world = programRunner.getWorld();
 
-        programRunner.runSimulation(20);
+        Wolf lone_wolf = null;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Wolf wolf) {
+                if (wolf.getMyAlpha().getPack().size() == 1) {
+                    lone_wolf = wolf;
+                }
+            }
+        }
 
-        // check damage
+        assertEquals(0, lone_wolf.getDamageTaken());
+    }
+
+    public void TestWolfPackAttacksLoneWolf() throws Exception {
+        programRunner.create("./data/wolf-test1.txt");
+        programRunner.runSimulation(1);
+
+        assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
 
     }
 
 
+    @Test
+    public void TestWolfPackTakesLoneWolf() throws Exception {
+        programRunner.create("./data/wolf-test2.txt");
+
+        world = programRunner.getWorld();
+
+        Wolf lone_wolf = null;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Wolf wolf) {
+                if (wolf.getMyAlpha().getPack().size() == 1) {
+                    lone_wolf = wolf;
+                }
+            }
+        }
+
+        programRunner.runSimulation(1);
+
+        assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
+
+        assertEquals(3, lone_wolf.getMyAlpha().getPack().size(), "now the wolf should become a part of the other wolves' pack");
+
+        programRunner.runSimulation(1);
+
+        assertEquals(6, lone_wolf.getDamageTaken(), "the wolves shouldn't attack him anymore");
+    }
+
     /**
      * Checking wolf moves away from enemy cave
      */
+    @Test
+    public void TestWolfMovesAwayFromEnemyCave() throws Exception {
+        programRunner.create("./data/wolf-test3.txt");
 
-    /**
-     * checking wolf eats together
-     */
+        world = programRunner.getWorld();
+
+        Wolf wolf1 = new Wolf(programRunner.getOriginal_id_generator() , false);
+        Location wolf_spawn_location = new Location(0,0);
+        world.setTile(wolf_spawn_location, wolf1);
+
+        Cave cave1 = new Cave(programRunner.getOriginal_id_generator());
+        Location cave_spawn_location = new Location(3,3);
+        world.setTile(cave_spawn_location, cave1);
+
+        programRunner.runSimulation(10);
+
+        programRunner.runSimulation(4);
+        assertTrue(wolf1.distanceTo(world, cave_spawn_location) > 2, "the wolf should be far away from enemy cave");
+    }
+
+
+        /**
+         * checking wolves eat together
+         */
+        @Test
+        public void TestWolfPackSharesFoodWhenHungry () throws Exception{
+            programRunner.create("./data/wolf-test4.txt");
+
+            world = programRunner.getWorld();
+
+            programRunner.runSimulation(7);
+
+            Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
+            bear.spawn(world);
+
+            while (world.getEntities().containsKey(bear)){
+                programRunner.runSimulation(1);
+            }
+
+            Carcass bear_carcass = null;
+            for(Object object : world.getEntities().keySet()){
+                if (object instanceof Carcass carcass){
+                    if (carcass.getType().equals("bear")){
+                        bear_carcass = carcass;
+                    }
+                }
+            }
+
+            assertEquals(12,bear_carcass.getNutritionalValue());
+
+        }
 
     /**
      *
