@@ -290,12 +290,12 @@ public class WolfTest {
      */
     @Test
     public void testWolfBreedSimulation() {
-        Program p = new Program(3,500,1000);
+        Program p = new Program(4,500,1000);
         world = p.getWorld();
         IDGenerator idGenerator = new IDGenerator();
 
-        Location location0 = new Location(0,0);
-        Location location1 = new Location(1,1);
+        Location location0 = new Location(3,2);
+        Location location1 = new Location(3,3);
         Location location2 = new Location(0,1);
         Carcass carcass = new Carcass(idGenerator,20,"bear",false);
         Wolf wolfMALE = new Wolf(idGenerator, false);
@@ -304,13 +304,10 @@ public class WolfTest {
         wolfFEMALE.setGender("Female");
         wolfMALE.createPack();
         wolfMALE.addWolfToPack(wolfFEMALE);
-        System.out.println(wolfFEMALE.getGender());
-        System.out.println(wolfMALE.getGender());
 
         wolfMALE.setAge(20);
-        System.out.println(wolfMALE.getAge());
+
         wolfFEMALE.setAge(20);
-        System.out.println(wolfFEMALE.getAge());
 
         world.setTile(location0, wolfMALE);
         world.setTile(location1, wolfFEMALE);

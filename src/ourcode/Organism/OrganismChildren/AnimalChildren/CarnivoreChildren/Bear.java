@@ -71,7 +71,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 }
             }
         }
-
     }
 
     @Override
@@ -109,12 +108,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public boolean findMate(World world) {
         if (!world.contains(this)) return false;
         for (Location location: world.getSurroundingTiles(world.getLocation(this), 7)) {
-            if (world.getTile(location) instanceof Bear potential_mate){
-                if (potential_mate.getGender() == Gender.Female){
+            if (world.getTile(location) instanceof Bear potential_mate) {
+                if (potential_mate.getGender() == Gender.Female) {
                     for(int i = 1 ; i < (distanceTo(world, world.getLocation(potential_mate))) ; i++) {
                         moveCloser(world, location);
                     }
-                    if (maleSetMate(potential_mate, world)){
+                    if (maleSetMate(potential_mate, world)) {
                         potential_mate.femaleSetMate(this);
                         return true;
                     }
@@ -159,7 +158,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         } return false;
     }
 
-    public void femaleSetMate(Bear male_bear){
+    public void femaleSetMate(Bear male_bear) {
         mate = male_bear;
         friends.add(male_bear);
         System.out.println("GIRL GOT MATE");

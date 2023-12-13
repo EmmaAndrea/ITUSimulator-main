@@ -5,11 +5,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class BearTest {
     public ProgramRunner programRunner;
@@ -49,7 +51,7 @@ public class BearTest {
      * This will check if the correct location is being declared as the bear's 'territory'.
      */
     @Test
-    public void testBearTerritory() {
+    public void testBearTerritoryMethod() {
         world = new World(3);
         id_generator = new IDGenerator();
 
@@ -59,5 +61,28 @@ public class BearTest {
         bear.setTerritoryLocation(world.getLocation(bear));
 
         Assertions.assertSame(bear.getTerritory(), world.getLocation(bear));
+    }
+
+    /**
+     * This test checks if bears, being spawned through an input file, can use the 'findMate' method correctly.
+     * @throws Exception
+     */
+    @Test
+    public void testBearFindMate() throws Exception {
+        programRunner.create("./data/bear-test.txt");
+        world = programRunner.getWorld();
+
+        programRunner.getP().setDelay(1000);
+        programRunner.runSimulation(20);
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Bear) {
+                if (((Bear) o).getGender() == Gender.Male) {
+                    assertTrue(((Bear) o).findMate(world));
+                }
+            }
+        }
+
+
     }
 }
