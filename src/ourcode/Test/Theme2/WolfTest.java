@@ -1,14 +1,12 @@
 package ourcode.Test.Theme2;
 
 import itumulator.executable.Program;
-import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
@@ -286,7 +284,7 @@ public class WolfTest {
      * Testing that wolves attack lone wolves
      */
 
-    public void TestWolfPackAttacksLoneWolf(){
+    public void TestWolfPackAttacksLoneWolf() throws Exception {
         programRunner.create("./data/wolf-test1.txt");
 
         world = programRunner.getWorld();
