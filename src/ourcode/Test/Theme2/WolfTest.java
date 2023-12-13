@@ -436,4 +436,17 @@ public class WolfTest {
 
         // visual check
     }
+
+    @Test
+    public void TestWolvesMoveCloserToTheirPack() throws Exception{
+        programRunner.create("./data/wolf_test6.txt");
+
+        world = programRunner.getWorld();
+
+        world.setNight();
+
+        programRunner.runSimulation(12);
+
+        // visual check
+    }
 }
