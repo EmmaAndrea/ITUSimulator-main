@@ -36,6 +36,7 @@ public abstract class Entity {
         id = id_generator.getID();
         age = 1;
         hasBeenKilled = false;
+        type = "";
     }
 
     /**
