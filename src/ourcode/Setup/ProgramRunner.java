@@ -228,6 +228,10 @@ public class ProgramRunner {
         return world.getEntities().get(location);
     }
 
+    public Program getP() {
+        return p;
+    }
+
     /**
      * Retrieves the specific Organism entity located at the current position in the simulation world. This is
      * particularly useful for scenarios where interactions or observations of Organism entities are required.
