@@ -671,7 +671,7 @@ public abstract class Animal extends Organism {
     }
 
     public void sameTypeInteraction(World world, Animal animal) {
-        // overridden by wolf
+        attack(world, animal);
     }
 
     public void setIn_hiding() {

@@ -56,12 +56,17 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
         if (gender == Gender.Female) { // more parameters
            if (steps_since_last_birth > 48) {
-               layEgg(world);
+               breed(world);
+               return;
            }
         }
     }
 
-    public void layEgg(World world) {
+    /**
+     * Lays egg.
+     * @param world The simulation world in which breeding occurs.
+     */
+    public void breed(World world) {
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
