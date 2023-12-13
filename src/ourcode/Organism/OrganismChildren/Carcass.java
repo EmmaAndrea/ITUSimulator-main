@@ -8,6 +8,7 @@ import ourcode.Organism.Organism;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Represents a carcass in the simulation environment, providing a source of food for carnivores.
@@ -21,6 +22,8 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     protected Location carcass_location; // The location of the carcass.
     protected int size; // The size of the carcass, representing its nutritional value.
     protected boolean fungus_added;
+
+    protected ArrayList<Animal> eaten_by;
 
     /**
      * Constructs a Carcass with a unique identifier, nutritional value, type, and fungus presence.
@@ -43,6 +46,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
             fungus = new Fungus(id_generator);
             fungus_added = false;
         }
+        eaten_by = new ArrayList<>();
     }
 
     /**
@@ -155,6 +159,18 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
      */
     public void setLocation(World world) {
         carcass_location = world.getLocation(this);
+    }
+
+    public void addEatenBy(Animal animal){
+        eaten_by.add(animal);
+    }
+
+    public String getEatenBy(){
+        String list= "";
+        for (Animal animal: eaten_by){
+            list = list + animal.getId() + " " + animal.getType() + ", ";
+        }
+        return list;
     }
 
     /**

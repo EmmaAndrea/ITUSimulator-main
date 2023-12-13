@@ -103,6 +103,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (pack_hunting && my_alpha != null){
             if (killed_animal_location != null) {
                 eatWithPack(world);
+                grace_period = 0;
             } else huntWithPack(world);
         }
 
@@ -161,23 +162,27 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public void eatWithPack(World world){
         grace_period = 1;
-        while (!world.isTileEmpty(killed_animal_location)) {
+        Wolf hungriest_wolf = null;
+        hungriest_wolf = getHungriestWolf();
+
+        if (!world.isTileEmpty(killed_animal_location)) {
             if (world.getTile(killed_animal_location) instanceof Carcass carcass) {
-                if (getHungriestWolf().getHunger() < 2){
+                if (getHungriestWolf().getHunger() < 2) {
                     pack_is_done_eating = true;
+                    killed_animal_location = null;
                     return;
                 }
-                Wolf hungriest_wolf = getHungriestWolf();
-                if (world.getEntities().containsKey(hungriest_wolf)){
-                    if (hungriest_wolf.getGracePeriod() == 0) {
+                System.out.println("try eating together");
+
+                    while (!world.isTileEmpty(killed_animal_location)) {
+                        if (carcass.getNutritionalValue()<2) return;
                         hungriest_wolf.eat(world, carcass);
-                    } else return;
-                    if (carcass.getNutritionalValue() < 1){
-                        return;
+                        hungriest_wolf = getHungriestWolf();
+                        System.out.println("eating together");
                     }
-                }
+
             } else killed_animal_location = null;
-        } killed_animal_location = null;
+        }
     }
 
     /**

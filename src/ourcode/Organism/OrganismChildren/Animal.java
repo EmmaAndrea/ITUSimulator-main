@@ -184,20 +184,25 @@ public abstract class Animal extends Organism {
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                if (damage_taken >= nutrition) {
-                    damage_taken -= nutrition;
-                }
                 if (carcass.getGracePeriod() == 0) {
-                    int nutritionChange = pack_hunting ? 2 : 4;
-                    hunger -= nutritionChange;
-                    carcass.setNutrition(nutritionChange);
+                    if (carcass.isRotten) {
+                        damage_taken -= 4;
+                    }
+                    if (carcass.has_fungus) {
+                        infect();
+                    }
+                    else {
+                        int nutritionChange = pack_hunting ? 2 : 4;
+                        hunger -= nutritionChange;
+                        carcass.setNutrition(nutritionChange);
+                        carcass.addEatenBy(this);
+                        if (damage_taken >= nutritionChange) {
+                            damage_taken -= nutritionChange;
+                        }
+                    }
+
                 }
-                if (carcass.has_fungus) {
-                    infect();
-                }
-                if (carcass.isRotten) {
-                    damage_taken -= 4;
-                }
+
             }
         }
     }
