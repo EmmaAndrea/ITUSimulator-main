@@ -49,7 +49,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
         // if not sleeping
         if (!in_hiding && !isBedtime(world)) {
-
             // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
                 if (findMate(world)) return;
@@ -58,13 +57,11 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             // if very hungry, go hunt
             if (hunger >= 20) {
                 hunt(world);
-                return;
             }
 
             // stay close to territory
             else if (distanceTo(world, territory_location) > 3) {
                 moveCloser(world, territory_location);
-                return;
             }
 
             else if (!enemyHabitatNearby(world)) {

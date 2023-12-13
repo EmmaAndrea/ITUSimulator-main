@@ -120,6 +120,15 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     }
 
     /**
+     * Gets the grace period of a carcass
+     *
+     * @return the grace period of a carcass
+     */
+    public int getGracePeriod() {
+        return grace_period;
+    }
+
+    /**
      * Sets the carcass to have fungus.
      */
     public void setHasFungus() {
