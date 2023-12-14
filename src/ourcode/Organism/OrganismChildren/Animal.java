@@ -562,7 +562,8 @@ public abstract class Animal extends Organism {
         // Validate if the animal is on the map
         if (!world.contains(this) || in_hiding) {
             System.out.println("Warning: Animal not on the map");
-            return false;
+            // returns true to stop act
+            return true;
         }
 
         lock.lock();
@@ -666,8 +667,10 @@ public abstract class Animal extends Organism {
             lock.unlock();
             return false;
         } catch (IllegalArgumentException iae) {
+            System.out.println(iae + "this has been eaten");
             lock.unlock();
-            return false;
+            // returns true to stop act
+            return true;
         }
     }
 
