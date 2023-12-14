@@ -146,9 +146,15 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     @Override
     public void sameTypeInteraction(World world, Animal animal){
         if(animal instanceof Wolf wolf){
-            if (wolf.getMyAlpha() != null) {
-                if (wolf.getMyAlpha().getPack().size() == 1) {
-                    attack(world, animal);
+            if (!friends.contains(wolf)) {
+                if (wolf.getMyAlpha() != null) {
+                    if (wolf.getMyAlpha().getPack().size() < 2) {
+                        attack(world, animal);
+                    } else {
+                        moveAway(world, world.getLocation(animal));
+                        moveAway(world, world.getLocation(animal));
+                        System.out.println("moved away");
+                    }
                 }
             }
         }
