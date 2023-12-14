@@ -241,9 +241,19 @@ public abstract class Animal extends Organism {
                 // If it's not too much time since they last gave birthed.
                 if (steps_since_last_birth >= 12) {
 
-                    for (Animal animal : habitat.getResidents()) {
-                        if (animal.getGender() == Male) {
-                            return true;
+                    if (has_habitat && in_hiding) {
+                        for (Animal animal : habitat.getResidents()) {
+                            if (animal.getGender() == Male) {
+                                return true;
+                            }
+                        }
+                    } else {
+                        for (Location location : world.getSurroundingTiles()) {
+                            if (world.getTile(location) instanceof Animal animal) {
+                                if (animal.getType().equals(type)) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
