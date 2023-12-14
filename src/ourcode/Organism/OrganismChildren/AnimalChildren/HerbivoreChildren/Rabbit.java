@@ -6,6 +6,8 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Obstacles.Habitat;
+import ourcode.Organism.Gender;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
 import ourcode.Setup.IDGenerator;
 
@@ -97,6 +99,17 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         my_burrows = new ArrayList<>();
         my_burrows.add(habitat);
         has_burrow = true;
+    }
+
+    @Override
+    public boolean checkHasBreedMate(World world){
+        if (is_hiding) {
+            for (Object o : world.getEntities().keySet()) {
+                if (o instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
+                    return true;
+                }
+            }
+        } return false;
     }
 
     /**
