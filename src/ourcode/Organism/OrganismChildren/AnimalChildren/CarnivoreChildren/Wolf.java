@@ -69,7 +69,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void act(World world) {
         super.act(world);
         // if wolf has an alpha and the pack does not exist, delete pack
-        if (my_alpha != null && my_alpha.getPack() == null){
+        if (my_alpha != null && my_alpha.getPack() == null) {
             deletePack();
         }
         else if (my_alpha != null && my_alpha.getPack().size() < 2) {

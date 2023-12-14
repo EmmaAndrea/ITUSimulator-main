@@ -90,6 +90,7 @@ public abstract class Predator extends Animal {
                                         }
                                         System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
                                         attack(world, animal);
+                                        System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
                                     }
                                 }
                             }

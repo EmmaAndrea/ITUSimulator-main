@@ -485,8 +485,9 @@ public abstract class Animal extends Organism {
      *
      * @param power The amount of damage to be inflicted on the animal.
      */
-    public void damage(int power){
+    public void damage(int power) {
         damage_taken += power;
+        System.out.println(type + " was hit for " + power + " damage");
     }
 
     /**
@@ -764,6 +765,10 @@ public abstract class Animal extends Organism {
 
     public int getHunger() {
         return hunger;
+    }
+
+    public void setHunger(int i) {
+        hunger = i;
     }
 }
 
