@@ -103,9 +103,9 @@ public abstract class Animal extends Organism {
             if (distanceTo(world, habitat_location) < 1) {
                 if (grace_period == 0) {
                     grace_period = 1;
-                    return;
-                } else enterHabitat(world);
-            } else return;
+                }
+                enterHabitat(world);
+            }
 
         } else if (!isBedtime(world) && is_hiding) {
             exitHabitat(world);
