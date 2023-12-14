@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
@@ -16,7 +17,8 @@ import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  *
@@ -141,29 +143,35 @@ public class BearTest {
         Program p = new Program(2, 800, 500);
         world = p.getWorld();
         id_generator = new IDGenerator();
-        programRunner.getP().setDelay(1000);
 
         Bear bear = new Bear(id_generator, false);
         Grass grass = new Grass(id_generator);
 
         bear.spawn(world);
         grass.spawn(world);
+        boolean hasEaten = true;
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+        }
 
-        programRunner.runSimulation(50);
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Grass) {
+                hasEaten = false;
+            }
+        }
 
-        assertEquals(1, world.getEntities().size());
-
+        assertTrue(hasEaten);
     }
 
     /**
      * This test will demonstrate a bears eating 'capabilities'. It will showcase if a bear can eat 'carcass'
      */
     @Test
-    public void testBearEatingCarcass() throws Exception {
+    public void testBearEatingCarcass() {
         Program p = new Program(2, 800, 500);
         world = p.getWorld();
         id_generator = new IDGenerator();
-        programRunner.getP().setDelay(1000);
 
         Bear bear = new Bear(id_generator, false);
         Carcass carcass = new Carcass(id_generator, 4, "wolf", false);
@@ -171,9 +179,19 @@ public class BearTest {
         bear.spawn(world);
         carcass.spawn(world);
 
-        programRunner.runSimulation(50);
+        boolean hasEatenCarcass = true;
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+        }
+        // checks after the simulation if the bear has eaten the spawned carcass
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Carcass) {
+                hasEatenCarcass = false;
+            }
+        }
 
-        assertEquals(1, world.getEntities().size());
+        assertTrue(hasEatenCarcass, "The bear did 'in fact' not eat the placed carcass");
     }
 
     /**
@@ -232,5 +250,33 @@ public class BearTest {
 
         System.out.println(counter);
         assertTrue(counter <= 10);
+    }
+
+    @Test
+    public void testBearEatingWolf() {
+        Program p = new Program(2, 500, 800);
+        world = p.getWorld();
+        id_generator = new IDGenerator();
+
+        Bear bear = new Bear(id_generator, false);
+        Wolf wolf = new Wolf(id_generator, false);
+
+        bear.spawn(world);
+        wolf.spawn(world);
+        bear.setAge(11);
+
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+        }
+
+        int x = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Animal) {
+                x++;
+            }
+        }
+
+        assertTrue(x == 1, "There should only be 1 animal in the world");
     }
 }

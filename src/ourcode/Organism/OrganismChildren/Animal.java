@@ -94,10 +94,13 @@ public abstract class Animal extends Organism {
             return;
         }
 
+        grace_period = 0;
+
         if (isBedtime(world) && !in_hiding && habitat != null){
             Location habitat_location = world.getLocation(habitat);
 
-            if (distanceTo(world, habitat_location) > 0){
+            if (distanceTo(world, habitat_location) > 0) {
+                grace_period = 0;
                 moveCloser(world, habitat_location);
             }
             if (distanceTo(world, habitat_location) < 1) {

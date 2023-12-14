@@ -9,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -427,7 +426,7 @@ public class WolfTest {
      */
 
     @Test
-    public void TestWolfPacksMoveAwayFromEachOther() throws Exception{
+    public void TestWolfPacksMoveAwayFromEachOther() throws Exception {
         programRunner.create("./data/wolf-test5.txt");
 
         world = programRunner.getWorld();
@@ -440,7 +439,7 @@ public class WolfTest {
     }
 
     @Test
-    public void TestWolvesMoveCloserToTheirPack() throws Exception{
+    public void TestWolvesMoveCloserToTheirPack() throws Exception {
         programRunner.create("./data/wolf_test6.txt");
 
         world = programRunner.getWorld();

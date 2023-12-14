@@ -19,12 +19,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
     public Bear(IDGenerator idGenerator, boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
-        trophic_level = 4;
+        trophic_level = 3;
         territory_location = null;
         type = "bear";
         max_age = 190;
         max_hunger = 30;
-        power = 6;
+        power = 4;
         max_damage = 16;
         consumable_foods.add("bush");
         consumable_foods.add("dinosaur");
@@ -46,6 +46,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public void act(World world) {
 
         super.act(world);
+
+        // bears are more dangerous and stronger as an adult
+        if (age >= 11) {
+            trophic_level = 4;
+            power = 6;
+        }
 
         // if not sleeping
         if (!in_hiding && !isBedtime(world)) {
