@@ -10,6 +10,7 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
@@ -26,9 +27,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         max_hunger = 30;
         power = 6;
         max_damage = 16;
-        consumable_foods.add("bush");
-        consumable_foods.add("dinosaur");
-        consumable_foods.add("grass");
+        consumable_foods.addAll(Arrays.asList("bush", "dinosaur", "grass"));
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 12;
