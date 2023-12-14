@@ -239,6 +239,6 @@ public class DinosaurTest {
             }
         }
 
-        assertEquals(0, counter);
+        assertEquals(0, counter, "Dinosaur should have been eaten by bear.");
     }
 }

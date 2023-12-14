@@ -112,7 +112,6 @@ public class RabbitTest {
     }
 
     @Test
-    @org.testng.annotations.Test
     public void testDeleteAfterEat() {
         // Create a 1x1 world
         Program p = new Program(1, 800, 2000);

@@ -56,6 +56,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             }
         }
 
+        if (hunger > 30) {
+            hunt(world);
+        }
+
         if (checkBreedStats(world)) {
            breed(world);
         }
