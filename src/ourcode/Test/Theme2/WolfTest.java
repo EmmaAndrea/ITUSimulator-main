@@ -498,13 +498,9 @@ public class WolfTest {
             p.simulate();
         }
 
-        // checks if a rabbit has taken damage leading to the fact that wolves has been hunting
-        for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Rabbit) {
-                if (((Rabbit) o).getDamageTaken() > 0) {
-                    hasHunted = true;
-                }
-            }
+        // checks if the rabbit took damage in the simulation resolving to wolves hunting
+        if (rabbit.getDamageTaken() > 0) {
+            hasHunted = true;
         }
         System.out.println("Rabbit has been hit for " + rabbit.getDamageTaken() + " damage");
 
