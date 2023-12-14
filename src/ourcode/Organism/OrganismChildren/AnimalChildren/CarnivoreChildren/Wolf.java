@@ -80,6 +80,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (is_hiding) return;
         if (isBedtime(world)) return;
 
+        // Sets grace_period to zero for lonely wolves
+        if (pack == null || pack.size() == 1) {
+            grace_period = 0;
+        }
+
 
         if (pack_is_done_eating && pack_hunting){
             if (my_alpha != null) {

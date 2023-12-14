@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
@@ -290,5 +291,24 @@ public class BearTest {
         }
 
         assertTrue(x == 1, "There should only be 1 animal in the world");
+    }
+
+    @Test
+    public void testBearEatingDinosaur() {
+        Program p = new Program(2, 500, 800);
+        world = p.getWorld();
+        id_generator = new IDGenerator();
+
+        Bear bear = new Bear(id_generator, false);
+        Dinosaur dino = new Dinosaur(id_generator, false);
+
+        bear.spawn(world);
+        dino.spawn(world);
+        bear.setAge(11);
+
+        p.show();
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+        }
     }
 }

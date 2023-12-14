@@ -44,6 +44,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             power = 7;
         }
 
+        if (!is_hiding) {
+            grace_period = 0;
+        }
+
         // Stop at once if something happened that killed the dinosaur.
         if (!world.contains(this)) {
             return;
