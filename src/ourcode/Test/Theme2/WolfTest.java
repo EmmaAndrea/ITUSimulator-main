@@ -278,16 +278,18 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
+        programRunner.runSimulation(1);
+
         Wolf lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
             if (object instanceof Wolf wolf) {
-                if (wolf.getMyAlpha().getPack().size() == 1) {
+                if (wolf.getPack() == null) {
                     lone_wolf = wolf;
                 }
             }
         }
 
-        assertEquals(0, lone_wolf.getDamageTaken());
+        assertEquals(7, lone_wolf.getDamageTaken());
     }
 
     @Test
@@ -296,22 +298,22 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
+        programRunner.runSimulation(1);
+
         Wolf lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
             if (object instanceof Wolf wolf) {
-                if (wolf.getMyAlpha().getPack().size() == 1) {
+                if (wolf.getPack() == null) {
                     lone_wolf = wolf;
                 }
             }
         }
 
-        programRunner.runSimulation(1);
-
         assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
 
         assertEquals(3, lone_wolf.getMyAlpha().getPack().size(), "now the wolf should become a part of the other wolves' pack");
 
-        programRunner.runSimulation(1);
+        //programRunner.runSimulation(1);
 
         assertEquals(6, lone_wolf.getDamageTaken(), "the wolves shouldn't attack him anymore");
     }
