@@ -86,7 +86,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         //}
 
 
-        if (pack_is_done_eating && pack_hunting){
+        if (pack_is_done_eating && pack_hunting) {
             if (my_alpha != null) {
                 for (Wolf wolf : my_alpha.getPack()) {
                     wolf.setPackHuntingFalse();

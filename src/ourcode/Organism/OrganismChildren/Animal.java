@@ -84,7 +84,7 @@ public abstract class Animal extends Organism {
         if (!is_hiding) grace_period = 0;
 
         steps_since_last_birth++;
-        if (damage_taken > 0) damage_taken -= 1;
+        //if (damage_taken > 0) damage_taken -= 1;
 
         if (!is_hiding) {
             hunger++;
@@ -93,6 +93,7 @@ public abstract class Animal extends Organism {
         if (hasBeenKilled || age >= max_age || hunger >= max_hunger) {
             grace_period = 1;
             dieAndBecomeCarcass(world);
+            System.out.println("this '" + getType() + "' died of natural causes");
             return;
         }
 

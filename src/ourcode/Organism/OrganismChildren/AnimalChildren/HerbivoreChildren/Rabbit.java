@@ -60,7 +60,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
         boolean isCloseToBurrow = false;
         // if it is not in its burrow
-        if (has_burrow){
+        if (has_burrow) {
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
                 isCloseToBurrow = true;
             }
