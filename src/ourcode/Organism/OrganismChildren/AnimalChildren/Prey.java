@@ -26,15 +26,4 @@ public abstract class Prey extends Animal {
     public void act(World world) {
         super.act(world);
     }
-
-    /**
-     * Spawns this prey into the world. This method leverages the spawn behavior
-     * defined in the Animal superclass, applying any additional rules or logic
-     * specific to prey.
-     *
-     * @param world The world in which the prey is spawned.
-     */
-    public void spawn(World world) {
-        super.spawn(world);
-    }
 }

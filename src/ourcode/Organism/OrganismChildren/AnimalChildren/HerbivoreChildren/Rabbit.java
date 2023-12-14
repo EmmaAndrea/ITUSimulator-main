@@ -6,7 +6,6 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Obstacles.Habitat;
-import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
 import ourcode.Setup.IDGenerator;
 
@@ -73,13 +72,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
             }
         }
         nextMove(world);
-    }
-
-    /**
-     * Spawns a rabbit.
-     */
-    public void spawn(World world) {
-        super.spawn(world);
     }
 
     /**
