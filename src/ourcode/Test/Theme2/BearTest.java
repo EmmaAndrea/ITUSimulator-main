@@ -306,9 +306,17 @@ public class BearTest {
         dino.spawn(world);
         bear.setAge(11);
 
+        boolean hasEaten = true;
         p.show();
         for (int i = 0; i < 20; i++) {
             p.simulate();
         }
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Dinosaur) {
+                hasEaten = false;
+            }
+        }
+        assertTrue(hasEaten);
     }
 }

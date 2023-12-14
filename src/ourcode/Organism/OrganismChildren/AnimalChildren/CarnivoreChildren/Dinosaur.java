@@ -21,7 +21,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      */
     public Dinosaur(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        trophic_level = 3;
+        trophic_level = 2;
         type = "dinosaur";
         max_age = 250;
         max_hunger = 50;
@@ -42,10 +42,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         if (age >= 20) {
             trophic_level = 6;
             power = 7;
-        }
-
-        if (!is_hiding) {
-            grace_period = 0;
         }
 
         // Stop at once if something happened that killed the dinosaur.

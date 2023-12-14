@@ -36,7 +36,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         nutritional_value = 12;
     }
 
-
     /**
      * Bears are extremely territorial, and therefore rarely wander outside their territory.
      * If the bear is very hungry, it will go further away from its territory than normal to hunt.
