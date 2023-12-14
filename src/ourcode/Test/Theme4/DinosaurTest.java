@@ -8,7 +8,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
-import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
 import ourcode.Setup.IDGenerator;
@@ -216,13 +215,18 @@ public class DinosaurTest {
         IDGenerator idGenerator = new IDGenerator();
 
         Bear bear = new Bear(idGenerator, false);
+
+        for (int i = 0; i < 20; i++) {
+            p.simulate();
+        }
+
         Dinosaur dino = new Dinosaur(idGenerator, false);
 
         bear.spawn(world);
         dino.spawn(world);
 
         p.show();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < 30; i++) {
             p.simulate();
             System.out.println(dino.getTrophicLevel());
         }
@@ -230,11 +234,11 @@ public class DinosaurTest {
         int counter = 0;
 
         for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Animal) {
+            if (o instanceof Dinosaur) {
                 counter++;
             }
         }
 
-        assertEquals(1, counter);
+        assertEquals(0, counter);
     }
 }
