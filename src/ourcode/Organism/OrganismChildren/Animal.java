@@ -259,7 +259,7 @@ public abstract class Animal extends Organism {
                         }
                     } else if (in_hiding) {
                         for (Object o : world.getEntities().keySet()) {
-                            if (o instanceof Animal animal && animal.getType().equals(type)) {
+                            if (o instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
                                 return true;
                             }
                         }
