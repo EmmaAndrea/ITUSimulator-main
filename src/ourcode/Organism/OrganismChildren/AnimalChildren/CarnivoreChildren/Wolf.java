@@ -5,17 +5,16 @@ import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
+import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
-import ourcode.Obstacles.Habitat;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.ConcurrentModificationException;
-import java.util.List;
 
 /**
  * Represents a Wolf entity in the simulated world, extending the Carnivore class.
@@ -48,7 +47,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         max_age = 130;
         max_hunger = 28;
         has_pack = false;
-        consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf", "carcass"));
         alpha = false;
         has_cave = false;
         power = 4;

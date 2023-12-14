@@ -6,6 +6,8 @@ import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -25,6 +27,7 @@ public abstract class Predator extends Animal {
      */
     public Predator(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
+        consumable_foods = new ArrayList<>(List.of("rabbit", "bear", "wolf", "carcass"));
     }
 
     /**

@@ -10,8 +10,6 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
@@ -29,7 +27,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         max_hunger = 50;
         power = 4;
         max_damage = 30;
-        consumable_foods = new ArrayList<>(List.of("wolf", "bear", "rabbit", "carcass", "dinosaur"));
+        consumable_foods.add("dinosaur");
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 20;
