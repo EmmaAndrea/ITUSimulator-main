@@ -99,10 +99,10 @@ public abstract class Entity {
      * Else, returns how many steps until it is night.
      */
     public int timeToNight(World world){
-        if (world.getCurrentTime() % 20 >= 10){
+        if (world.getCurrentTime() >= 10){
             return 0;
         } else {
-            return 10 - world.getCurrentTime() % 20;
+            return 10 - world.getCurrentTime();
         }
     }
 }

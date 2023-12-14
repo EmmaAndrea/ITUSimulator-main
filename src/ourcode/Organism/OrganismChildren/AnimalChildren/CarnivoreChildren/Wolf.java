@@ -81,9 +81,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (isBedtime(world)) return;
 
         // Sets grace_period to zero for lonely wolves
-        if (pack == null || pack.size() == 1) {
-            grace_period = 0;
-        }
+        //if (pack == null || pack.size() == 1) {
+          //  grace_period = 0;
+        //}
 
 
         if (pack_is_done_eating && pack_hunting){
@@ -548,6 +548,13 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * Deletes the pack associated with this wolf, resetting pack-related properties.
      */
     public void deletePack(){
+        if (pack != null) {
+            for (Wolf wolf : pack) {
+                if (wolf != this) {
+                    removeWolfFromPack(wolf);
+                }
+            }
+        }
         pack = null;
         has_pack = false;
         alpha = false;
