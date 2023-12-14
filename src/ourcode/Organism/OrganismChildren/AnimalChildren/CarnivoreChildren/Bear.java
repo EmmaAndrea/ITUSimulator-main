@@ -36,15 +36,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
 
     /**
-     * Bears are extremely territorial, and therefore never wander outside their territory.
-     * The omnivore act method ensures the bear has a territory and never goes too far away.
-     * However, when the bear is old enough, it will leave its own territory in order to find a mate.
+     * Bears are extremely territorial, and therefore rarely wander outside their territory.
      * If the bear is very hungry, it will go further away from its territory than normal to hunt.
      * The bear will always sleep in its territory.
      * @param world The simulation world in which the omnivore exists.
      */
     public void act(World world) {
-
         super.act(world);
 
         // if not sleeping

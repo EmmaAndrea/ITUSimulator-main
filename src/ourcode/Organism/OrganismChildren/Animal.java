@@ -250,11 +250,17 @@ public abstract class Animal extends Organism {
             if (age >= max_age * 0.15 && age <= max_age * 0.85) {
 
                 // If it's not too much time since they last gave birthed.
-                if (steps_since_last_birth >= 12) {
+                if (steps_since_last_birth >= 10) {
 
-                    if (has_habitat && in_hiding) {
+                    if (has_habitat && habitat.getResidents().size() > 1) {
                         for (Animal animal : habitat.getResidents()) {
                             if (animal.getGender() == Male) {
+                                return true;
+                            }
+                        }
+                    } else if (in_hiding) {
+                        for (Object o : world.getEntities().keySet()) {
+                            if (o instanceof Animal animal && animal.getType().equals(type)) {
                                 return true;
                             }
                         }
@@ -742,6 +748,10 @@ public abstract class Animal extends Organism {
             }
         }
         return false;
+    }
+
+    public int getHunger() {
+        return hunger;
     }
 }
 

@@ -13,9 +13,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
-import static ourcode.Organism.Gender.Female;
-import static ourcode.Organism.Gender.Male;
-
 /**
  * Represents a Rabbit entity in the simulated world.
  * Rabbits are a type of Herbivore, characterized by their interactions with burrows.
@@ -24,10 +21,9 @@ import static ourcode.Organism.Gender.Male;
 public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
     ArrayList <Habitat> my_burrows;
-
     Rabbit mate;
-
     boolean has_burrow; // Indicates whether the rabbit has a burrow.
+
     /**
      * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
      * sets up its relationship with burrows.
@@ -57,10 +53,10 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         super.act(world);
 
         if (in_hiding) return;
+
         if (isBedtime(world)) return;
 
         boolean isCloseToBurrow = false;
-
         // if it is not in its burrow
         if (has_burrow){
             if (distanceTo(world, world.getLocation(habitat)) < 1) {
@@ -73,52 +69,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         }
         nextMove(world);
     }
-
-    /**
-     * Links the animal to an existing burrow. This method updates the animal's burrow list and sets
-     * its 'has_burrow' flag to true.
-     */
-    private boolean linkBurrow(World world) {
-        Location location = world.getLocation(this);
-        if (world.containsNonBlocking(location)){
-            if(world.getNonBlocking(location) instanceof Burrow burrow){
-                my_burrows = new ArrayList<>();
-                my_burrows.add(burrow);
-                has_burrow = true;
-                return true;
-            }
-        } return false;
-    }
-
-    @Override
-    public boolean checkBreed(World world) {
-        // Only females can give birth.
-        if (gender == Female) {
-
-            // If animal is in breeding age.
-            if (age >= max_age * 0.15 && age <= max_age * 0.85) {
-
-                // If it's not too much time since they last gave birthed.
-                if (steps_since_last_birth >= 12) {
-
-                    while (mate == null) {
-                        for (Object object : world.getEntities().keySet()) {
-                            if (object instanceof Rabbit rabbit) {
-                                if (rabbit.getGender() == Male) {
-                                    mate = rabbit;
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        // If any of these are false, return false.
-        return false;
-    }
-
-
 
     /**
      * Creates a new burrow at the specified location and updates the animal's state accordingly.
@@ -147,16 +97,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         my_burrows = new ArrayList<>();
         my_burrows.add(habitat);
         has_burrow = true;
-    }
-
-    /**
-     * Retrieves the current hunger level of the rabbit. This can be used to determine the rabbit's need for food
-     * and possibly influence its behavior in the simulation, such as seeking food sources.
-     *
-     * @return The current hunger level of the rabbit.
-     */
-    public int getHunger() {
-        return hunger;
     }
 
     /**

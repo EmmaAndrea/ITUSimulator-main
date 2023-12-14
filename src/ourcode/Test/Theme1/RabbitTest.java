@@ -2,7 +2,7 @@ package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
 import itumulator.world.World;
-//import org.junit.Test;
+import org.junit.Test;
 import org.junit.jupiter.api.*;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -66,7 +66,7 @@ public class RabbitTest {
      * File spawns 4 rabbits and no grass
      * Spawns one rabbit to track
      */
-    @org.testng.annotations.Test
+    @Test
     public void testRabbitDeath() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
@@ -132,17 +132,12 @@ public class RabbitTest {
     }
 
     @Test
-    @org.testng.annotations.Test
-    public void testRabbitBreeding() throws Exception{
+    public void testRabbitBreeding() throws Exception {
         // Create a world
         programRunner.create("./data/t1-2b.txt");
         world = programRunner.getWorld();
 
-        for(int i =0 ; i<3 ; i++){
-            Rabbit rabbit = new Rabbit(programRunner.getOriginal_id_generator(), false);
-            rabbit.spawn(world);
-        }
-        for(int i =0 ; i<25 ; i++){
+        for (int i = 0; i < 6; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
@@ -151,7 +146,7 @@ public class RabbitTest {
         int initialRabbitCount = countRabbits(world);
 
         // Run the simulation for a number of steps to allow breeding
-        programRunner.runSimulation(30);
+        programRunner.runSimulation(20);
 
         // Get the count of rabbits after running the simulation
         int postSimulationRabbitCount = countRabbits(world);
@@ -171,7 +166,6 @@ public class RabbitTest {
     }
 
     @Test
-    @org.testng.annotations.Test
     public void testRabbitsDontBreedThemselves() throws Exception{
         // Create a world
         programRunner.create("./data/t1-2a.txt");
@@ -187,7 +181,7 @@ public class RabbitTest {
         int postSimulationRabbitCount = countRabbits(world);
 
         // Assert that the number of rabbits has increased
-        assertTrue(postSimulationRabbitCount == initialRabbitCount, "Rabbits should not breed themselves.");
+        assertEquals(postSimulationRabbitCount, initialRabbitCount, "Rabbits should not breed themselves.");
     }
 
 
