@@ -5,6 +5,7 @@ import itumulator.world.World;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -183,20 +184,25 @@ public abstract class Animal extends Organism {
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                if (damage_taken >= nutrition) {
-                    damage_taken -= nutrition;
-                }
                 if (carcass.getGracePeriod() == 0) {
-                    int nutritionChange = pack_hunting ? 2 : 4;
-                    hunger -= nutritionChange;
-                    carcass.setNutrition(nutritionChange);
+                    if (carcass.isRotten) {
+                        damage_taken -= 4;
+                    }
+                    if (carcass.has_fungus) {
+                        infect();
+                    }
+                    else {
+                        int nutritionChange = pack_hunting ? 2 : 4;
+                        hunger -= nutritionChange;
+                        carcass.setNutrition(nutritionChange);
+                        carcass.addEatenBy(this);
+                        if (damage_taken >= nutritionChange) {
+                            damage_taken -= nutritionChange;
+                        }
+                    }
+
                 }
-                if (carcass.has_fungus) {
-                    infect();
-                }
-                if (carcass.isRotten) {
-                    damage_taken -= 4;
-                }
+
             }
         }
     }
@@ -220,6 +226,12 @@ public abstract class Animal extends Organism {
         cub.setHabitat(habitat);
         cub.setInHiding();
         System.out.println("made cub");
+
+        if (cub instanceof Wolf wolf_cub) {
+            if (this instanceof Wolf this_wolf){
+                this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
+            }
+        }
 
         steps_since_last_birth = 0;
     }
@@ -572,7 +584,7 @@ public abstract class Animal extends Organism {
                                 // wolves act differently than other animals when interacting with each other.
                                 if (animal.getType().equals(type)) {
                                     sameTypeInteraction(world, animal);
-                                    continue;
+                                    return true;
                                 }
 
                                 // If the organism has a higher trophic level than itself, this will move away.

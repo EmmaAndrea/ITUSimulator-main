@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -278,19 +279,23 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        programRunner.runSimulation(1);
-
         Wolf lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
             if (object instanceof Wolf wolf) {
-                if (wolf.getPack() == null) {
+                if (wolf.getMyAlpha().getPack().size() == 1) {
                     lone_wolf = wolf;
                 }
             }
         }
 
-        assertEquals(7, lone_wolf.getDamageTaken());
+        assertEquals(0, lone_wolf.getDamageTaken());
+
+        programRunner.runSimulation(1);
+
+        assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
+
     }
+
 
     @Test
     public void TestWolfPackTakesLoneWolf() throws Exception {
@@ -298,22 +303,22 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        programRunner.runSimulation(1);
-
         Wolf lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
             if (object instanceof Wolf wolf) {
-                if (wolf.getPack() == null) {
+                if (wolf.getMyAlpha().getPack().size() == 1) {
                     lone_wolf = wolf;
                 }
             }
         }
 
+        programRunner.runSimulation(1);
+
         assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
 
         assertEquals(3, lone_wolf.getMyAlpha().getPack().size(), "now the wolf should become a part of the other wolves' pack");
 
-        //programRunner.runSimulation(1);
+        programRunner.runSimulation(1);
 
         assertEquals(6, lone_wolf.getDamageTaken(), "the wolves shouldn't attack him anymore");
     }
@@ -346,7 +351,7 @@ public class WolfTest {
          * checking wolves eat together
          */
         @Test
-        public void TestWolfPackDontEatCarcassImmediately () throws Exception{
+        public void TestWolfPackSharesFoodWhenHungry () throws Exception {
             programRunner.create("./data/wolf-test4.txt");
 
             world = programRunner.getWorld();
@@ -356,92 +361,64 @@ public class WolfTest {
             Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
             bear.spawn(world);
 
-            while (world.getEntities().containsKey(bear)){
+            while (world.getEntities().containsKey(bear)) {
                 programRunner.runSimulation(1);
             }
 
             Carcass bear_carcass = null;
-            for(Object object : world.getEntities().keySet()){
-                if (object instanceof Carcass carcass){
-                    if (carcass.getType().equals("bear")){
+            for (Object object : world.getEntities().keySet()) {
+                if (object instanceof Carcass carcass) {
+                    if (carcass.getType().equals("bear")) {
                         bear_carcass = carcass;
                     }
                 }
             }
 
-            assertEquals(12,bear_carcass.getNutritionalValue());
+            assertEquals(12, bear_carcass.getNutritionalValue());
 
-        }
-
-    @Test
-    public void TestWolfPackSharesFoodWhenHungry () throws Exception {
-        programRunner.create("./data/wolf-test4.txt");
-
-        world = programRunner.getWorld();
-
-        programRunner.runSimulation(7);
-
-        Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
-        bear.spawn(world);
-
-        while (world.getEntities().containsKey(bear)) {
-            programRunner.runSimulation(1);
-        }
-
-        Carcass bear_carcass = null;
-        for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Carcass carcass) {
-                if (carcass.getType().equals("bear")) {
-                    bear_carcass = carcass;
+            Wolf wolf1 = null;
+            for (Object object : world.getEntities().keySet()) {
+                if (object instanceof Wolf wolf) {
+                    wolf1 = wolf;
+                    break;
                 }
             }
-        }
 
-        assertEquals(12, bear_carcass.getNutritionalValue());
+            Wolf hungriest_wolf_before = wolf1.getHungriestWolf();
 
-        Wolf wolf1 = null;
-        for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Wolf wolf) {
-                wolf1 = wolf;
-                break;
+            /**
+            int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
+
+            if (hungriest_wolf == wolf1) {
+                for (Object object : world.getEntities().keySet()) {
+                    if (object instanceof Wolf wolf) {
+                        if (wolf1 != wolf) {
+                            wolf1 = wolf;
+                            break;
+                        }
+                    }
+                }
             }
+            int wolf1_hunger_before = wolf1.getHunger();
+             */
+
+
+            programRunner.runSimulation(1);
+
+            // int hungries_wolf_hunger_after = hungriest_wolf.getHunger();
+
+            // int wolf1_hunger_after = wolf1.getHunger();
+
+            Wolf hungriest_wolf_after = wolf1.getHungriestWolf();
+
+            programRunner.runSimulation(1);
+            programRunner.runSimulation(1);
+            programRunner.runSimulation(1);
+
+            System.out.println(bear_carcass.getEatenBy());
+            assertTrue(bear_carcass.amountGottenEatenBy() > 1);
+
         }
-
-        Wolf hungriest_wolf_before = wolf1.getHungriestWolf();
-
-        /**
-         int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
-
-         if (hungriest_wolf == wolf1) {
-         for (Object object : world.getEntities().keySet()) {
-         if (object instanceof Wolf wolf) {
-         if (wolf1 != wolf) {
-         wolf1 = wolf;
-         break;
-         }
-         }
-         }
-         }
-         int wolf1_hunger_before = wolf1.getHunger();
-         */
-
-
-        programRunner.runSimulation(1);
-
-        // int hungries_wolf_hunger_after = hungriest_wolf.getHunger();
-
-        // int wolf1_hunger_after = wolf1.getHunger();
-
-        Wolf hungriest_wolf_after = wolf1.getHungriestWolf();
-
-        programRunner.runSimulation(1);
-        programRunner.runSimulation(1);
-        programRunner.runSimulation(1);
-
-        System.out.println(bear_carcass.getEatenBy());
-        assertTrue(bear_carcass.amountGottenEatenBy() > 1);
-
-    }
 
     /**
      * Testing that wolves move away from each other
