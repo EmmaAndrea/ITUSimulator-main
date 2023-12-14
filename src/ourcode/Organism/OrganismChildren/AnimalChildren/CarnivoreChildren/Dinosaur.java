@@ -65,6 +65,8 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         if (checkBreedStats(world)) {
            breed(world);
         }
+
+        else nextMove(world);
     }
 
     /**
@@ -79,6 +81,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             my_location = world.getLocation(this);
         } catch (Exception e) {
             System.out.println("dinosaur died");
+            return false;
         }
         for (Location location: world.getSurroundingTiles(my_location, 2)) {
             if (!world.isTileEmpty(location)) {

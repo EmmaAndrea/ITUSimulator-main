@@ -80,6 +80,7 @@ public abstract class Predator extends Animal {
                 if (object instanceof Animal animal) {
                     synchronized (animal) {
                         if (animal.getGracePeriod() == 0) {
+                            animal.setGracePeriod(1);
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() <= trophic_level) {
                                     if (consumable_foods.contains(animal.getType())) {

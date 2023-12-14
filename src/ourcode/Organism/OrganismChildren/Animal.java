@@ -81,6 +81,8 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (!is_hiding) grace_period = 0;
+
         steps_since_last_birth++;
         if (damage_taken > 0) damage_taken -= 1;
 
@@ -88,7 +90,7 @@ public abstract class Animal extends Organism {
             hunger++;
         }
 
-        if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
+        if (hasBeenKilled || age >= max_age || hunger >= max_hunger) {
             grace_period = 1;
             dieAndBecomeCarcass(world);
             return;
@@ -100,7 +102,7 @@ public abstract class Animal extends Organism {
             if (distanceTo(world, habitat_location) > 0) {
                 moveCloser(world, habitat_location);
             }
-            if (distanceTo(world, habitat_location) < 1) {
+            if (distanceTo(world, habitat_location) < 2) {
                 if (grace_period == 0) {
                     grace_period = 1;
                 }
@@ -197,9 +199,7 @@ public abstract class Animal extends Organism {
                             damage_taken -= nutritionChange;
                         }
                     }
-
                 }
-
             }
         }
     }
@@ -228,7 +228,7 @@ public abstract class Animal extends Organism {
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
         cub.setInHiding();
-        System.out.println("made cub");
+        System.out.println(type + " made cub");
 
         if (cub instanceof Wolf wolf_cub) {
             if (this instanceof Wolf this_wolf){
