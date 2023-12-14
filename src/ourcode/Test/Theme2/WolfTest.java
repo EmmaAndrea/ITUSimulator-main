@@ -312,6 +312,8 @@ public class WolfTest {
             }
         }
 
+        assertEquals(0, lone_wolf.getDamageTaken());
+
         programRunner.runSimulation(1);
 
         assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
@@ -320,7 +322,7 @@ public class WolfTest {
 
         programRunner.runSimulation(1);
 
-        assertEquals(6, lone_wolf.getDamageTaken(), "the wolves shouldn't attack him anymore");
+        assertEquals(6, lone_wolf.getDamageTaken(), "the pack shouldn't attack the lone_wolf anymore");
     }
 
     /**
