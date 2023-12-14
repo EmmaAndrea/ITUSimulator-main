@@ -28,17 +28,6 @@ public abstract class Predator extends Animal {
     }
 
     /**
-     * Spawns this predator in the world. This method leverages the spawn behavior
-     * defined in the Animal superclass, applying any additional rules or logic
-     * specific to predators.
-     *
-     * @param world The world in which the predator is spawned.
-     */
-    public void spawn(World world) {
-        super.spawn(world);
-    }
-
-    /**
      * Defines the behavior of a carnivore in each simulation step. This method
      * should be implemented to specify the actions of the carnivore in the world.
      *

@@ -103,8 +103,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (pack_hunting && my_alpha != null){
             if (killed_animal_location != null) {
                 eatWithPack(world);
-                return;
-            } else huntWithPack(world); return;
+            } else huntWithPack(world);
         }
 
         // sequence for alphas
@@ -115,7 +114,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 }
             } else if (!enemyHabitatNearby(world)){
                 nextMove(world);
-                return;
             }
         }
 
@@ -124,21 +122,17 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             if (hunger > 15) {
                 for (Wolf wolf : my_alpha.getPack()) {
                     wolf.setPackHuntingTrue();
-                    return;
                 }
             } else if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                 moveCloser(world, world.getLocation(my_alpha));
-                return;
 
             } else if (!enemyHabitatNearby(world)) {
                 nextMove(world);
-                return;
             }
 
             // sequence for lone wolves
         } else if (hunger > 15) {
             hunt(world);
-            return;
         } else if (!enemyHabitatNearby(world)) {
             nextMove(world);
         }
