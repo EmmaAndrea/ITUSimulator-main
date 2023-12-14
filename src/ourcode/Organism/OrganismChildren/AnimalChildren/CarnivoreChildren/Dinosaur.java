@@ -42,8 +42,8 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         super.act(world);
 
         if (age >= 20) {
-            setTrophicLevel(6);
-            setPower(7);
+            trophic_level = 6;
+            power = 7;
         }
 
         // Stop at once if something happened that killed the dinosaur.
