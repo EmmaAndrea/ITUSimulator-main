@@ -310,6 +310,7 @@ public class BearTest {
         p.show();
         for (int i = 0; i < 20; i++) {
             p.simulate();
+            System.out.println(dino.getDamageTaken());
         }
 
         for (Object o : world.getEntities().keySet()) {

@@ -112,6 +112,12 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         } return false;
     }
 
+    public void setBurrow(Burrow burrow) {
+
+        my_burrows.add(burrow);
+        has_burrow = true;
+    }
+
     /**
      * Provides the visual representation of the rabbit in the simulation. Changes appearance based on the rabbit's age.
      *

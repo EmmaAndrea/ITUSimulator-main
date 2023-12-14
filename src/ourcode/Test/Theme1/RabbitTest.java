@@ -1,6 +1,7 @@
 package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
+import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.Test;
 import org.junit.jupiter.api.AfterAll;
@@ -8,7 +9,9 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import ourcode.Obstacles.Burrow;
+import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -260,6 +263,33 @@ public class RabbitTest {
         world = programRunner.getWorld();
         programRunner.runSimulation(50);
 
+
+    }
+
+    @Test
+    public void rabbitInfinity() {
+        Program p = new Program(3, 500, 800);
+        world = p.getWorld();
+        IDGenerator idGenerator = new IDGenerator();
+
+        Location location = new Location(0,0);
+        Location location1 = new Location(0,1);
+        Location location2 = new Location(1,0);
+        Location location3 = new Location(0,1);
+        Rabbit rabbit = new Rabbit(idGenerator, false);
+        Carcass carcass = new Carcass(idGenerator, 4, "bear", false);
+        DinosaurEgg egg = new DinosaurEgg(idGenerator, false);
+        Burrow burrow = new Burrow(idGenerator);
+
+        world.setTile(location, rabbit);
+        world.setTile(location1, carcass);
+        world.setTile(location2, egg);
+        world.setTile(location3, burrow);
+
+        p.show();
+        for (int i = 0; i < 40; i++) {
+            p.simulate();
+        }
 
     }
 
