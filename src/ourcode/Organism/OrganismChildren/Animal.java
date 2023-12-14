@@ -409,7 +409,7 @@ public abstract class Animal extends Organism {
         try {
             world.setTile(spawn_location, this);
         } catch (Exception e) {
-            e.getMessage();
+            System.out.println(e.getMessage());
             return;
         }
         is_hiding = false;
