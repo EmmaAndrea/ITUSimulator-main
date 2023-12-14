@@ -29,7 +29,7 @@ public abstract class Animal extends Organism {
     protected int hunger; // Current hunger level of the animal.
     protected int max_hunger; // Maximum hunger level an animal can sustain before dying.
     protected int steps_since_last_birth; // Number of simulation steps since the animal last gave birth.
-    protected boolean in_hiding; // Flag indicating if the animal is currently in hiding.
+    protected boolean is_hiding; // Flag indicating if the animal is currently in hiding.
     protected Gender gender; // Gender of the animal, affecting its breeding behaviors.
     protected ArrayList<String> consumable_foods; // List of food types that the animal can consume.
     protected int damage_taken; // Amount of damage the animal has taken.
@@ -57,7 +57,7 @@ public abstract class Animal extends Organism {
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
-        in_hiding = false;
+        is_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         damage_taken = 0;
         grace_period = 0;
@@ -84,7 +84,7 @@ public abstract class Animal extends Organism {
         steps_since_last_birth++;
         if (damage_taken > 0) damage_taken -= 1;
 
-        if (!in_hiding) {
+        if (!is_hiding) {
             hunger++;
         }
 
@@ -94,7 +94,7 @@ public abstract class Animal extends Organism {
             return;
         }
 
-        if (isBedtime(world) && !in_hiding && habitat != null){
+        if (isBedtime(world) && !is_hiding && habitat != null){
             Location habitat_location = world.getLocation(habitat);
 
             if (distanceTo(world, habitat_location) > 0){
@@ -107,7 +107,7 @@ public abstract class Animal extends Organism {
                 } else enterHabitat(world);
             } else return;
 
-        } else if (!isBedtime(world) && in_hiding) {
+        } else if (!isBedtime(world) && is_hiding) {
             exitHabitat(world);
             return;
         }
@@ -115,7 +115,7 @@ public abstract class Animal extends Organism {
         lock.lock();
 
         // If the animal is currently inside its habitat.
-        if (in_hiding) {
+        if (is_hiding) {
             if (checkBreed(world)) {
                 try {
                     breed(world);
@@ -130,7 +130,7 @@ public abstract class Animal extends Organism {
             // Make habitat if it doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
-            } if (!in_hiding) {
+            } if (!is_hiding) {
                 if (!findFoodOrSafety(world)) {
                     nextMove(world);
                 }
@@ -257,9 +257,9 @@ public abstract class Animal extends Organism {
                                 return true;
                             }
                         }
-                    } else if (in_hiding) {
+                    } else if (is_hiding) {
                         for (Object o : world.getEntities().keySet()) {
-                            if (o instanceof Animal animal && animal.getType().equals(type)) {
+                            if (o instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
                                 return true;
                             }
                         }
@@ -365,7 +365,7 @@ public abstract class Animal extends Organism {
      * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
-        if (location != null && !in_hiding && world.contains(this)) {
+        if (location != null && !is_hiding && world.contains(this)) {
             Location currentLocation = world.getLocation(this);
 
             // Calculate the absolute difference in x and y coordinates
@@ -392,7 +392,7 @@ public abstract class Animal extends Organism {
         world.remove(this);
 
         // goes into hiding
-        in_hiding = true;
+        is_hiding = true;
 
         // overridden by bear
     }
@@ -417,7 +417,7 @@ public abstract class Animal extends Organism {
             e.getMessage();
             return;
         }
-        in_hiding = false;
+        is_hiding = false;
         System.out.println("left habitat");
         // overridden by bear
     }
@@ -566,7 +566,7 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
         // Validate if the animal is on the map
-        if (!world.contains(this) || in_hiding) {
+        if (!world.contains(this) || is_hiding) {
             System.out.println("Warning: Animal not on the map");
             // returns true to stop act
             return true;
@@ -701,7 +701,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public Carcass dieAndBecomeCarcass(World world) {
-        if (in_hiding) {
+        if (is_hiding) {
             world.delete(this);
         } else {
             Location current_location = world.getLocation(this);
@@ -715,7 +715,7 @@ public abstract class Animal extends Organism {
     }
 
     public void setInHiding(){
-        in_hiding = true;
+        is_hiding = true;
     }
 
     public boolean hasCordyceps() {
@@ -761,6 +761,10 @@ public abstract class Animal extends Organism {
             }
         }
         return false;
+    }
+
+    public boolean isHiding() {
+        return is_hiding;
     }
 
     public int getHunger() {

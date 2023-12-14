@@ -3,7 +3,10 @@ package ourcode.Test.Theme1;
 import itumulator.executable.Program;
 import itumulator.world.World;
 import org.junit.Test;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -236,14 +239,16 @@ public class RabbitTest {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
-        programRunner.runSimulation(13);
+
+        programRunner.runSimulation(19);
         int rabbits_in_burrows = 0;
-        for (Object entity : world.getEntities().keySet()) {
-            if (world.getEntities().get(entity) == null) {
+
+        for (Object o : world.getEntities().keySet()) {
+            if (world.getLocation(o) == null) {
                 rabbits_in_burrows++;
             }
         }
-        assertEquals(4, rabbits_in_burrows, "checks rabbits are in their burrows at night");
+        assertEquals(4, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
     }
 
     /**

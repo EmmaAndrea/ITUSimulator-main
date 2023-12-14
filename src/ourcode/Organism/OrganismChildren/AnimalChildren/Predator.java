@@ -2,7 +2,6 @@ package ourcode.Organism.OrganismChildren.AnimalChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Setup.IDGenerator;
 
@@ -63,7 +62,7 @@ public abstract class Predator extends Animal {
      * @param world The simulation world where hunting takes place.
      */
     public void hunt(World world) {
-        if (!world.contains(this) || hasBeenKilled || in_hiding) return;
+        if (!world.contains(this) || hasBeenKilled || is_hiding) return;
 
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
 
