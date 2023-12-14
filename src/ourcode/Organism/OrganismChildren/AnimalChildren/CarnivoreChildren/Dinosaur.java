@@ -6,7 +6,6 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
-import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
@@ -43,8 +42,8 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         super.act(world);
 
         if (age >= 20) {
-            setTrophicLevel(6);
-            setPower(7);
+            trophic_level = 6;
+            power = 7;
         }
 
         // Stop at once if something happened that killed the dinosaur.
@@ -59,10 +58,8 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             }
         }
 
-        if (gender == Gender.Female) { // more parameters
-           if (steps_since_last_birth > 20) {
-               breed(world);
-           }
+        if (checkBreed(world)) {
+           breed(world);
         }
     }
 

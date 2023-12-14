@@ -8,7 +8,6 @@ import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
-import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
 import java.lang.reflect.Constructor;
@@ -241,9 +240,19 @@ public abstract class Animal extends Organism {
                 // If it's not too much time since they last gave birthed.
                 if (steps_since_last_birth >= 12) {
 
-                    for (Animal animal : habitat.getResidents()) {
-                        if (animal.getGender() == Male) {
-                            return true;
+                    if (has_habitat && in_hiding) {
+                        for (Animal animal : habitat.getResidents()) {
+                            if (animal.getGender() == Male) {
+                                return true;
+                            }
+                        }
+                    } else {
+                        for (Location location : world.getSurroundingTiles()) {
+                            if (world.getTile(location) instanceof Animal animal) {
+                                if (animal.getType().equals(type)) {
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }
@@ -475,23 +484,6 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Calculates and returns the nutritional value of the organism the animal is currently standing on.
-     *
-     * @param world The world in which the animal exists.
-     * @return The nutritional value of the organism at the current location.
-     */
-    public int getStandingOnNutritionalValue(World world) {
-        Entity entity = id_generator.getGrass(world.getLocation(this));
-
-        if (entity instanceof Organism organism) {
-            return organism.getNutritionalValue();
-        }
-
-        // Handle the case where the entity is not an Organism (e.g., return a default value or throw an exception)
-        return 0; // Or handle this scenario appropriately
-    }
-
-    /**
      * Retrieves the grace period of the animal.
      * This period is used in specific scenarios to avoid simulation errors.
      *
@@ -672,16 +664,8 @@ public abstract class Animal extends Organism {
         return damage_taken;
     }
 
-    public boolean isIn_hiding() {
-        return in_hiding;
-    }
-
     public void sameTypeInteraction(World world, Animal animal) {
         attack(world, animal);
-    }
-
-    public void setIn_hiding() {
-        in_hiding = true;
     }
 
     /**
@@ -716,10 +700,6 @@ public abstract class Animal extends Organism {
     public void infect() {
         has_cordyceps = true;
         max_age = max_age - 18;
-    }
-
-    public void setPower(int i) {
-        power = i;
     }
 
     public boolean enemyHabitatNearby(World world) {
