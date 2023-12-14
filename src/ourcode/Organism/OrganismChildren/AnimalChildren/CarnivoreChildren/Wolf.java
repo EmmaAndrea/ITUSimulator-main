@@ -433,7 +433,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             // add all the wolves to this pack
             if (oldwolf.getPack().size() > 1) {
                 for (Wolf wolf : oldwolf.getPack()) {
-                    my_alpha.addWolfToPack(wolf);
+                    try {
+                        my_alpha.addWolfToPack(wolf);
+                    } catch (ConcurrentModificationException e) {
+                        System.out.println("wolf has been eaten");
+                    }
                 }
             }
 
