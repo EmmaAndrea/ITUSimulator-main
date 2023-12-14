@@ -12,9 +12,12 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
+
+    private Dinosaur mother;
     /**
      * Constructs a dinosaur instance. Calls the constructor of the superclass Animal
      * and initializes specific attributes for a predator.
@@ -33,6 +36,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 20;
+        friends = new ArrayList<>();
     }
 
     @Override
@@ -41,9 +45,14 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         Location current_location = world.getLocation(this);
         super.act(world);
 
+        if (!world.getEntities().containsKey(mother)){
+            mother = null;
+        }
         if (age >= 20) {
             trophic_level = 6;
             power = 7;
+        } else {
+            if (mother != null) followMother(world);
         }
 
         // Stop at once if something happened that killed the dinosaur.
@@ -96,11 +105,28 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     public void breed(World world) {
         System.out.println("made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
+        dinosaurEgg.setMother(this);
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
             steps_since_last_birth = 0;
-
             // add taking care of egg?
+        }
+    }
+
+    public void becomeMother(Dinosaur baby) {
+        friends.add(baby);
+    }
+
+    public void setMother(Dinosaur mother) {
+        this.mother = mother;
+        friends.add(mother);
+    }
+
+    public void followMother(World world){
+        if (distanceTo(world, world.getLocation(mother)) > 1) {
+            for (int i = 0 ; i < distanceTo(world, world.getLocation(mother)) ; i++){
+                moveCloser(world, world.getLocation(mother));
+            }
         }
     }
 

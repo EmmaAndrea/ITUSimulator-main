@@ -184,7 +184,7 @@ public abstract class Animal extends Organism {
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                if (carcass.getGracePeriod() == 0) {
+                //if (carcass.getGracePeriod() == 0) {
                     if (carcass.isRotten) {
                         damage_taken -= 4;
                     }
@@ -200,7 +200,7 @@ public abstract class Animal extends Organism {
                             damage_taken -= nutritionChange;
                         }
                     }
-                }
+                //}
             }
         }
     }
@@ -600,7 +600,7 @@ public abstract class Animal extends Organism {
 
                                 }
                                 // Otherwise this will attack.
-                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                                if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
                                     if (hunger >= animal.getNutritionalValue()) {
                                         if (animal.getGracePeriod() == 0) {
                                             animal.setGracePeriod(1);
@@ -695,6 +695,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public Carcass dieAndBecomeCarcass(World world) {
+        grace_period = 1;
         if (is_hiding) {
             world.delete(this);
         } else {

@@ -49,6 +49,7 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void attack(World world, Animal animal) {
+        System.out.println(type + " attacks " + animal + " in hunt mode");
         animal.damage(power);
         if (animal.isDead()) {
             eat(world, animal.dieAndBecomeCarcass(world));

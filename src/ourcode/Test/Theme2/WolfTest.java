@@ -358,7 +358,7 @@ public class WolfTest {
 
             world = programRunner.getWorld();
 
-            programRunner.runSimulation(7);
+            programRunner.runSimulation(11);
 
             Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
             bear.spawn(world);

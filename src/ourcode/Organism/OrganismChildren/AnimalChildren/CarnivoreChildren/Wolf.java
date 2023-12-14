@@ -72,10 +72,16 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (my_alpha != null && my_alpha.getPack() == null){
             deletePack();
         }
-        if (my_alpha != null && my_alpha.getPack().size() < 2) {
+        else if (my_alpha != null && my_alpha.getPack().size() < 2) {
             deletePack();
             System.out.println("pack deleted");
         }
+        else if (my_alpha != null) {
+            if (my_alpha.getPack().size() > 4) {
+                setTrophicLevel(5);
+            } else setTrophicLevel(3);
+        }
+
 
         if (is_hiding) return;
         if (isBedtime(world)) return;
@@ -112,7 +118,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
         // sequence for alphas
         else if (alpha) {
-            if (hunger > 8) {
+            if (hunger > 14) {
                 for (Wolf wolf : pack) {
                     wolf.setPackHuntingTrue();
                 }
@@ -233,7 +239,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
             if (friends.contains(animal)) return;
-            if (animal.getGracePeriod() == 0) {
+
                 animal.setGracePeriod(1);
                 animal.damage(power);
                 if (animal instanceof Wolf wolf_to_take) {
@@ -252,7 +258,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     } else if (hunger >= 4) eat(world, carcass_to_eat);
                 } else animal.setGracePeriod(0);
             }
-        }
+
     }
 
     public boolean shareCarcass(){
@@ -339,11 +345,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         for (Wolf wolf : pack) {
             wolf.setFriends(new_wolf);
             new_wolf.setFriends(wolf);
-            if (pack.size() == 5) {
-                wolf.setTrophicLevel(5);
-            }
         }
-
     }
 
     /**

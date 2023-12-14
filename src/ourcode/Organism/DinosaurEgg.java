@@ -17,6 +17,8 @@ import java.awt.*;
  */
 public class DinosaurEgg extends Animal implements DynamicDisplayInformationProvider {
 
+    Dinosaur mother;
+
     /**
      * Constructs a DinosaurEgg with a unique identifier and cordyceps status.
      * Sets the maximum age after which the egg will hatch into a dinosaur.
@@ -42,6 +44,10 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
         if (age >= max_age) {
             becomeDinosaur(world);
         }
+    }
+
+    public void setMother(Dinosaur mother){
+        this.mother = mother;
     }
 
     /**
