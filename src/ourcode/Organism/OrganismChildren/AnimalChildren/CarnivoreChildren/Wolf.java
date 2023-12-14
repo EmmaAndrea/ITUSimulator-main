@@ -77,7 +77,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             System.out.println("pack deleted");
         }
 
-        if (in_hiding) return;
+        if (is_hiding) return;
         if (isBedtime(world)) return;
 
 
@@ -542,7 +542,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     @Override
     public Carcass dieAndBecomeCarcass(World world) {
-        if (in_hiding) {
+        if (is_hiding) {
                 try {
                     deleteMe(world);
                 } catch (ConcurrentModificationException e) {
@@ -551,7 +551,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             return null;
         }
 
-        if (world.contains(this) && !in_hiding) {
+        if (world.contains(this) && !is_hiding) {
             grace_period = 1;
             Location current_location = world.getLocation(this);
             try {

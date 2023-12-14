@@ -8,7 +8,6 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import ourcode.Obstacles.Burrow;
-import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
@@ -245,11 +244,11 @@ public class RabbitTest {
         int rabbits_in_burrows = 0;
 
         for (Object o : world.getEntities().keySet()) {
-            if () {
+            if (world.getLocation(o) == null) {
                 rabbits_in_burrows++;
             }
         }
-        assertEquals(4, rabbits_in_burrows, "checks rabbits are in their burrows at night");
+        assertEquals(4, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
     }
 
     @AfterEach

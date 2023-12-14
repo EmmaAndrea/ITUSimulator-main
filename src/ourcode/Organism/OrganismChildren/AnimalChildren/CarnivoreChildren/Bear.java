@@ -45,7 +45,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         super.act(world);
 
         // if not sleeping
-        if (!in_hiding && !isBedtime(world)) {
+        if (!is_hiding && !isBedtime(world)) {
             // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
                 if (findMate(world)) return;
@@ -85,13 +85,13 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public void enterHabitat(World world) {
         moveCloser(world, world.getLocation(habitat));
         habitat.addResident(this);
-        in_hiding = true;
+        is_hiding = true;
     }
 
     @Override
     public void exitHabitat(World world){
         habitat.removeResident(this);
-        in_hiding = false;
+        is_hiding = false;
         grace_period = 0;
     }
 
@@ -188,7 +188,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             if (age >= 11) {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-large-wounded");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large");
@@ -196,7 +196,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             } else {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-small-wounded");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small");
@@ -206,7 +206,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             if (age >= 11) {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-large-wounded-cordyceps");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large-cordyceps");
@@ -214,7 +214,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             } else {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-small-wounded-cordyceps");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small-cordyceps");

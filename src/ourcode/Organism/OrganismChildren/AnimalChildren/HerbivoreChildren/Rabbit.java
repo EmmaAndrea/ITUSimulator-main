@@ -52,7 +52,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     public void act(World world) {
         super.act(world);
 
-        if (in_hiding) return;
+        if (is_hiding) return;
 
         if (isBedtime(world)) return;
 
