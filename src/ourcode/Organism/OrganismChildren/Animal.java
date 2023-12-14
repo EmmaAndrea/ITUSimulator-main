@@ -29,7 +29,7 @@ public abstract class Animal extends Organism {
     protected int hunger; // Current hunger level of the animal.
     protected int max_hunger; // Maximum hunger level an animal can sustain before dying.
     protected int steps_since_last_birth; // Number of simulation steps since the animal last gave birth.
-    protected boolean in_hiding; // Flag indicating if the animal is currently in hiding.
+    protected boolean is_hiding; // Flag indicating if the animal is currently in hiding.
     protected Gender gender; // Gender of the animal, affecting its breeding behaviors.
     protected ArrayList<String> consumable_foods; // List of food types that the animal can consume.
     protected int damage_taken; // Amount of damage the animal has taken.
@@ -57,7 +57,7 @@ public abstract class Animal extends Organism {
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
-        in_hiding = false;
+        is_hiding = false;
         gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
         damage_taken = 0;
         grace_period = 0;
@@ -84,7 +84,7 @@ public abstract class Animal extends Organism {
         steps_since_last_birth++;
         if (damage_taken > 0) damage_taken -= 1;
 
-        if (!in_hiding) {
+        if (!is_hiding) {
             hunger++;
         }
 
@@ -93,10 +93,9 @@ public abstract class Animal extends Organism {
             dieAndBecomeCarcass(world);
             return;
         }
-
         grace_period = 0;
 
-        if (isBedtime(world) && !in_hiding && habitat != null){
+        if (isBedtime(world) && !is_hiding && habitat != null){
             Location habitat_location = world.getLocation(habitat);
 
             if (distanceTo(world, habitat_location) > 0) {
@@ -110,17 +109,16 @@ public abstract class Animal extends Organism {
                 } else enterHabitat(world);
             } else return;
 
-        } else if (!isBedtime(world) && in_hiding) {
+        } else if (!isBedtime(world) && is_hiding) {
             exitHabitat(world);
-            System.out.println("left habitat");
             return;
         }
 
         lock.lock();
 
         // If the animal is currently inside its habitat.
-        if (in_hiding) {
-            if (checkBreed(world)) {
+        if (is_hiding) {
+            if (checkBreedStats(world)) {
                 try {
                     breed(world);
                 } catch (Exception e) {
@@ -134,10 +132,8 @@ public abstract class Animal extends Organism {
             // Make habitat if it doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
-            } if (!in_hiding) {
-                if (!findFoodOrSafety(world)) {
-                    nextMove(world);
-                }
+            } if (!findFoodOrSafety(world)) {
+                nextMove(world);
             }
         }
         lock.unlock();
@@ -223,6 +219,12 @@ public abstract class Animal extends Organism {
         Constructor<? extends Animal> constructor = animalClass.getDeclaredConstructor(IDGenerator.class, boolean.class);
         Animal cub = constructor.newInstance(id_generator, has_cordyceps);
 
+        putCubInWorld(world, cub);
+
+        steps_since_last_birth = 0;
+    }
+
+    public void putCubInWorld(World world, Animal cub){
         world.add(cub);
         habitat.addResident(cub);
         cub.setGracePeriod(1);
@@ -235,8 +237,6 @@ public abstract class Animal extends Organism {
                 this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
             }
         }
-
-        steps_since_last_birth = 0;
     }
 
     /**
@@ -245,7 +245,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where breeding might occur.
      * @return true if the animal can breed, false otherwise.
      */
-    public boolean checkBreed(World world) {
+    public boolean checkBreedStats(World world) {
         // Only females can give birth.
         if (gender == Female) {
 
@@ -253,28 +253,25 @@ public abstract class Animal extends Organism {
             if (age >= max_age * 0.15 && age <= max_age * 0.85) {
 
                 // If it's not too much time since they last gave birthed.
-                if (steps_since_last_birth >= 12) {
+                if (steps_since_last_birth >= 10) {
 
-                    if (has_habitat && in_hiding) {
-                        for (Animal animal : habitat.getResidents()) {
-                            if (animal.getGender() == Male) {
-                                return true;
-                            }
-                        }
-                    } else {
-                        for (Location location : world.getSurroundingTiles()) {
-                            if (world.getTile(location) instanceof Animal animal) {
-                                if (animal.getType().equals(type)) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                    return checkHasBreedMate(world);
+
                 }
             }
         }
         // If any of these are false, return false.
         return false;
+    }
+
+    public boolean checkHasBreedMate(World world){
+        if (has_habitat && habitat.getResidents().size() > 1) {
+            for (Animal animal : habitat.getResidents()) {
+                if (animal.getGender() == Male) {
+                    return true;
+                }
+            }
+        } return false;
     }
 
     /**
@@ -363,7 +360,7 @@ public abstract class Animal extends Organism {
      * @return The number of simulation steps required to reach the specified location.
      */
     public int distanceTo(World world, Location location) {
-        if (location != null && !in_hiding && world.contains(this)) {
+        if (location != null && !is_hiding && world.contains(this)) {
             Location currentLocation = world.getLocation(this);
 
             // Calculate the absolute difference in x and y coordinates
@@ -390,7 +387,7 @@ public abstract class Animal extends Organism {
         world.remove(this);
 
         // goes into hiding
-        in_hiding = true;
+        is_hiding = true;
 
         // overridden by bear
     }
@@ -405,13 +402,18 @@ public abstract class Animal extends Organism {
     public void exitHabitat(World world) {
         habitat.removeResident(this);
         Location spawn_location = getSpawnLocation(world);
+        if (spawn_location == null){
+            System.out.println("could not leave habitat");
+            return;
+        }
         try {
             world.setTile(spawn_location, this);
         } catch (Exception e) {
             e.getMessage();
             return;
         }
-        in_hiding = false;
+        is_hiding = false;
+        System.out.println("left habitat");
         // overridden by bear
     }
 
@@ -559,9 +561,10 @@ public abstract class Animal extends Organism {
      */
     public boolean findFoodOrSafety(World world) {
         // Validate if the animal is on the map
-        if (!world.contains(this) || in_hiding) {
+        if (!world.contains(this) || is_hiding) {
             System.out.println("Warning: Animal not on the map");
-            return false;
+            // returns true to stop act
+            return true;
         }
 
         lock.lock();
@@ -665,8 +668,10 @@ public abstract class Animal extends Organism {
             lock.unlock();
             return false;
         } catch (IllegalArgumentException iae) {
+            System.out.println(iae + "this has been eaten");
             lock.unlock();
-            return false;
+            // returns true to stop act
+            return true;
         }
     }
 
@@ -691,7 +696,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public Carcass dieAndBecomeCarcass(World world) {
-        if (in_hiding) {
+        if (is_hiding) {
             world.delete(this);
         } else {
             Location current_location = world.getLocation(this);
@@ -705,7 +710,7 @@ public abstract class Animal extends Organism {
     }
 
     public void setInHiding(){
-        in_hiding = true;
+        is_hiding = true;
     }
 
     public boolean hasCordyceps() {
@@ -718,7 +723,13 @@ public abstract class Animal extends Organism {
     }
 
     public boolean enemyHabitatNearby(World world) {
-        Location current = world.getLocation(this);
+        Location current = null;
+        try {
+            current = world.getLocation(this);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage() + " animal has been eaten");
+            return true;
+        }
 
         // checks standing on location for enemy habitat
         if (world.containsNonBlocking(current)) {
@@ -745,6 +756,14 @@ public abstract class Animal extends Organism {
             }
         }
         return false;
+    }
+
+    public boolean isHiding() {
+        return is_hiding;
+    }
+
+    public int getHunger() {
+        return hunger;
     }
 }
 

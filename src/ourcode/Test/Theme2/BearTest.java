@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import ourcode.Organism.Gender;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
@@ -92,19 +91,32 @@ public class BearTest {
      */
     @Test
     public void testBearFindMate() throws Exception {
-        programRunner.create("./data/bear-test.txt");
-        world = programRunner.getWorld();
+        Program program = new Program(3, 500, 200);
+        world = program.getWorld();
+        id_generator = new IDGenerator();
 
-        programRunner.getP().setDelay(1000);
-        programRunner.runSimulation(20);
+        Bear male_bear = new Bear(id_generator, false);
+        male_bear.setGender("Male");
+
+        Bear female_bear = new Bear(id_generator, false);
+        male_bear.setGender("Female");
+
+        female_bear.spawn(world);
+        male_bear.spawn(world);
+
+        for (int i = 0; i < 20; i++) {
+            program.simulate();
+        }
+
+        int counter = 0;
 
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Bear) {
-                if (((Bear) o).getGender() == Gender.Male) {
-                    assertTrue(((Bear) o).findMate(world));
-                }
+                counter++;
             }
         }
+
+        assertTrue(counter > 2, "The bears should have mated.");
     }
 
     /**
@@ -249,7 +261,7 @@ public class BearTest {
         }
 
         System.out.println(counter);
-        assertTrue(counter <= 10);
+        assertTrue(counter <= 7);
     }
 
     @Test

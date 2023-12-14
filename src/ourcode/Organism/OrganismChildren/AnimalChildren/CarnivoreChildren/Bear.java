@@ -6,16 +6,20 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
 
     protected Location territory_location;
 
     protected Bear mate;
+
+    protected Animal my_cub;
 
     public Bear(IDGenerator idGenerator, boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
@@ -26,9 +30,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         max_hunger = 30;
         power = 4;
         max_damage = 16;
-        consumable_foods.add("bush");
-        consumable_foods.add("dinosaur");
-        consumable_foods.add("grass");
+        consumable_foods.addAll(Arrays.asList("bush", "dinosaur", "grass"));
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 12;
@@ -36,15 +38,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
 
     /**
-     * Bears are extremely territorial, and therefore never wander outside their territory.
-     * The omnivore act method ensures the bear has a territory and never goes too far away.
-     * However, when the bear is old enough, it will leave its own territory in order to find a mate.
+     * Bears are extremely territorial, and therefore rarely wander outside their territory.
      * If the bear is very hungry, it will go further away from its territory than normal to hunt.
      * The bear will always sleep in its territory.
      * @param world The simulation world in which the omnivore exists.
      */
     public void act(World world) {
-
         super.act(world);
 
         // bears are more dangerous and stronger as an adult
@@ -54,20 +53,19 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         }
 
         // if not sleeping
-        if (!in_hiding && !isBedtime(world)) {
+        if (!is_hiding && !isBedtime(world)) {
             // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
+                System.out.println("Starts finding mate");
                 if (findMate(world)) return;
             }
 
-            // if very hungry, go hunt
-            if (hunger >= 20) {
-                hunt(world);
-            }
-
             // stay close to territory
-            else if (distanceTo(world, territory_location) > 3) {
+            if (distanceTo(world, territory_location) > 2) {
                 moveCloser(world, territory_location);
+                // if very hungry, go hunt
+            } else if (hunger >= 20) {
+                hunt(world);
             }
 
             else if (!enemyHabitatNearby(world)) {
@@ -80,7 +78,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
     @Override
     public void makeHabitat(World world) {
-        if (age < 8) return;
         if (territory_location == null) {
             territory_location = world.getLocation(this);
         }
@@ -94,13 +91,13 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     public void enterHabitat(World world) {
         moveCloser(world, world.getLocation(habitat));
         habitat.addResident(this);
-        in_hiding = true;
+        is_hiding = true;
     }
 
     @Override
     public void exitHabitat(World world){
         habitat.removeResident(this);
-        in_hiding = false;
+        is_hiding = false;
         grace_period = 0;
     }
 
@@ -135,12 +132,10 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @return true if breeding conditions are met, false otherwise.
      */
     @Override
-    public boolean checkBreed(World world) {
-        if (gender == Gender.Female) {
-            if (mate != null) {
-                System.out.println("tries to breed");
-                    return true;
-            }
+    public boolean checkHasBreedMate(World world) {
+        if (mate != null) {
+            System.out.println("tries to breed");
+                return true;
         }
         return false;
     }
@@ -167,6 +162,16 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         mate = male_bear;
         friends.add(male_bear);
         System.out.println("GIRL GOT MATE");
+    }
+
+    @Override
+    public void putCubInWorld(World world, Animal cub){
+        cub.setHabitat(habitat);
+        world.setTile(getSpawnLocation(world), cub);
+        cub.setHabitat(null);
+        cub.setGracePeriod(1);
+        setMyCub(cub);
+        mate.setMyCub(cub);
     }
 
     /**
@@ -197,7 +202,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             if (age >= 11) {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-large-wounded");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large");
@@ -205,7 +210,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             } else {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-small-wounded");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small");
@@ -215,7 +220,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             if (age >= 11) {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-large-wounded-cordyceps");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large-cordyceps");
@@ -223,7 +228,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
             } else {
                 if (damage_taken > 0) {
                     return new DisplayInformation(Color.yellow, "bear-small-wounded-cordyceps");
-                } else if (in_hiding) {
+                } else if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small-cordyceps");
@@ -245,8 +250,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         if (habitat != null){
             world.delete(habitat);
         }
-        Territory new_territory = new Territory(id_generator);
-        world.setTile(location, new_territory);
-        habitat = new_territory;
+        habitat = new Territory(id_generator);
+        world.setTile(location, habitat);
+    }
+
+    public void setMyCub(Animal cub){
+        my_cub = cub;
+        friends.add(cub);
     }
 }

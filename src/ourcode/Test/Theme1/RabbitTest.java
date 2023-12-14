@@ -2,8 +2,11 @@ package ourcode.Test.Theme1;
 
 import itumulator.executable.Program;
 import itumulator.world.World;
-//import org.junit.Test;
-import org.junit.jupiter.api.*;
+import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -66,7 +69,7 @@ public class RabbitTest {
      * File spawns 4 rabbits and no grass
      * Spawns one rabbit to track
      */
-    @org.testng.annotations.Test
+    @Test
     public void testRabbitDeath() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
@@ -132,17 +135,12 @@ public class RabbitTest {
     }
 
     @Test
-    @org.testng.annotations.Test
-    public void testRabbitBreeding() throws Exception{
+    public void testRabbitBreeding() throws Exception {
         // Create a world
         programRunner.create("./data/t1-2b.txt");
         world = programRunner.getWorld();
 
-        for(int i =0 ; i<3 ; i++){
-            Rabbit rabbit = new Rabbit(programRunner.getOriginal_id_generator(), false);
-            rabbit.spawn(world);
-        }
-        for(int i =0 ; i<25 ; i++){
+        for (int i = 0; i < 6; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
@@ -151,7 +149,7 @@ public class RabbitTest {
         int initialRabbitCount = countRabbits(world);
 
         // Run the simulation for a number of steps to allow breeding
-        programRunner.runSimulation(30);
+        programRunner.runSimulation(20);
 
         // Get the count of rabbits after running the simulation
         int postSimulationRabbitCount = countRabbits(world);
@@ -171,7 +169,6 @@ public class RabbitTest {
     }
 
     @Test
-    @org.testng.annotations.Test
     public void testRabbitsDontBreedThemselves() throws Exception{
         // Create a world
         programRunner.create("./data/t1-2a.txt");
@@ -187,7 +184,7 @@ public class RabbitTest {
         int postSimulationRabbitCount = countRabbits(world);
 
         // Assert that the number of rabbits has increased
-        assertTrue(postSimulationRabbitCount == initialRabbitCount, "Rabbits should not breed themselves.");
+        assertEquals(postSimulationRabbitCount, initialRabbitCount, "Rabbits should not breed themselves.");
     }
 
 
@@ -234,22 +231,37 @@ public class RabbitTest {
     }
 
     @org.testng.annotations.Test
-    public void testRabbitGoesIntoBurrowAtNight() throws Exception{
+    public void testRabbitGoesIntoBurrowAtNight() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
 
-        for (int i = 0 ; i < 40 ; i ++){
-            Grass grass = new Grass (programRunner.getOriginal_id_generator());
+        for (int i = 0; i < 40; i++) {
+            Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
-        programRunner.runSimulation(13);
+
+        programRunner.runSimulation(19);
         int rabbits_in_burrows = 0;
-        for (Object entity : world.getEntities().keySet()) {
-            if (world.getEntities().get(entity) == null) {
+
+        for (Object o : world.getEntities().keySet()) {
+            if (world.getLocation(o) == null) {
                 rabbits_in_burrows++;
             }
         }
-        assertEquals(4, rabbits_in_burrows, "checks rabbits are in their burrows at night");
+        assertEquals(4, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
+    }
+
+    /**
+     * Rabbit moves away from wolves
+     * @throws Exception
+     */
+    @org.testng.annotations.Test
+    public void RabbitMovesAwayFromFromWolves() throws Exception {
+        programRunner.create("./data/rabbit-test1.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(50);
+
+
     }
 
     @AfterEach

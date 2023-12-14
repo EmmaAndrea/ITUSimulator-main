@@ -77,7 +77,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             System.out.println("pack deleted");
         }
 
-        if (in_hiding) return;
+        if (is_hiding) return;
         if (isBedtime(world)) return;
 
 
@@ -405,26 +405,39 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param oldwolf The alpha wolf of the pack being overtaken.
      */
     public void overtakePack(Wolf oldwolf) {
+        // if the old wolf has a pack
         if (oldwolf.getPack() != null) {
+            // if this pack is null and this doesn't have an alpha
+            // create a new pack with this as alpha
             if (pack == null && my_alpha == null){
                 createPack();
             }
+
+            // if this has a pack and there is no alpha
+            // make this alpha of this pack
             if (pack != null && my_alpha == null){
                 for (Wolf wolf: pack){
                     wolf.setAlpha(this);
                 }
             }
+
+            // if the oldwolf had a pack with only itself
+            // delete pack and add to new pack
             if (oldwolf.getPack().size() == 1) {
                 oldwolf.deletePack();
                 my_alpha.addWolfToPack(oldwolf);
+                return;
             }
-            else {
+
+            // if the old wolf has a big pack
+            // add all the wolves to this pack
+            if (oldwolf.getPack().size() > 1) {
                 for (Wolf wolf : oldwolf.getPack()) {
-                    oldwolf.removeWolfFromPack(wolf);
                     my_alpha.addWolfToPack(wolf);
                 }
             }
-        }
+
+        } else addWolfToPack(oldwolf);
     }
 
     /**
@@ -529,7 +542,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
     @Override
     public Carcass dieAndBecomeCarcass(World world) {
-        if (in_hiding) {
+        if (is_hiding) {
                 try {
                     deleteMe(world);
                 } catch (ConcurrentModificationException e) {
@@ -538,7 +551,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             return null;
         }
 
-        if (world.contains(this) && !in_hiding) {
+        if (world.contains(this) && !is_hiding) {
             grace_period = 1;
             Location current_location = world.getLocation(this);
             try {

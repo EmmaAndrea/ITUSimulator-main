@@ -19,7 +19,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         // Sets up the simulation environment based on the contents of the input file.
         ProgramRunner programRunner = new ProgramRunner();
-        programRunner.create("./data/tf4-3ab.txt");
+        programRunner.create("./data/tf4-2a.txt");
 
         // Runs the simulation for a specified number of steps.
         programRunner.runSimulation(200);
