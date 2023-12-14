@@ -1,6 +1,7 @@
 package ourcode.Test.Theme2;
 
 import itumulator.executable.Program;
+import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -289,15 +289,6 @@ public class WolfTest {
 
         assertEquals(0, lone_wolf.getDamageTaken());
     }
-
-    public void TestWolfPackAttacksLoneWolf() throws Exception {
-        programRunner.create("./data/wolf-test1.txt");
-        programRunner.runSimulation(1);
-
-        assertEquals(7, lone_wolf.getDamageTaken(), "the lone wolf gets hurt twice and takes 8 damage, then heals once");
-
-    }
-
 
     @Test
     public void TestWolfPackTakesLoneWolf() throws Exception {
