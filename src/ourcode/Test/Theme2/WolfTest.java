@@ -344,7 +344,7 @@ public class WolfTest {
          * checking wolves eat together
          */
         @Test
-        public void TestWolfPackSharesFoodWhenHungry () throws Exception{
+        public void TestWolfPackDontEatCarcassImmediately () throws Exception{
             programRunner.create("./data/wolf-test4.txt");
 
             world = programRunner.getWorld();
@@ -371,7 +371,103 @@ public class WolfTest {
 
         }
 
+    @Test
+    public void TestWolfPackSharesFoodWhenHungry () throws Exception {
+        programRunner.create("./data/wolf-test4.txt");
+
+        world = programRunner.getWorld();
+
+        programRunner.runSimulation(7);
+
+        Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
+        bear.spawn(world);
+
+        while (world.getEntities().containsKey(bear)) {
+            programRunner.runSimulation(1);
+        }
+
+        Carcass bear_carcass = null;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Carcass carcass) {
+                if (carcass.getType().equals("bear")) {
+                    bear_carcass = carcass;
+                }
+            }
+        }
+
+        assertEquals(12, bear_carcass.getNutritionalValue());
+
+        Wolf wolf1 = null;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Wolf wolf) {
+                wolf1 = wolf;
+                break;
+            }
+        }
+
+        Wolf hungriest_wolf_before = wolf1.getHungriestWolf();
+
+        /**
+         int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
+
+         if (hungriest_wolf == wolf1) {
+         for (Object object : world.getEntities().keySet()) {
+         if (object instanceof Wolf wolf) {
+         if (wolf1 != wolf) {
+         wolf1 = wolf;
+         break;
+         }
+         }
+         }
+         }
+         int wolf1_hunger_before = wolf1.getHunger();
+         */
+
+
+        programRunner.runSimulation(1);
+
+        // int hungries_wolf_hunger_after = hungriest_wolf.getHunger();
+
+        // int wolf1_hunger_after = wolf1.getHunger();
+
+        Wolf hungriest_wolf_after = wolf1.getHungriestWolf();
+
+        programRunner.runSimulation(1);
+        programRunner.runSimulation(1);
+        programRunner.runSimulation(1);
+
+        System.out.println(bear_carcass.getEatenBy());
+        assertTrue(bear_carcass.amountGottenEatenBy() > 1);
+
+    }
+
     /**
-     *
+     * Testing that wolves move away from each other
      */
+
+    @Test
+    public void TestWolfPacksMoveAwayFromEachOther() throws Exception{
+        programRunner.create("./data/wolf-test5.txt");
+
+        world = programRunner.getWorld();
+
+        world.setNight();
+
+        programRunner.runSimulation(7);
+
+        // visual check
+    }
+
+    @Test
+    public void TestWolvesMoveCloserToTheirPack() throws Exception{
+        programRunner.create("./data/wolf_test6.txt");
+
+        world = programRunner.getWorld();
+
+        world.setNight();
+
+        programRunner.runSimulation(12);
+
+        // visual check
+    }
 }
