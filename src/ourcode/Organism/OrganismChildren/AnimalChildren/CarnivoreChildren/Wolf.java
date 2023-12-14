@@ -234,7 +234,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     carcass_location = world.getLocation(animal.dieAndBecomeCarcass(world));
                     Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
                     if (pack_hunting) {
-                        if (shareCarcass(animal)) {
+                        if (shareCarcass()) {
                             killed_animal_location = carcass_location;
                         }
                     } else if (hunger >= 4) eat(world, carcass_to_eat);
@@ -243,7 +243,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         }
     }
 
-    public boolean shareCarcass(Animal animal){
+    public boolean shareCarcass(){
         if (my_alpha!=null) {
             return true;
         }
@@ -404,7 +404,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
             if (pack != null && my_alpha == null){
                 for (Wolf wolf: pack){
-                    setAlpha(this);
+                    wolf.setAlpha(this);
                 }
             }
             if (oldwolf.getPack().size() == 1) {
