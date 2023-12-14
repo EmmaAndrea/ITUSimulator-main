@@ -420,7 +420,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             }
             else {
                 for (Wolf wolf : oldwolf.getPack()) {
-                    oldwolf.removeWolfFromPack(wolf);
                     my_alpha.addWolfToPack(wolf);
                 }
             }
