@@ -93,21 +93,19 @@ public abstract class Animal extends Organism {
             dieAndBecomeCarcass(world);
             return;
         }
-        grace_period = 0;
 
-        if (isBedtime(world) && !is_hiding && habitat != null){
+        if (isBedtime(world) && !is_hiding && habitat != null) {
             Location habitat_location = world.getLocation(habitat);
 
             if (distanceTo(world, habitat_location) > 0) {
-                grace_period = 0;
                 moveCloser(world, habitat_location);
             }
             if (distanceTo(world, habitat_location) < 1) {
                 if (grace_period == 0) {
                     grace_period = 1;
-                    return;
-                } else enterHabitat(world);
-            } else return;
+                }
+                enterHabitat(world);
+            }
 
         } else if (!isBedtime(world) && is_hiding) {
             exitHabitat(world);

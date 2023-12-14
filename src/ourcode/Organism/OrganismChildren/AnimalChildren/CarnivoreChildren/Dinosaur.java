@@ -6,6 +6,8 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
+import ourcode.Organism.Gender;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
@@ -44,6 +46,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             power = 7;
         }
 
+        if (!is_hiding) {
+            grace_period = 0;
+        }
+
         // Stop at once if something happened that killed the dinosaur.
         if (!world.contains(this)) {
             return;
@@ -69,12 +75,33 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      * Lays egg.
      * @param world The simulation world in which breeding occurs.
      */
+
+    @Override
+    public boolean checkHasBreedMate(World world){
+        Location my_location =null;
+        try {
+            my_location = world.getLocation(this);
+        } catch (Exception e) {
+            System.out.println("dinosaur died");
+        }
+        for (Location location: world.getSurroundingTiles(my_location, 2)) {
+            if (!world.isTileEmpty(location)) {
+                if (world.getTile(location) instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
+                    return true;
+                }
+            }
+        } return false;
+    }
+
     @Override
     public void breed(World world) {
+        System.out.println("made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
             steps_since_last_birth = 0;
+
+            // add taking care of egg?
         }
     }
 

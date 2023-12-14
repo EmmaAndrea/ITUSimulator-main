@@ -80,6 +80,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         if (is_hiding) return;
         if (isBedtime(world)) return;
 
+        // Sets grace_period to zero for lonely wolves
+        if (pack == null || pack.size() == 1) {
+            grace_period = 0;
+        }
+
 
         if (pack_is_done_eating && pack_hunting){
             if (my_alpha != null) {
@@ -321,8 +326,11 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      * @param new_wolf The wolf to be added to the pack.
      */
     public void addWolfToPack(Wolf new_wolf) {
-        if (new_wolf.getHasPack() && pack != null) {
+        if (new_wolf.getHasPack() && new_wolf.getMyAlpha().getPack() != null) {
             new_wolf.getMyAlpha().removeWolfFromPack(new_wolf);
+        }
+        if (pack == null){
+            createPack();
         }
         pack.add(new_wolf);
         new_wolf.setAlpha(this);
@@ -432,13 +440,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             // if the old wolf has a big pack
             // add all the wolves to this pack
             if (oldwolf.getPack().size() > 1) {
-                for (Wolf wolf : oldwolf.getPack()) {
-                    try {
+
+                try {
+                    for (Wolf wolf : oldwolf.getPack()) {
                         my_alpha.addWolfToPack(wolf);
-                    } catch (ConcurrentModificationException e) {
-                        System.out.println("wolf has been eaten");
-                        continue;
                     }
+                } catch (ConcurrentModificationException e) {
+                    System.out.println("wolf has been eaten");
+
                 }
             }
 
