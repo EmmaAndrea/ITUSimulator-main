@@ -109,7 +109,6 @@ public abstract class Animal extends Organism {
 
         } else if (!isBedtime(world) && in_hiding) {
             exitHabitat(world);
-            System.out.println("left habitat");
             return;
         }
 
@@ -408,6 +407,10 @@ public abstract class Animal extends Organism {
     public void exitHabitat(World world) {
         habitat.removeResident(this);
         Location spawn_location = getSpawnLocation(world);
+        if (spawn_location == null){
+            System.out.println("could not leave habitat");
+            return;
+        }
         try {
             world.setTile(spawn_location, this);
         } catch (Exception e) {
@@ -415,6 +418,7 @@ public abstract class Animal extends Organism {
             return;
         }
         in_hiding = false;
+        System.out.println("left habitat");
         // overridden by bear
     }
 
@@ -564,7 +568,8 @@ public abstract class Animal extends Organism {
         // Validate if the animal is on the map
         if (!world.contains(this) || in_hiding) {
             System.out.println("Warning: Animal not on the map");
-            return false;
+            // returns true to stop act
+            return true;
         }
 
         lock.lock();
@@ -668,8 +673,10 @@ public abstract class Animal extends Organism {
             lock.unlock();
             return false;
         } catch (IllegalArgumentException iae) {
+            System.out.println(iae + "this has been eaten");
             lock.unlock();
-            return false;
+            // returns true to stop act
+            return true;
         }
     }
 
@@ -721,7 +728,13 @@ public abstract class Animal extends Organism {
     }
 
     public boolean enemyHabitatNearby(World world) {
-        Location current = world.getLocation(this);
+        Location current = null;
+        try {
+            current = world.getLocation(this);
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage() + " animal has been eaten");
+            return true;
+        }
 
         // checks standing on location for enemy habitat
         if (world.containsNonBlocking(current)) {
