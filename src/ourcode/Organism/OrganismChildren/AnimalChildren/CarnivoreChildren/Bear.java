@@ -6,6 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Territory;
 import ourcode.Organism.Gender;
+import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
@@ -17,6 +18,8 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     protected Location territory_location;
 
     protected Bear mate;
+
+    protected Animal my_cub;
 
     public Bear(IDGenerator idGenerator, boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
@@ -47,17 +50,16 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         if (!is_hiding && !isBedtime(world)) {
             // if ready to mate and if single, start finding a partner
             if (gender == Gender.Male && age > 19 && mate == null) {
+                System.out.println("Starts finding mate");
                 if (findMate(world)) return;
             }
 
-            // if very hungry, go hunt
-            if (hunger >= 20) {
-                hunt(world);
-            }
-
             // stay close to territory
-            else if (distanceTo(world, territory_location) > 3) {
+            if (distanceTo(world, territory_location) > 2) {
                 moveCloser(world, territory_location);
+                // if very hungry, go hunt
+            } else if (hunger >= 20) {
+                hunt(world);
             }
 
             else if (!enemyHabitatNearby(world)) {
@@ -70,7 +72,6 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
 
     @Override
     public void makeHabitat(World world) {
-        if (age < 8) return;
         if (territory_location == null) {
             territory_location = world.getLocation(this);
         }
@@ -125,12 +126,10 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
      * @return true if breeding conditions are met, false otherwise.
      */
     @Override
-    public boolean checkBreed(World world) {
-        if (gender == Gender.Female) {
-            if (mate != null) {
-                System.out.println("tries to breed");
-                    return true;
-            }
+    public boolean checkHasBreedMate(World world) {
+        if (mate != null) {
+            System.out.println("tries to breed");
+                return true;
         }
         return false;
     }
@@ -157,6 +156,16 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         mate = male_bear;
         friends.add(male_bear);
         System.out.println("GIRL GOT MATE");
+    }
+
+    @Override
+    public void putCubInWorld(World world, Animal cub){
+        cub.setHabitat(habitat);
+        world.setTile(getSpawnLocation(world), cub);
+        cub.setHabitat(null);
+        cub.setGracePeriod(1);
+        setMyCub(cub);
+        mate.setMyCub(cub);
     }
 
     /**
@@ -235,8 +244,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         if (habitat != null){
             world.delete(habitat);
         }
-        Territory new_territory = new Territory(id_generator);
-        world.setTile(location, new_territory);
-        habitat = new_territory;
+        habitat = new Territory(id_generator);
+        world.setTile(location, habitat);
+    }
+
+    public void setMyCub(Animal cub){
+        my_cub = cub;
+        friends.add(cub);
     }
 }

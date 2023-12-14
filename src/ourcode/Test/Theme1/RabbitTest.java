@@ -231,12 +231,12 @@ public class RabbitTest {
     }
 
     @org.testng.annotations.Test
-    public void testRabbitGoesIntoBurrowAtNight() throws Exception{
+    public void testRabbitGoesIntoBurrowAtNight() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
 
-        for (int i = 0 ; i < 40 ; i ++){
-            Grass grass = new Grass (programRunner.getOriginal_id_generator());
+        for (int i = 0; i < 40; i++) {
+            Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
 
@@ -249,6 +249,19 @@ public class RabbitTest {
             }
         }
         assertEquals(4, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
+    }
+
+    /**
+     * Rabbit moves away from wolves
+     * @throws Exception
+     */
+    @org.testng.annotations.Test
+    public void RabbitMovesAwayFromFromWolves() throws Exception {
+        programRunner.create("./data/rabbit-test1.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(50);
+
+
     }
 
     @AfterEach

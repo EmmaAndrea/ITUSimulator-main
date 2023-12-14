@@ -116,7 +116,7 @@ public abstract class Animal extends Organism {
 
         // If the animal is currently inside its habitat.
         if (is_hiding) {
-            if (checkBreed(world)) {
+            if (checkBreedStats(world)) {
                 try {
                     breed(world);
                 } catch (Exception e) {
@@ -130,10 +130,8 @@ public abstract class Animal extends Organism {
             // Make habitat if it doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
-            } if (!is_hiding) {
-                if (!findFoodOrSafety(world)) {
-                    nextMove(world);
-                }
+            } if (!findFoodOrSafety(world)) {
+                nextMove(world);
             }
         }
         lock.unlock();
@@ -199,9 +197,7 @@ public abstract class Animal extends Organism {
                             damage_taken -= nutritionChange;
                         }
                     }
-
                 }
-
             }
         }
     }
@@ -219,6 +215,12 @@ public abstract class Animal extends Organism {
         Constructor<? extends Animal> constructor = animalClass.getDeclaredConstructor(IDGenerator.class, boolean.class);
         Animal cub = constructor.newInstance(id_generator, has_cordyceps);
 
+        putCubInWorld(world, cub);
+
+        steps_since_last_birth = 0;
+    }
+
+    public void putCubInWorld(World world, Animal cub){
         world.add(cub);
         habitat.addResident(cub);
         cub.setGracePeriod(1);
@@ -231,8 +233,6 @@ public abstract class Animal extends Organism {
                 this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
             }
         }
-
-        steps_since_last_birth = 0;
     }
 
     /**
@@ -241,7 +241,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where breeding might occur.
      * @return true if the animal can breed, false otherwise.
      */
-    public boolean checkBreed(World world) {
+    public boolean checkBreedStats(World world) {
         // Only females can give birth.
         if (gender == Female) {
 
@@ -251,32 +251,23 @@ public abstract class Animal extends Organism {
                 // If it's not too much time since they last gave birthed.
                 if (steps_since_last_birth >= 10) {
 
-                    if (has_habitat && habitat.getResidents().size() > 1) {
-                        for (Animal animal : habitat.getResidents()) {
-                            if (animal.getGender() == Male) {
-                                return true;
-                            }
-                        }
-                    } else if (is_hiding) {
-                        for (Object o : world.getEntities().keySet()) {
-                            if (o instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
-                                return true;
-                            }
-                        }
-                    } else {
-                        for (Location location : world.getSurroundingTiles()) {
-                            if (world.getTile(location) instanceof Animal animal) {
-                                if (animal.getType().equals(type)) {
-                                    return true;
-                                }
-                            }
-                        }
-                    }
+                    return checkHasBreedMate(world);
+
                 }
             }
         }
         // If any of these are false, return false.
         return false;
+    }
+
+    public boolean checkHasBreedMate(World world){
+        if (has_habitat && habitat.getResidents().size() > 1) {
+            for (Animal animal : habitat.getResidents()) {
+                if (animal.getGender() == Male) {
+                    return true;
+                }
+            }
+        } return false;
     }
 
     /**
