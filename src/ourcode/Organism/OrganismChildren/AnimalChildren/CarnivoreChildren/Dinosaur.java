@@ -15,6 +15,7 @@ import java.awt.*;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
+
     /**
      * Constructs a dinosaur instance. Calls the constructor of the superclass Animal
      * and initializes specific attributes for a predator.
@@ -39,6 +40,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     public void act(World world) {
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
+
         super.act(world);
 
         if (age >= 20) {
