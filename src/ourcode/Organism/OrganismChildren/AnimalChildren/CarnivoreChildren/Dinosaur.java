@@ -96,20 +96,21 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     @Override
     public boolean checkHasBreedMate(World world) {
-        Location my_location = null;
+        Location my_location;
         try {
             my_location = world.getLocation(this);
         } catch (Exception e) {
             System.out.println("dinosaur died");
             return false;
         }
-        for (Location location: world.getSurroundingTiles(my_location, 2)) {
+        for (Location location : world.getSurroundingTiles(my_location, 2)) {
             if (!world.isTileEmpty(location)) {
                 if (world.getTile(location) instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
                     return true;
                 }
             }
-        } return false;
+        }
+        return false;
     }
 
     @Override

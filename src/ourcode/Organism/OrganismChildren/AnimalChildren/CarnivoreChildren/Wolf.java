@@ -177,7 +177,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public void eatWithPack(World world){
         grace_period = 1;
-        Wolf hungriest_wolf = null;
+        Wolf hungriest_wolf;
         hungriest_wolf = getHungriestWolf();
 
         if (!world.isTileEmpty(killed_animal_location)) {
@@ -239,7 +239,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
             if (friends.contains(animal)) return;
-
                 animal.setGracePeriod(1);
                 animal.damage(power);
                 if (animal instanceof Wolf wolf_to_take) {
@@ -262,10 +261,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     public boolean shareCarcass(){
-        if (my_alpha!=null) {
-            return true;
-        }
-        else return false;
+        return my_alpha != null;
     }
 
     /**
@@ -346,23 +342,6 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             wolf.setFriends(new_wolf);
             new_wolf.setFriends(wolf);
         }
-    }
-
-    /**
-     * Retrieves a specific wolf from the pack.
-     *
-     * @param thisWolf The wolf to retrieve from the pack.
-     * @return The wolf from the pack, if present.
-     */
-    public Wolf getWolfFromPack(Wolf thisWolf) {
-        Wolf getwolf = null;
-        for (Wolf wolf : pack) {
-            if (wolf.equals(thisWolf)) {
-                getwolf = wolf;
-                break;
-            }
-        }
-        return getwolf;
     }
 
     /**
@@ -624,9 +603,5 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
      */
     public boolean isAlpha(){
         return alpha;
-    }
-
-    public int getHunger(){
-        return hunger;
     }
 }

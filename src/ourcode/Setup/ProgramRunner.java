@@ -257,10 +257,6 @@ public class ProgramRunner {
         return grass;
     }
 
-    public Burrow getBurrow() {
-        return burrow;
-    }
-
     public Rabbit getRabbit() {
         return rabbit;
     }
