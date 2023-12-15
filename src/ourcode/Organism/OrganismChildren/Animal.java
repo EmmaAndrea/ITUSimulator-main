@@ -91,10 +91,12 @@ public abstract class Animal extends Organism {
             hunger++;
         }
 
-        if (hasBeenKilled || age >= max_age || hunger >= max_hunger) {
-            grace_period = 1;
-            dieAndBecomeCarcass(world);
-            System.out.println(type + id + " died of natural causes");
+        if (hasBeenKilled || age >= max_age || hunger >= max_hunger || isDead()) {
+            if (grace_period == 0) {
+                grace_period = 1;
+                dieAndBecomeCarcass(world);
+                System.out.println(type + id + " died of natural causes");
+            }
             return;
         }
 
@@ -189,7 +191,6 @@ public abstract class Animal extends Organism {
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                //if (carcass.getGracePeriod() == 0) {
                     if (carcass.isRotten) {
                         damage_taken -= 4;
                     }
@@ -205,7 +206,7 @@ public abstract class Animal extends Organism {
                             damage_taken -= nutritionChange;
                         }
                     }
-                //}
+                    carcass.setGracePeriod(0);
             }
         }
     }
@@ -318,6 +319,7 @@ public abstract class Animal extends Organism {
         int dx = Integer.compare(target_location.getX(), current_location.getX());
         int dy = Integer.compare(target_location.getY(), current_location.getY());
         move(world, dx, dy);
+
     }
 
     /**
@@ -348,7 +350,9 @@ public abstract class Animal extends Organism {
             Location newXLocation = new Location(current_location.getX() + dx, current_location.getY());
             if (isValidMove(world, newXLocation)) {
                 world.move(this, newXLocation);
-                return;
+                if (world.getLocation(this) != current_location){
+                    return;
+                }
             }
         }
 
@@ -618,7 +622,20 @@ public abstract class Animal extends Organism {
                     if (object instanceof Carcass carcass) {
                         if (this instanceof Predator) {
                             if (hunger >= 4) {
-                                eat(world, carcass);
+                                if (carcass.isRotten) {
+                                    damage_taken -= 4;
+                                    moveAway(world, world.getLocation(carcass));
+                                }
+                                if (carcass.has_fungus) {
+                                    infect();
+                                    moveAway(world, world.getLocation(carcass));
+                                }
+                                else {
+                                    if (carcass.getGracePeriod() == 0) {
+                                        carcass.setGracePeriod(1);
+                                        eat(world, carcass);
+                                    }
+                                }
                                 lock.unlock();
                                 return true;
                             }
@@ -707,7 +724,6 @@ public abstract class Animal extends Organism {
         if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
             if (hunger >= animal.getNutritionalValue()) {
                 if (animal.getGracePeriod() == 0) {
-                    animal.setGracePeriod(1);
                     attack(world, animal);
                     lock.unlock();
                     return true;

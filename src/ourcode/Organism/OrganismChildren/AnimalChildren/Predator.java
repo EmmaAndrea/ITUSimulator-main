@@ -52,7 +52,7 @@ public abstract class Predator extends Animal {
         animal.damage(power);
         System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
         if (animal.isDead()) {
-            eat(world, animal.dieAndBecomeCarcass(world));
+            animal.dieAndBecomeCarcass(world);
         } else animal.setGracePeriod(0);
     }
 
@@ -87,7 +87,7 @@ public abstract class Predator extends Animal {
                 if (object instanceof Animal animal) {
                     synchronized (animal) {
                         if (animal.getGracePeriod() == 0) {
-                            animal.setGracePeriod(1);
+
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() <= trophic_level) {
                                     if (consumable_foods.contains(animal.getType())) {

@@ -79,6 +79,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
         else if (checkBreedStats(world)) {
            breed(world);
+           return;
         }
 
         else if (hunger > 30) {
@@ -86,7 +87,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
                 nextMove(world);
             }
         }
-        else nextMove(world);
+        nextMove(world);
     }
 
     /**

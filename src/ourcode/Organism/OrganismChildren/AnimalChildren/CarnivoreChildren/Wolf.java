@@ -189,6 +189,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 if (getHungriestWolf().getHunger() < 2) {
                     pack_is_done_eating = true;
                     killed_animal_location = null;
+                    carcass.setGracePeriod(0);
                     return;
                 }
 
@@ -199,6 +200,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     }
 
             } else killed_animal_location = null;
+
         }
     }
 
