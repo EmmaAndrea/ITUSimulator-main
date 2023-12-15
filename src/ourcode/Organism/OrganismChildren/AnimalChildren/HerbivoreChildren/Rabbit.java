@@ -54,20 +54,24 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     public void act(World world) {
         super.act(world);
 
-        if (is_hiding) return;
+        if (is_hiding) {
+            return;
+        }
 
-        if (isBedtime(world)) return;
+        if (isBedtime(world)) {
+            return;
+        }
 
         boolean isCloseToBurrow = false;
         // if it is not in its burrow
-        if (has_burrow) {
-            if (distanceTo(world, world.getLocation(habitat)) < 1) {
+        if (habitat != null) {
+            if (distanceTo(world, world.getLocation(habitat)) < 3) {
                 isCloseToBurrow = true;
             }
-            if (timeToNight(world) < 5 && !isCloseToBurrow) {
+            if (world.getCurrentTime() < 10 && world.getCurrentTime() > 5 && !isCloseToBurrow) {
                 moveCloser(world, world.getLocation(habitat));
                 return;
-            }
+            } else nextMove(world);
         }
         nextMove(world);
     }

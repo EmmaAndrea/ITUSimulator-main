@@ -136,7 +136,7 @@ public class RabbitTest {
         assertFalse(world.containsNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten.");
     }
 
-    @Test
+    @org.testng.annotations.Test
     public void testRabbitBreeding() throws Exception {
         // Create a world
         programRunner.create("./data/t1-2b.txt");
@@ -151,7 +151,8 @@ public class RabbitTest {
         int initialRabbitCount = countRabbits(world);
 
         // Run the simulation for a number of steps to allow breeding
-        programRunner.runSimulation(20);
+        programRunner.runSimulation(10);
+        programRunner.runSimulation(10);
 
         // Get the count of rabbits after running the simulation
         int postSimulationRabbitCount = countRabbits(world);

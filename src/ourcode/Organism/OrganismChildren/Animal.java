@@ -6,6 +6,7 @@ import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -589,7 +590,8 @@ public abstract class Animal extends Organism {
 
                                 // wolves act differently than other animals when interacting with each other.
                                 if (animal.getType().equals(type)) {
-                                    sameTypeInteraction(world, animal);
+                                    if (this instanceof Rabbit) continue;
+                                    else sameTypeInteraction(world, animal);
                                     return true;
                                 }
 
@@ -642,7 +644,7 @@ public abstract class Animal extends Organism {
                                         return true;
                                     }
                                 }
-                            }
+                            } return true;
                         }
                     }
                 } else if (!world.isTileEmpty(location)) {
