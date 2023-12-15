@@ -7,8 +7,6 @@ import itumulator.world.World;
 import ourcode.Obstacles.Meteor;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
-import ourcode.Organism.Gender;
-import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
@@ -31,9 +29,9 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         trophic_level = 2;
         type = "dinosaur";
         max_age = 250;
-        max_hunger = 50;
-        power = 4;
-        max_damage = 30;
+        max_hunger = 80;
+        power = 3;
+        max_damage = 120;
         consumable_foods.add("dinosaur");
         bedtime = 12;
         wakeup = 18;
@@ -47,7 +45,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             return;
         }
 
-        setPrevious_location(world);
+        previous_location = world.getLocation(this);
         Location current_location = world.getLocation(this);
         super.act(world);
 
@@ -55,9 +53,9 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             mother = null;
         }
 
-        if (age >= 20) {
+        if (age >= 14) {
             trophic_level = 6;
-            power = 7;
+            power = 6;
         } else {
             if (mother != null) followMother(world);
         }
@@ -74,16 +72,16 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             }
         }
 
-        if (hunger > 30) {
-            hunt(world);
+        if (kaboomOdds()) {
+            goExtinct(world);
         }
 
         else if (checkBreedStats(world)) {
            breed(world);
         }
 
-        else if (kaboomOdds()) {
-            goExtinct(world);
+        else if (hunger > 30) {
+            hunt(world);
         }
 
         else nextMove(world);
@@ -93,7 +91,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      * Lays egg.
      * @param world The simulation world in which breeding occurs.
      */
-
     @Override
     public boolean checkHasBreedMate(World world) {
         Location my_location;
@@ -103,9 +100,9 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             System.out.println("dinosaur died");
             return false;
         }
-        for (Location location : world.getSurroundingTiles(my_location, 2)) {
+        for (Location location : world.getSurroundingTiles(my_location, 4)) {
             if (!world.isTileEmpty(location)) {
-                if (world.getTile(location) instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
+                if (world.getTile(location) instanceof Dinosaur dinosaur && dinosaur.getGender() != gender) {
                     return true;
                 }
             }
@@ -121,7 +118,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
             steps_since_last_birth = 0;
-            // add taking care of egg?
+            // add taking care of egg? - should be take care of baby, egg cannot be hurt
         }
     }
 
@@ -150,11 +147,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     }
 
     public boolean kaboomOdds() {
-        return new Random().nextInt(100) < 1;
-    }
-
-    public void setPrevious_location(World world) {
-        previous_location = world.getLocation(this);
+        return new Random().nextInt(150) < 1;
     }
 
     /**
@@ -164,7 +157,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     @Override
     public DisplayInformation getInformation() {
         if (!has_cordyceps) {
-            if (age >= 20) {
+            if (age >= 14) {
                 if (is_sleeping) {
                     return new DisplayInformation(Color.black, "dinosaur-adult-sleeping");
                 } else if (damage_taken > 0) {
@@ -182,7 +175,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
                 }
             }
         } else {
-            if (age >= 20) {
+            if (age >= 14) {
                 if (is_sleeping) {
                     return new DisplayInformation(Color.black, "dinosaur-adult-sleeping-cordyceps");
                 } else if (damage_taken > 0) {

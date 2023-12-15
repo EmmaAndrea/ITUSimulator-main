@@ -38,7 +38,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
         super(id_generator);
         this.nutritional_value = nutritional_value;
         this.type = type;
-        max_age = 20;
+        max_age = 16;
         isRotten = false;
         this.has_fungus = has_fungus;
         size = nutritional_value;
@@ -59,7 +59,7 @@ public class Carcass extends Organism implements DynamicDisplayInformationProvid
     public void act(World world) {
         super.act(world);
 
-        if (age >= 15) {
+        if (age >= 11) {
             isRotten = true;
         }
 
