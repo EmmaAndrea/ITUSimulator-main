@@ -1,5 +1,6 @@
 package ourcode.Setup;
 
+import itumulator.simulator.Actor;
 import itumulator.world.Location;
 import itumulator.world.World;
 
@@ -9,7 +10,7 @@ import java.util.Random;
  * The Entity class gives the abstraction of an object in the world. Entities can be uniquely identified by their
  * 'type' of entity. Entities also have a unique identity to distinguish between entities of same type.
  */
-public abstract class Entity {
+public abstract class Entity implements Actor {
     // Type (subclass) of entity.
     protected String type;
 
@@ -37,6 +38,10 @@ public abstract class Entity {
         age = 1;
         hasBeenKilled = false;
         type = "";
+    }
+
+    public void act(World world) {
+        age++;
     }
 
     /**
@@ -90,8 +95,13 @@ public abstract class Entity {
         return age;
     }
 
-    public boolean isHasBeenKilled() {
-        return hasBeenKilled;
+    public void deleteEverythingOnTile(World world, Location location) {
+        if (world.containsNonBlocking(location)) {
+            world.delete(world.getNonBlocking(location));
+        }
+        if (!world.isTileEmpty(location)) {
+            world.delete(world.getTile(location));
+        }
     }
 
     /**

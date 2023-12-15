@@ -6,6 +6,7 @@ import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ourcode.Obstacles.Fossil;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
@@ -75,10 +76,9 @@ public class DinosaurTest {
 
     /**
      * Testing that dinosaurs lay eggs as eggspected.
-     * @throws Exception skibob
      */
     @Test
-    public void testDinosaurLayEgg() throws Exception {
+    public void testDinosaurLayEgg() {
         Program program = new Program(3, 500, 200);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
@@ -107,10 +107,9 @@ public class DinosaurTest {
 
     /**
      * Testing that eggs hatch into dinosaurs as expected.
-     * @throws Exception skibob
      */
     @Test
-    public void testEggHatch() throws Exception {
+    public void testEggHatch() {
         Program program = new Program(2, 500, 200);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
@@ -134,10 +133,9 @@ public class DinosaurTest {
 
     /**
      * Testing that infected eggs hatch as infected dinosaur.
-     * @throws Exception skibob
      */
     @Test
-    public void testInfectedEggHatch() throws Exception {
+    public void testInfectedEggHatch() {
         Program program = new Program(2, 500, 200);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
@@ -161,10 +159,9 @@ public class DinosaurTest {
 
     /**
      * Testing that a dinosaur leaves footprints as expected.
-     * @throws Exception skibob
      */
     @Test
-    public void testDinosaurFootprint() throws Exception {
+    public void testDinosaurFootprint() {
         Program program = new Program(2, 500, 200);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
@@ -173,7 +170,6 @@ public class DinosaurTest {
         dino.spawn(world);
         Location previous_location = world.getLocation(dino);
         program.simulate();
-        Location current_location = world.getLocation(dino);
 
         boolean correct_footstep = world.getTile(previous_location) instanceof Footprint;
 
@@ -182,10 +178,9 @@ public class DinosaurTest {
 
     /**
      * Testing that male dinosaur does not lay egg.
-     * @throws Exception skibob
      */
     @Test
-    public void testMaleEggLayingFalse() throws Exception {
+    public void testMaleEggLayingFalse() {
         Program program = new Program(2, 500, 200);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
@@ -240,5 +235,61 @@ public class DinosaurTest {
         }
 
         assertEquals(0, counter, "Dinosaur should have been eaten by bear.");
+    }
+
+    /**
+     * Testing the process of dinosaur extinction.
+     * @throws Exception skibob
+     */
+    @Test
+    public void testDinosaurGoesExtinct() throws Exception {
+        programRunner.create("data/dinosaur-test-meteor.txt");
+        world = programRunner.getWorld();
+
+        boolean fossilExists = false;
+
+        for (int i = 0; i < 200; i++) {
+            programRunner.simulate();
+
+            for (Object o : world.getEntities().keySet()) {
+                if (o instanceof Fossil) {
+                    fossilExists = true;
+                    break;
+                }
+            }
+        }
+
+        assertTrue(fossilExists, "There should (probably) be a fossil.");
+    }
+
+    /**
+     * Testing that a meteor will turn into a fossil
+     * @throws Exception skibob
+     */
+    @Test
+    public void testMeteorBecomesFossil() throws Exception {
+        programRunner.create("data/test-meteor.txt");
+        world = programRunner.getWorld();
+
+        boolean fossilExists = false;
+
+        for (int i = 0; i < 6; i++) {
+            programRunner.simulate();
+
+            for (Object o : world.getEntities().keySet()) {
+                if (o instanceof Dinosaur dino) {
+                    dino.goExtinct(world);
+                }
+            }
+
+            for (Object o : world.getEntities().keySet()) {
+                if (o instanceof Fossil) {
+                    fossilExists = true;
+                    break;
+                }
+            }
+        }
+
+        assertTrue(fossilExists, "A meteor should turn into a fossil after 4 steps.");
     }
 }

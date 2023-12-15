@@ -39,7 +39,7 @@ public abstract class Organism extends Entity implements Actor {
      * @param world The simulation world where the organism exists.
      */
     public void act(World world) {
-        age++;
+        super.act(world);
     }
 
     /**

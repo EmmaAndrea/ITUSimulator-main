@@ -203,14 +203,6 @@ public class ProgramRunner {
 
         for (int i = 0; i < step_count; i++) {
             p.simulate();
-            if (i == 148) {
-                for (Object o : p.getWorld().getEntities().keySet()) {
-                    if (o instanceof Dinosaur dinosaur) {
-                        p.getWorld().delete(dinosaur);
-                        System.out.println("EXTINCTION");
-                    }
-                }
-            }
         }
         // for up to step count
     }
@@ -271,5 +263,11 @@ public class ProgramRunner {
 
     public Rabbit getRabbit() {
         return rabbit;
+    }
+
+    public void simulate() {
+        // show the simulation
+        p.show();
+        p.simulate();
     }
 }
