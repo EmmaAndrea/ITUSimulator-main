@@ -142,7 +142,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
 
             // sequence for lone wolves
         } else if (hunger > 15) {
-            hunt(world);
+            if (!hunt(world)){
+                nextMove(world);
+            }
         } else if (!enemyHabitatNearby(world)) {
             nextMove(world);
         }
@@ -225,7 +227,9 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
             if (distanceTo(world, world.getLocation(my_alpha)) > 3) {
                 moveCloser(world, world.getLocation(my_alpha));
             }
-            hunt(world);
+            if (!hunt(world)){
+                nextMove(world);
+            }
         }
     }
 

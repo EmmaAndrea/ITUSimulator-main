@@ -64,7 +64,14 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
 
         boolean isCloseToBurrow = false;
         // if it is not in its burrow
-        if (habitat != null) {
+        if (habitat != null && world.getEntities().containsKey(this)) {
+            try {
+                world.getLocation(habitat);
+            } catch (Exception e) {
+                System.out.println("habitat missing");
+                habitat = null;
+                return;
+            }
             if (distanceTo(world, world.getLocation(habitat)) < 3) {
                 isCloseToBurrow = true;
             }
@@ -90,6 +97,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         if(world.containsNonBlocking(location)){
             if (world.getNonBlocking(location) instanceof Burrow burrow){
                 habitat = burrow;
+                return;
             }
         } else if (age < 5) return;
 

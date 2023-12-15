@@ -124,7 +124,8 @@ public abstract class Animal extends Organism {
             // Make habitat if it doesn't have one.
             if (habitat == null) {
                 makeHabitat(world);
-            } if (!findFoodOrSafety(world)) {
+            }
+            if (!findFoodOrSafety(world)) {
                 nextMove(world);
             }
         }
@@ -165,9 +166,10 @@ public abstract class Animal extends Organism {
         if (world.containsNonBlocking(location)) {
             if (world.getNonBlocking(location) instanceof Grass grass) {
                 world.delete(grass);
+                return true;
             }
         }
-        return !world.containsNonBlocking(location);
+        return false;
     }
 
     /**
@@ -182,8 +184,8 @@ public abstract class Animal extends Organism {
 
         if (organism instanceof Grass || organism instanceof Bush) {
             hunger -= nutrition;
-            if (organism.getType().equals("grass")) {
-                world.delete(world.getNonBlocking(world.getLocation(this)));
+            if (organism instanceof Grass grass) {
+                world.delete(grass);
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
@@ -625,38 +627,45 @@ public abstract class Animal extends Organism {
                 }
             }
 
-            // Next, check for non-blocking organisms like grass.
-            for (Location location : surrounding_tiles) {
-                if (world.containsNonBlocking(location)) {
-                    Object object = world.getNonBlocking(location);
-                    if (object instanceof Organism organism) {
-                        if (consumable_foods.contains(organism.getType())) {
-                            moveCloser(world, location);
-                            if (world.containsNonBlocking(world.getLocation(this))) {
-                                if (world.getNonBlocking(world.getLocation(this)) instanceof Grass grass) {
-                                    if (hunger >= grass.getNutritionalValue()) {
-                                        eat(world, grass);
-                                        lock.unlock();
-                                        return true;
-                                    }
-                                }
-                            } return true;
+            if (world.containsNonBlocking(world.getLocation(this))) {
+                Object object = world.getNonBlocking(world.getLocation(this));
+                if (object instanceof Grass grass) {
+                    if (consumable_foods.contains(grass.getType())) {
+                        if (hunger >= grass.getNutritionalValue()) {
+                            eat(world, grass);
+                            return true;
                         }
                     }
-                } else if (!world.isTileEmpty(location)) {
+                }
+            }
+            // Next, check for plants.
+            for (Location location : surrounding_tiles) {
+                if (!world.isTileEmpty(location)) {
                     // Declares a new object at given location.
                     Object object = world.getTile(location);
 
                     // Casts object to Organism class and checks if the object is an Organism.
                     if (object instanceof Bush bush) {
                         if (consumable_foods.contains("bush")) {
-                            if (hunger > 2 && bush.getBerriesAmount()>2) {
+                            if (hunger > 2 && bush.getBerriesAmount() > 2) {
                                 bush.eatBerries();
                                 eat(world, bush);
                             }
                             System.out.println(type + " ate berries");
                             lock.unlock();
-                            return false;
+                            return true;
+                        }
+                    } else if (world.containsNonBlocking(location)) {
+                        object = world.getNonBlocking(location);
+                        if (object instanceof Grass grass) {
+                            if (consumable_foods.contains(grass.getType())) {
+                                if (hunger >= grass.getNutritionalValue()) {
+                                    moveCloser(world, location);
+                                    eat(world, grass);
+                                    lock.unlock();
+                                    return true;
+                                }
+                            }
                         }
                     }
                 }

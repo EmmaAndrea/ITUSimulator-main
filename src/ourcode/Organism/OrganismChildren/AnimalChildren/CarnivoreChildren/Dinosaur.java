@@ -58,6 +58,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             power = 6;
         } else {
             if (mother != null) followMother(world);
+            return;
         }
 
         // Stop at once if something happened that killed the dinosaur.
@@ -81,9 +82,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         }
 
         else if (hunger > 30) {
-            hunt(world);
+            if (!hunt(world)){
+                nextMove(world);
+            }
         }
-
         else nextMove(world);
     }
 

@@ -49,8 +49,8 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void attack(World world, Animal animal) {
-        System.out.println(type + " attacks " + animal.getType() + animal.getId() + " in hunt mode");
         animal.damage(power);
+        System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
         if (animal.isDead()) {
             eat(world, animal.dieAndBecomeCarcass(world));
         } else animal.setGracePeriod(0);
@@ -68,8 +68,8 @@ public abstract class Predator extends Animal {
      *
      * @param world The simulation world where hunting takes place.
      */
-    public void hunt(World world) {
-        if (!world.contains(this) || hasBeenKilled || is_hiding) return;
+    public boolean hunt(World world) {
+        if (!world.contains(this) || hasBeenKilled || is_hiding) return true;
 
         Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
 
@@ -96,7 +96,7 @@ public abstract class Predator extends Animal {
                                         }
                                         System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
                                         attack(world, animal);
-                                        System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
+                                        return true;
                                     }
                                 }
                             }
@@ -104,6 +104,6 @@ public abstract class Predator extends Animal {
                     }
                 }
             }
-        }
+        } return false;
     }
 }

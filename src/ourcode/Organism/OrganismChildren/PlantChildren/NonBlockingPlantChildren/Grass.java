@@ -72,7 +72,9 @@ public class Grass extends NonBlockingPlant implements DynamicDisplayInformation
         // If a suitable location is found, spread the grass.
         if (spreadLocation != null) {
             Grass spreaded_grass = new Grass(id_generator);
-            world.setTile(spreadLocation, spreaded_grass);
+            if (!world.containsNonBlocking(spreadLocation)) {
+                world.setTile(spreadLocation, spreaded_grass);
+            }
             id_generator.addEntityToIdMap(spreaded_grass.getId(), spreaded_grass);
             id_generator.addLocationToIdMap(world.getLocation(spreaded_grass), spreaded_grass.getId());
             id_generator.addGrassToLocationMap(spreadLocation, spreaded_grass);
