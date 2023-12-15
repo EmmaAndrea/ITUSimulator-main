@@ -28,7 +28,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         super(original_id_generator, has_cordyceps);
         trophic_level = 2;
         type = "dinosaur";
-        max_age = 250;
+        max_age = 200;
         max_hunger = 80;
         power = 3;
         max_damage = 120;
@@ -82,7 +82,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
            return;
         }
 
-        else if (hunger > 30) {
+        else if (hunger > 10) {
             if (!hunt(world)){
                 nextMove(world);
             }
@@ -115,13 +115,12 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     @Override
     public void breed(World world) {
-        System.out.println("made baby dino");
+        System.out.println(type + id + " made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
         dinosaurEgg.setMother(this);
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
             steps_since_last_birth = 0;
-            // add taking care of egg? - should be take care of baby, egg cannot be hurt
         }
     }
 

@@ -71,7 +71,7 @@ public abstract class Predator extends Animal {
     public boolean hunt(World world) {
         if (!world.contains(this) || hasBeenKilled || is_hiding) return true;
 
-        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 5);
+        Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 7);
 
         // First, check for blocking organisms.
         // Though, if there is an animal of higher trophic level, move away from this animal.
@@ -87,14 +87,14 @@ public abstract class Predator extends Animal {
                 if (object instanceof Animal animal) {
                     synchronized (animal) {
                         if (animal.getGracePeriod() == 0) {
-
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() <= trophic_level) {
                                     if (consumable_foods.contains(animal.getType())) {
                                         for (int i = 1; i <= distanceTo(world, location); i++) {
+                                            System.out.println(type + id + " moves closer to " + animal.getType() + animal.getId() + " in hunt mode");
                                             moveCloser(world, location);
                                         }
-                                        System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
+                                        System.out.println(type + id + " attacks " + animal.getType() + animal.getId() + " in hunt mode");
                                         attack(world, animal);
                                         return true;
                                     }
@@ -104,6 +104,7 @@ public abstract class Predator extends Animal {
                     }
                 }
             }
-        } return false;
+        }
+        return false;
     }
 }
