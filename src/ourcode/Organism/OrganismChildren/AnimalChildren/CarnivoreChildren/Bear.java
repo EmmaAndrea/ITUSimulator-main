@@ -14,11 +14,8 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
-
     protected Location territory_location;
-
     protected Bear mate;
-
     protected Animal my_cub;
 
     public Bear(IDGenerator idGenerator, boolean has_cordyceps) {
@@ -27,9 +24,9 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         territory_location = null;
         type = "bear";
         max_age = 190;
-        max_hunger = 30;
-        power = 4;
-        max_damage = 16;
+        max_hunger = 60;
+        power = 3;
+        max_damage = 36;
         consumable_foods.addAll(Arrays.asList("bush", "dinosaur", "grass"));
         bedtime = 12;
         wakeup = 18;
@@ -245,15 +242,15 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         this.territory_location = territory;
     }
 
-    public void setTerritory(World world, Location location){
-        if (habitat != null){
+    public void setTerritory(World world, Location location) {
+        if (habitat != null && world.contains(habitat)) {
             world.delete(habitat);
         }
         habitat = new Territory(id_generator);
         world.setTile(location, habitat);
     }
 
-    public void setMyCub(Animal cub){
+    public void setMyCub(Animal cub) {
         my_cub = cub;
         friends.add(cub);
     }

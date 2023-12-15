@@ -36,13 +36,13 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     public Rabbit(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
         type = "rabbit";
-        max_hunger = 18;
+        max_hunger = 24;
         nutritional_value = 4;
         max_age = 100;
         trophic_level = 2;
-        power = 2;
+        power = 1;
         has_burrow = false;
-        max_damage = 8;
+        max_damage = 18;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
         this.has_cordyceps = has_cordyceps;
         bedtime = 9;
@@ -116,12 +116,6 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         } return false;
     }
 
-    public void setBurrow(Burrow burrow) {
-
-        my_burrows.add(burrow);
-        has_burrow = true;
-    }
-
     /**
      * Provides the visual representation of the rabbit in the simulation. Changes appearance based on the rabbit's age.
      *
@@ -130,13 +124,13 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
     @Override
     public DisplayInformation getInformation() {
         if (!has_cordyceps) {
-            if (age >= 15) {
+            if (age >= 20) {
                 return new DisplayInformation(Color.black, "rabbit-large");
             } else {
                 return new DisplayInformation(Color.black, "rabbit-small");
             }
         } else {
-            if (age >= 15) {
+            if (age >= 20) {
                 return new DisplayInformation(Color.black, "rabbit-large-cordyceps");
             } else {
                 return new DisplayInformation(Color.black, "rabbit-small-cordyceps");

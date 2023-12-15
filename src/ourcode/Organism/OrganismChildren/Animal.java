@@ -94,23 +94,13 @@ public abstract class Animal extends Organism {
         if (hasBeenKilled || age >= max_age || hunger >= max_hunger) {
             grace_period = 1;
             dieAndBecomeCarcass(world);
-            System.out.println("this '" + getType() + "' died of natural causes");
+            System.out.println(type + id + " died of natural causes");
             return;
         }
 
-        if (isBedtime(world) && !is_hiding && habitat != null) {
+        if (isBedtime(world) && !is_hiding && habitat != null && world.contains(habitat)) {
             Location habitat_location = world.getLocation(habitat);
-
-            if (distanceTo(world, habitat_location) > 0) {
-                moveCloser(world, habitat_location);
-            }
-            if (distanceTo(world, habitat_location) < 2) {
-                if (grace_period == 0) {
-                    grace_period = 1;
-                }
-                enterHabitat(world);
-            }
-
+            goToHabitat(world, habitat_location);
         } else if (!isBedtime(world) && is_hiding) {
             exitHabitat(world);
             return;
@@ -139,6 +129,18 @@ public abstract class Animal extends Organism {
             }
         }
         lock.unlock();
+    }
+
+    public void goToHabitat(World world, Location habitat_location) {
+        if (distanceTo(world, habitat_location) > 0) {
+            moveCloser(world, habitat_location);
+        }
+        if (distanceTo(world, habitat_location) < 2) {
+            if (grace_period == 0) {
+                grace_period = 1;
+            }
+            enterHabitat(world);
+        }
     }
 
     /**
@@ -215,11 +217,23 @@ public abstract class Animal extends Organism {
     public void breed(World world) throws Exception {
         Class<? extends Animal> animalClass = this.getClass();
 
-        // Assuming idGenerator is available in the scope and hasCordyceps is either a field or a parameter
         Constructor<? extends Animal> constructor = animalClass.getDeclaredConstructor(IDGenerator.class, boolean.class);
-        Animal cub = constructor.newInstance(id_generator, has_cordyceps);
 
-        putCubInWorld(world, cub);
+        int max_cubs = 12; // Maximum number of cubs that can be born.
+        int family_size = 0;
+
+        for (Object o : world.getEntities().keySet()) {
+            if (this.getClass().isInstance(o)) {
+                family_size++;
+            }
+        }
+        // Calculate amount of cubs, ensures amount_of_cubs doesn't go below 0.
+        int amount_of_cubs = Math.max(max_cubs - family_size, 1);
+
+        for (int i = 0; i < amount_of_cubs; i++) {
+            Animal cub = constructor.newInstance(id_generator, has_cordyceps);
+            putCubInWorld(world, cub);
+        }
 
         steps_since_last_birth = 0;
     }
@@ -403,7 +417,7 @@ public abstract class Animal extends Organism {
         habitat.removeResident(this);
         Location spawn_location = getSpawnLocation(world);
         if (spawn_location == null){
-            System.out.println("could not leave habitat");
+            System.out.println(type + id + " could not leave habitat");
             return;
         }
         try {
@@ -413,7 +427,7 @@ public abstract class Animal extends Organism {
             return;
         }
         is_hiding = false;
-        System.out.println("left habitat");
+        System.out.println(type + id + "left habitat");
         // overridden by bear
     }
 
@@ -424,7 +438,8 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the habitat is located.
      * @return The chosen location for the animal to spawn.
      */
-    public Location getSpawnLocation(World world){
+    public Location getSpawnLocation(World world) {
+        if (!world.contains(habitat)) return null;
         Location habitat_location = world.getLocation(habitat);
 
         // Makes list of possible spawn locations (locations with no blocking elements).
@@ -488,7 +503,7 @@ public abstract class Animal extends Organism {
      */
     public void damage(int power) {
         damage_taken += power;
-        System.out.println(type + " was hit for " + power + " damage");
+        System.out.println(type + id + " was hit for " + power + " damage");
     }
 
     /**

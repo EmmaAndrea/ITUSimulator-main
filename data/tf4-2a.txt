@@ -6,3 +6,4 @@ wolf 3
 cordyceps wolf 1-5 
 dinosaur 3-8
 dinosaur egg 10
+bear 8
