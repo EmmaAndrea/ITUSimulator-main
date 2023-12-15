@@ -18,7 +18,7 @@ public abstract class Organism extends Entity implements Actor {
     // Represents how much hunger to deduct when particular organism is eaten.
     protected int nutritional_value;
 
-    protected int trophic_level = 0;
+    protected int trophic_level;
 
     protected int grace_period; // A grace period used for specific scenarios to avoid simulation errors.
 
@@ -39,7 +39,7 @@ public abstract class Organism extends Entity implements Actor {
      * @param world The simulation world where the organism exists.
      */
     public void act(World world) {
-        age++;
+        super.act(world);
     }
 
     /**
@@ -48,7 +48,7 @@ public abstract class Organism extends Entity implements Actor {
      * @return A list of free locations around the organism, or null if none are available.
      */
     public ArrayList<Location> getSurroundingFreeLocations(World world) {
-        if (!world.contains(this) || hasBeenKilled) return new ArrayList<Location>();
+        if (!world.contains(this) || hasBeenKilled) return new ArrayList<>();
 
         Location current_location = world.getLocation(this);
 

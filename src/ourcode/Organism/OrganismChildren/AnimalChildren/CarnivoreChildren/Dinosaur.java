@@ -4,6 +4,7 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Meteor;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
 import ourcode.Organism.Gender;
@@ -13,6 +14,7 @@ import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Random;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
@@ -41,13 +43,18 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     @Override
     public void act(World world) {
+        if (!world.contains(this)) {
+            return;
+        }
+
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
         super.act(world);
 
-        if (!world.getEntities().containsKey(mother)){
+        if (!world.getEntities().containsKey(mother)) {
             mother = null;
         }
+
         if (age >= 20) {
             trophic_level = 6;
             power = 7;
@@ -71,8 +78,12 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             hunt(world);
         }
 
-        if (checkBreedStats(world)) {
+        else if (checkBreedStats(world)) {
            breed(world);
+        }
+
+        else if (kaboomOdds()) {
+            goExtinct(world);
         }
 
         else nextMove(world);
@@ -85,20 +96,21 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     @Override
     public boolean checkHasBreedMate(World world) {
-        Location my_location = null;
+        Location my_location;
         try {
             my_location = world.getLocation(this);
         } catch (Exception e) {
             System.out.println("dinosaur died");
             return false;
         }
-        for (Location location: world.getSurroundingTiles(my_location, 2)) {
+        for (Location location : world.getSurroundingTiles(my_location, 2)) {
             if (!world.isTileEmpty(location)) {
                 if (world.getTile(location) instanceof Animal animal && animal.getType().equals(type) && animal.getGender() == Gender.Male) {
                     return true;
                 }
             }
-        } return false;
+        }
+        return false;
     }
 
     @Override
@@ -128,6 +140,17 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
                 moveCloser(world, world.getLocation(mother));
             }
         }
+    }
+
+    public void goExtinct(World world) {
+        Meteor meteor = new Meteor(id_generator);
+        Location current_location = world.getLocation(this);
+        deleteEverythingOnTile(world, current_location);
+        world.setTile(current_location, meteor);
+    }
+
+    public boolean kaboomOdds() {
+        return new Random().nextInt(100) < 1;
     }
 
     public void setPrevious_location(World world) {
