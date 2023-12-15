@@ -602,32 +602,13 @@ public abstract class Animal extends Organism {
                     if (object instanceof Animal animal) {
                         if (animal.getGracePeriod() == 0) {
                             if (!friends.contains(animal)) {
-
-                                // wolves act differently than other animals when interacting with each other.
                                 if (animal.getType().equals(type)) {
-                                    if (this instanceof Rabbit) continue;
-                                    else sameTypeInteraction(world, animal);
+                                    if (sameTypeInteraction(world, animal)) {
+                                        return true;
+                                    } else continue;
+                                } else if (differentTypeInteraction(world, animal)) {
                                     return true;
-                                }
-
-                                // If the organism has a higher trophic level than itself, this will move away.
-                                if (animal.getTrophicLevel() > trophic_level) {
-                                    moveAway(world, location);
-                                    lock.unlock();
-                                    return true;
-
-                                }
-                                // Otherwise this will attack.
-                                if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
-                                    if (hunger >= animal.getNutritionalValue()) {
-                                        if (animal.getGracePeriod() == 0) {
-                                            animal.setGracePeriod(1);
-                                            attack(world, animal);
-                                            lock.unlock();
-                                            return true;
-                                        } else continue;
-                                    }
-                                }
+                                } else continue;
                             }
                         }
                     }
@@ -701,8 +682,30 @@ public abstract class Animal extends Organism {
         return damage_taken;
     }
 
-    public void sameTypeInteraction(World world, Animal animal) {
-        attack(world, animal);
+    public boolean sameTypeInteraction(World world, Animal animal) {
+        return false;
+    }
+
+    public boolean differentTypeInteraction(World world, Animal animal){
+        // If the organism has a higher trophic level than itself, this will move away.
+        if (animal.getTrophicLevel() > trophic_level) {
+            moveAway(world, world.getLocation(animal));
+            lock.unlock();
+            return true;
+
+        }
+        // Otherwise this will attack.
+        if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
+            if (hunger >= animal.getNutritionalValue()) {
+                if (animal.getGracePeriod() == 0) {
+                    animal.setGracePeriod(1);
+                    attack(world, animal);
+                    lock.unlock();
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     /**

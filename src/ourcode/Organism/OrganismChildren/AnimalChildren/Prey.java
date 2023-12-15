@@ -26,4 +26,9 @@ public abstract class Prey extends Animal {
     public void act(World world) {
         super.act(world);
     }
+
+    @Override
+    public boolean sameTypeInteraction(World world, Animal animal){
+        return false;
+    }
 }

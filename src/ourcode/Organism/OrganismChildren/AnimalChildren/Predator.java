@@ -56,6 +56,12 @@ public abstract class Predator extends Animal {
         } else animal.setGracePeriod(0);
     }
 
+    @Override
+    public boolean sameTypeInteraction(World world, Animal animal){
+        attack(world, animal);
+        return true;
+    }
+
     /**
      * Searches for and hunts down potential prey within a specified range in the world.
      * The predator moves closer to the prey and attacks if it is a consumable animal.
