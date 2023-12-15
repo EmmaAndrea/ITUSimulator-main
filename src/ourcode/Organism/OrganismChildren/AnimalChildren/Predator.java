@@ -58,7 +58,10 @@ public abstract class Predator extends Animal {
 
     @Override
     public boolean sameTypeInteraction(World world, Animal animal){
-        attack(world, animal);
+        // make sure attacker isn't being killed while attacking
+        grace_period = 1;
+        if (!isDead()) attack(world, animal);
+        grace_period = 0;
         return true;
     }
 

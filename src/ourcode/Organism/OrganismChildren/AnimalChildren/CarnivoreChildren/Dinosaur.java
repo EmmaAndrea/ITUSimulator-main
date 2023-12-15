@@ -143,6 +143,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     }
 
     public void goExtinct(World world) {
+        System.out.println("went extinct");
         Meteor meteor = new Meteor(id_generator);
         Location current_location = world.getLocation(this);
         deleteEverythingOnTile(world, current_location);

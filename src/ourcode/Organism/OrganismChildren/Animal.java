@@ -615,7 +615,7 @@ public abstract class Animal extends Organism {
                                 } else if (differentTypeInteraction(world, animal)) {
                                     return true;
                                 } else continue;
-                            }
+                            } continue;
                         }
                     }
                     // if the object is a carcass this will eat part of it.
@@ -746,9 +746,9 @@ public abstract class Animal extends Organism {
             world.delete(this);
         } else {
             Location current_location = world.getLocation(this);
-            world.delete(this);
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
+            world.delete(this);
             world.setTile(current_location, carcass);
             return carcass;
         }
