@@ -247,24 +247,20 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public void attack(World world, Animal animal) {
         if (world.getEntities().containsKey(animal) && world.getEntities().get(animal) != null) {
             if (friends.contains(animal)) return;
+            if (animal.getGracePeriod() == 0) {
                 animal.setGracePeriod(1);
                 animal.damage(power);
                 if (animal instanceof Wolf wolf_to_take) {
                     if (wolf_to_take.getDamageTaken() > 7) {
                         if (alpha && wolf_to_take.isAlpha()) overtakePack(wolf_to_take);
-                        else if (my_alpha!= null) my_alpha.addWolfToPack(wolf_to_take);
+                        else if (my_alpha != null) my_alpha.addWolfToPack(wolf_to_take);
                     }
                 }
                 if (animal.isDead()) {
-                    carcass_location = world.getLocation(animal.dieAndBecomeCarcass(world));
-                    Organism carcass_to_eat = (Organism) world.getTile(carcass_location);
-                    if (pack_hunting) {
-                        if (shareCarcass()) {
-                            killed_animal_location = carcass_location;
-                        }
-                    } else if (hunger >= 4) eat(world, carcass_to_eat);
-                } else animal.setGracePeriod(0);
-            }
+                    killed_animal_location = world.getLocation(animal.dieAndBecomeCarcass(world));
+                }
+            } animal.setGracePeriod(0);
+        }
 
     }
 
