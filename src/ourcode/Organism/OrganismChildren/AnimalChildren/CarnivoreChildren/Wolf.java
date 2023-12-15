@@ -521,6 +521,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 int i = 0;
                 while (pack.get(i) == this) {
                     i++;
+                    if (i >= pack.size() - 1) break;
                 }
                 Wolf next_alpha = pack.get(i);
 
