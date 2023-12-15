@@ -6,7 +6,6 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Cave;
 import ourcode.Obstacles.Habitat;
-import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.Carcass;
@@ -159,7 +158,7 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     public boolean sameTypeInteraction(World world, Animal animal){
         if(animal instanceof Wolf wolf){
             if (!friends.contains(wolf)) {
-                if (wolf.getMyAlpha() != null) {
+                if (wolf.getMyAlpha() != null && wolf.getMyAlpha().getPack() != null) {
                     if (wolf.getMyAlpha().getPack().size() < 2) {
                         attack(world, animal);
                         return true;
@@ -257,9 +256,13 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                     }
                 }
                 if (animal.isDead()) {
-                    killed_animal_location = world.getLocation(animal.dieAndBecomeCarcass(world));
+                    animal.setCarcassLocation(world.getLocation(animal));
+                    if (animal.getCarcassLocation() != null) {
+                        killed_animal_location = animal.getCarcassLocation();
+                    }
                 }
-            } animal.setGracePeriod(0);
+                animal.setGracePeriod(0);
+            }
         }
 
     }
@@ -548,14 +551,14 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
     }
 
     @Override
-    public Carcass dieAndBecomeCarcass(World world) {
+    public void dieAndBecomeCarcass(World world) {
         if (is_hiding) {
                 try {
                     deleteMe(world);
                 } catch (ConcurrentModificationException e) {
                     System.out.println(e.getMessage() + "concurrent");
             }
-            return null;
+            return;
         }
 
         if (world.contains(this) && !is_hiding) {
@@ -565,14 +568,12 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
                 deleteMe(world);
             } catch (ConcurrentModificationException e) {
                 System.out.println(e.getMessage());
-                return null;
+                return;
             }
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
             world.setTile(current_location, carcass);
-            return carcass;
         }
-        return null;
     }
 
     /**

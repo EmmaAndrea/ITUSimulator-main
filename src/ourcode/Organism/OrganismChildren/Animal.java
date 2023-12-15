@@ -6,7 +6,6 @@ import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -45,6 +44,9 @@ public abstract class Animal extends Organism {
     protected int wakeup; // The simulation step when the animal wakes up.
     protected boolean pack_hunting; // Indicates if the animal is currently engaged in pack hunting.
 
+    protected Location my_carcass_location;
+
+    protected int carcass_count;
     /**
      * Constructs a new Animal with a unique identifier.
      * Initializes hunger levels, breeding steps, hiding state, and randomly assigns gender.
@@ -54,7 +56,7 @@ public abstract class Animal extends Organism {
      */
     public Animal(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator); // life_counter = 1;
-
+        carcass_count = 0;
         hunger = 1;
         max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
         steps_since_last_birth = 0;
@@ -91,13 +93,13 @@ public abstract class Animal extends Organism {
             hunger++;
         }
 
-        if (hasBeenKilled || age >= max_age || hunger >= max_hunger || isDead()) {
-            if (grace_period == 0) {
+        if (hasBeenKilled || (age >= max_age) || (hunger >= max_hunger) || isDead()) {
+
                 grace_period = 1;
                 dieAndBecomeCarcass(world);
                 System.out.println(type + id + " died of natural causes");
-            }
-            return;
+                return;
+
         }
 
         if (isBedtime(world) && !is_hiding && habitat != null && world.contains(habitat)) {
@@ -740,19 +742,19 @@ public abstract class Animal extends Organism {
      *
      * @param world The simulation world where the transformation occurs.
      */
-    public Carcass dieAndBecomeCarcass(World world) {
+    public void dieAndBecomeCarcass(World world) {
         grace_period = 1;
         if (is_hiding) {
             world.delete(this);
         } else {
-            Location current_location = world.getLocation(this);
+            if (my_carcass_location == null) {
+                my_carcass_location = world.getLocation(this);
+            }
             Carcass carcass = new Carcass(id_generator, nutritional_value, type, has_cordyceps);
             carcass.setGracePeriod(1);
             world.delete(this);
-            world.setTile(current_location, carcass);
-            return carcass;
+            if (world.isTileEmpty(my_carcass_location)) world.setTile(my_carcass_location, carcass);
         }
-        return null;
     }
 
     public void setInHiding(){
@@ -814,6 +816,28 @@ public abstract class Animal extends Organism {
 
     public void setHunger(int i) {
         hunger = i;
+    }
+
+    public boolean isCloseToDeath(){
+        return max_damage - damage_taken < 4;
+    }
+
+    public void setHasBeenKilled(){
+        hasBeenKilled = true;
+    }
+
+    public void setCarcassLocation(Location location){
+        if (my_carcass_location == null) {
+            my_carcass_location = location;
+        }
+    }
+
+    public Location getCarcassLocation(){
+        if (carcass_count == 0) {
+            carcass_count++;
+            return my_carcass_location;
+        } else return null;
+
     }
 }
 
