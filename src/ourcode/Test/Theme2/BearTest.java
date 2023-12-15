@@ -100,12 +100,13 @@ public class BearTest {
         male_bear.setGender("Male");
 
         Bear female_bear = new Bear(id_generator, false);
-        male_bear.setGender("Female");
+        female_bear.setGender("Female");
 
         female_bear.spawn(world);
         male_bear.spawn(world);
 
-        for (int i = 0; i < 20; i++) {
+        program.show();
+        for (int i = 0; i < 40; i++) {
             program.simulate();
         }
 
@@ -266,6 +267,35 @@ public class BearTest {
     }
 
     @Test
+    public void testBearEatingRabbit() {
+        Program p = new Program(2, 500, 800);
+        world = p.getWorld();
+        id_generator = new IDGenerator();
+
+        Bear bear = new Bear(id_generator, false);
+        Rabbit rabbit = new Rabbit(id_generator, false);
+
+        bear.spawn(world);
+        rabbit.spawn(world);
+        bear.setAge(11);
+        bear.setHunger(20);
+
+        p.show();
+        for (int i = 0; i < 10; i++) {
+            p.simulate();
+        }
+
+        int x = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Animal) {
+                x++;
+            }
+        }
+
+        assertTrue(x == 1, "There should only be 1 animal in the world");
+    }
+
+    @Test
     public void testBearEatingWolf() {
         Program p = new Program(2, 500, 800);
         world = p.getWorld();
@@ -277,6 +307,7 @@ public class BearTest {
         bear.spawn(world);
         wolf.spawn(world);
         bear.setAge(11);
+        bear.setHunger(20);
 
         p.show();
         for (int i = 0; i < 20; i++) {
@@ -305,10 +336,22 @@ public class BearTest {
         bear.spawn(world);
         dino.spawn(world);
         bear.setAge(11);
+        bear.setHunger(20);
 
+        boolean hasEaten = true;
         p.show();
         for (int i = 0; i < 20; i++) {
             p.simulate();
         }
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Dinosaur) {
+                hasEaten = false;
+            }
+        }
+        System.out.println("the dinosaur was hit for " + dino.getDamageTaken() + " damage");
+        System.out.println(bear.getHunger());
+        System.out.println("in hiding: " + bear.isHiding());
+        assertTrue(hasEaten);
     }
 }

@@ -81,16 +81,19 @@ public abstract class Animal extends Organism {
     public void act(World world) {
         super.act(world);
 
+        if (!is_hiding) grace_period = 0;
+
         steps_since_last_birth++;
-        if (damage_taken > 0) damage_taken -= 1;
+        //if (damage_taken > 0) damage_taken -= 1;
 
         if (!is_hiding) {
             hunger++;
         }
 
-        if (this.hasBeenKilled || age >= max_age || hunger >= max_hunger) {
+        if (hasBeenKilled || age >= max_age || hunger >= max_hunger) {
             grace_period = 1;
             dieAndBecomeCarcass(world);
+            System.out.println("this '" + getType() + "' died of natural causes");
             return;
         }
 
@@ -100,7 +103,7 @@ public abstract class Animal extends Organism {
             if (distanceTo(world, habitat_location) > 0) {
                 moveCloser(world, habitat_location);
             }
-            if (distanceTo(world, habitat_location) < 1) {
+            if (distanceTo(world, habitat_location) < 2) {
                 if (grace_period == 0) {
                     grace_period = 1;
                 }
@@ -181,7 +184,7 @@ public abstract class Animal extends Organism {
             }
         } else if (organism instanceof Carcass carcass) {
             synchronized (carcass) {
-                if (carcass.getGracePeriod() == 0) {
+                //if (carcass.getGracePeriod() == 0) {
                     if (carcass.isRotten) {
                         damage_taken -= 4;
                     }
@@ -197,9 +200,7 @@ public abstract class Animal extends Organism {
                             damage_taken -= nutritionChange;
                         }
                     }
-
-                }
-
+                //}
             }
         }
     }
@@ -228,7 +229,7 @@ public abstract class Animal extends Organism {
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
         cub.setInHiding();
-        System.out.println("made cub");
+        System.out.println(type + " made cub");
 
         if (cub instanceof Wolf wolf_cub) {
             if (this instanceof Wolf this_wolf){
@@ -484,8 +485,9 @@ public abstract class Animal extends Organism {
      *
      * @param power The amount of damage to be inflicted on the animal.
      */
-    public void damage(int power){
+    public void damage(int power) {
         damage_taken += power;
+        System.out.println(type + " was hit for " + power + " damage");
     }
 
     /**
@@ -599,7 +601,7 @@ public abstract class Animal extends Organism {
 
                                 }
                                 // Otherwise this will attack.
-                                if (animal.getTrophicLevel() < trophic_level && consumable_foods.contains(animal.getType())) {
+                                if (animal.getTrophicLevel() <= trophic_level && consumable_foods.contains(animal.getType())) {
                                     if (hunger >= animal.getNutritionalValue()) {
                                         if (animal.getGracePeriod() == 0) {
                                             animal.setGracePeriod(1);
@@ -694,6 +696,7 @@ public abstract class Animal extends Organism {
      * @param world The simulation world where the transformation occurs.
      */
     public Carcass dieAndBecomeCarcass(World world) {
+        grace_period = 1;
         if (is_hiding) {
             world.delete(this);
         } else {
@@ -762,6 +765,10 @@ public abstract class Animal extends Organism {
 
     public int getHunger() {
         return hunger;
+    }
+
+    public void setHunger(int i) {
+        hunger = i;
     }
 }
 

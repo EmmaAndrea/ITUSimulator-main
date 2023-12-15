@@ -12,6 +12,7 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -357,7 +358,7 @@ public class WolfTest {
 
             world = programRunner.getWorld();
 
-            programRunner.runSimulation(7);
+            programRunner.runSimulation(11);
 
             Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
             bear.spawn(world);
@@ -449,5 +450,60 @@ public class WolfTest {
         programRunner.runSimulation(12);
 
         // visual check
+    }
+
+    @Test
+    public void testWolvesHuntTogether() {
+        Program p = new Program(4, 500, 2000);
+        world = p.getWorld();
+        IDGenerator idGenerator = new IDGenerator();
+
+        // sets locations for wolves and rabbit to spawn on
+        Location location = new Location(0,0);
+        Location location1 = new Location(0,1);
+        Location location2 = new Location(0,2);
+        Location location3 = new Location(3,3);
+
+        // added wolves to world
+        Wolf wolf = new Wolf(idGenerator, false);
+        Wolf wolf1 = new Wolf(idGenerator, false);
+        Wolf wolf2 = new Wolf(idGenerator, false);
+
+        // makes wolves appropriate age to hunt
+        wolf.setAge(20);
+        wolf1.setAge(20);
+        wolf2.setAge(20);
+
+        wolf.createPack();
+
+        wolf.addWolfToPack(wolf1);
+        wolf.addWolfToPack(wolf2);
+
+        Rabbit rabbit = new Rabbit(idGenerator, false);
+
+        // spawns wolves at given locations
+        world.setTile(location, wolf);
+        world.setTile(location1, wolf1);
+        world.setTile(location2, wolf2);
+
+        // spawns rabbit at given location
+        world.setTile(location3, rabbit);
+
+        // check if wolves has hunted
+        boolean hasHunted = false;
+
+        // display information
+        p.show();
+        for (int i = 0; i < 40; i++) {
+            p.simulate();
+        }
+
+        // checks if the rabbit took damage in the simulation resolving to wolves hunting
+        if (rabbit.getDamageTaken() > 0) {
+            hasHunted = true;
+        }
+        System.out.println("Rabbit has been hit for " + rabbit.getDamageTaken() + " damage");
+
+        assertTrue(hasHunted);
     }
 }

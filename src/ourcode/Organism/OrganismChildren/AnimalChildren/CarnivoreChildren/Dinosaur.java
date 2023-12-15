@@ -12,10 +12,12 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
 
+    private Dinosaur mother;
     /**
      * Constructs a dinosaur instance. Calls the constructor of the superclass Animal
      * and initializes specific attributes for a predator.
@@ -24,7 +26,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      */
     public Dinosaur(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        trophic_level = 3;
+        trophic_level = 2;
         type = "dinosaur";
         max_age = 250;
         max_hunger = 50;
@@ -34,22 +36,23 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         bedtime = 12;
         wakeup = 18;
         nutritional_value = 20;
+        friends = new ArrayList<>();
     }
 
     @Override
     public void act(World world) {
         setPrevious_location(world);
         Location current_location = world.getLocation(this);
-
         super.act(world);
 
+        if (!world.getEntities().containsKey(mother)){
+            mother = null;
+        }
         if (age >= 20) {
             trophic_level = 6;
             power = 7;
-        }
-
-        if (!is_hiding) {
-            grace_period = 0;
+        } else {
+            if (mother != null) followMother(world);
         }
 
         // Stop at once if something happened that killed the dinosaur.
@@ -71,6 +74,8 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         if (checkBreedStats(world)) {
            breed(world);
         }
+
+        else nextMove(world);
     }
 
     /**
@@ -79,12 +84,13 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
      */
 
     @Override
-    public boolean checkHasBreedMate(World world){
-        Location my_location =null;
+    public boolean checkHasBreedMate(World world) {
+        Location my_location = null;
         try {
             my_location = world.getLocation(this);
         } catch (Exception e) {
             System.out.println("dinosaur died");
+            return false;
         }
         for (Location location: world.getSurroundingTiles(my_location, 2)) {
             if (!world.isTileEmpty(location)) {
@@ -99,11 +105,28 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     public void breed(World world) {
         System.out.println("made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
+        dinosaurEgg.setMother(this);
         if (world.isTileEmpty(previous_location)) {
             world.setTile(previous_location, dinosaurEgg);
             steps_since_last_birth = 0;
-
             // add taking care of egg?
+        }
+    }
+
+    public void becomeMother(Dinosaur baby) {
+        friends.add(baby);
+    }
+
+    public void setMother(Dinosaur mother) {
+        this.mother = mother;
+        friends.add(mother);
+    }
+
+    public void followMother(World world){
+        if (distanceTo(world, world.getLocation(mother)) > 1) {
+            for (int i = 0 ; i < distanceTo(world, world.getLocation(mother)) ; i++){
+                moveCloser(world, world.getLocation(mother));
+            }
         }
     }
 

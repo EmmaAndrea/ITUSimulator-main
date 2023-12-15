@@ -49,6 +49,7 @@ public abstract class Predator extends Animal {
      */
     @Override
     public void attack(World world, Animal animal) {
+        System.out.println(type + " attacks " + animal + " in hunt mode");
         animal.damage(power);
         if (animal.isDead()) {
             eat(world, animal.dieAndBecomeCarcass(world));
@@ -80,6 +81,7 @@ public abstract class Predator extends Animal {
                 if (object instanceof Animal animal) {
                     synchronized (animal) {
                         if (animal.getGracePeriod() == 0) {
+                            animal.setGracePeriod(1);
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() <= trophic_level) {
                                     if (consumable_foods.contains(animal.getType())) {
@@ -88,6 +90,7 @@ public abstract class Predator extends Animal {
                                         }
                                         System.out.println(type + " attacks  " + animal.getType() + " in hunt mode");
                                         attack(world, animal);
+                                        System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
                                     }
                                 }
                             }
