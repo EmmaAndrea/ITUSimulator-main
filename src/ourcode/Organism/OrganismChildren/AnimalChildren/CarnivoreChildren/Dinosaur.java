@@ -4,7 +4,9 @@ import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Habitat;
 import ourcode.Obstacles.Meteor;
+import ourcode.Obstacles.Territory;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Footprint;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
@@ -77,7 +79,7 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
             goExtinct(world);
         }
 
-        else if (checkBreedStats(world)) {
+        if (checkBreedStats(world)) {
            breed(world);
            return;
         }
@@ -118,8 +120,11 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
         System.out.println(type + id + " made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
         dinosaurEgg.setMother(this);
-        if (world.isTileEmpty(previous_location)) {
-            world.setTile(previous_location, dinosaurEgg);
+        if (world.getSurroundingTiles(world.getLocation(this), 1) != null){
+            for (Location location: world.getSurroundingTiles(world.getLocation(this), 1)) {
+                world.setTile(location, dinosaurEgg);
+                break;
+            }
             steps_since_last_birth = 0;
         }
     }

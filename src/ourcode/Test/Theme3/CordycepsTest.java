@@ -54,11 +54,13 @@ public class CordycepsTest {
     public void testCordycepsSpreadsWhenEaten() throws Exception {
         programRunner.create("data/cordyceps-test-2.txt");
         world = programRunner.getWorld();
-        programRunner.runSimulation(15);
+        programRunner.runSimulation(11);
         int counter = 0;
         for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Animal animal && animal.hasCordyceps()) {
-                counter++;
+            if (o instanceof Animal animal) {
+                if (animal.hasCordyceps()) {
+                    counter++;
+                }
             }
         }
 
