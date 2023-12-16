@@ -93,6 +93,9 @@ public abstract class Animal extends Organism {
             hunger++;
         }
 
+        if (hunger==70){
+            //hi
+        }
         if (hasBeenKilled || (age >= max_age) || (hunger >= max_hunger) || isDead()) {
 
                 grace_period = 1;

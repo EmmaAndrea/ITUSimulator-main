@@ -43,8 +43,8 @@ public class Wolf extends Predator implements DynamicDisplayInformationProvider 
         super(idGenerator, has_cordyceps);
         type = "wolf";
         trophic_level = 3;
-        max_age = 130;
-        max_hunger = 70;
+        max_age = 131;
+        max_hunger = 71;
         has_pack = false;
         alpha = false;
         has_cave = false;

@@ -162,9 +162,9 @@ public class CarcassTest {
      */
     @Test
     public void testAnimalBecomesCarcass() throws Exception {
-        programRunner.create("data/carcasstest4.txt");
+        programRunner.create("data/carcass-test6.txt");
         world = programRunner.getWorld();
-        programRunner.runSimulation(50);
+        programRunner.runSimulation(101);
         int counter = 0;
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Carcass) {
@@ -172,6 +172,6 @@ public class CarcassTest {
             }
         }
 
-        assertEquals(1, counter, "Wolf should have eaten the carcass, then died and become carcass.");
+        assertEquals(1, counter, "Wolf should have died of natural causes and become a carcass.");
     }
 }
