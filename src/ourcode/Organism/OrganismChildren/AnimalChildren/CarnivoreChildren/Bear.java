@@ -61,12 +61,12 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 moveCloser(world, territory_location);
                 // if very hungry, go hunt
             } else if (hunger >= 20) {
-                if (!hunt(world)){
-                    nextMove(world);
+                if (hunt(world)){
+                    return;
                 }
             }
 
-            else if (!enemyHabitatNearby(world)) {
+            if (!enemyHabitatNearby(world)) {
                 if (getRandomMoveLocation(world) != null) {
                     world.move(this, getRandomMoveLocation(world));
                 }

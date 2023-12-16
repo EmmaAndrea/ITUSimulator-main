@@ -52,13 +52,17 @@ public abstract class Predator extends Animal {
         animal.damage(power);
         System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
         if (animal.isDead()) {
-            animal.dieAndBecomeCarcass(world);
-        } else animal.setGracePeriod(0);
+            setHasBeenKilled();
+        } animal.setGracePeriod(0);
     }
 
     @Override
     public boolean sameTypeInteraction(World world, Animal animal){
-        attack(world, animal);
+        // make sure attacker isn't being killed while attacking
+        grace_period = 1;
+        if (isCloseToDeath()) moveAway(world, world.getLocation(animal));
+        else attack(world, animal);
+        grace_period = 0;
         return true;
     }
 
