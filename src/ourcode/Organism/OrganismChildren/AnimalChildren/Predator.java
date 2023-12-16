@@ -52,7 +52,7 @@ public abstract class Predator extends Animal {
         animal.damage(power);
         System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
         if (animal.isDead()) {
-            setHasBeenKilled();
+            animal.setHasBeenKilled();
         } animal.setGracePeriod(0);
     }
 

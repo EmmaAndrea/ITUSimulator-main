@@ -172,7 +172,7 @@ public abstract class Animal extends Organism {
                 world.delete(grass);
                 return true;
             }
-        }
+        } else return true;
         return false;
     }
 
@@ -237,13 +237,15 @@ public abstract class Animal extends Organism {
 
         for (int i = 0; i < amount_of_cubs; i++) {
             Animal cub = constructor.newInstance(id_generator, has_cordyceps);
-            putCubInWorld(world, cub);
+            if (!putCubInWorld(world, cub)){
+                break;
+            }
         }
 
         steps_since_last_birth = 0;
     }
 
-    public void putCubInWorld(World world, Animal cub){
+    public boolean putCubInWorld(World world, Animal cub){
         world.add(cub);
         habitat.addResident(cub);
         cub.setGracePeriod(1);
@@ -256,6 +258,8 @@ public abstract class Animal extends Organism {
                 this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
             }
         }
+
+        return true;
     }
 
     /**

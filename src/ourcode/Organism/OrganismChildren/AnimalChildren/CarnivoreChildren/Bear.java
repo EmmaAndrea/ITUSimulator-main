@@ -12,6 +12,9 @@ import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.Objects;
+
+import static ourcode.Organism.Gender.Male;
 
 public class Bear extends Predator implements DynamicDisplayInformationProvider {
     protected Location territory_location;
@@ -51,7 +54,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         // if not sleeping
         if (!is_hiding && !isBedtime(world)) {
             // if ready to mate and if single, start finding a partner
-            if (gender == Gender.Male && age > 19 && mate == null) {
+            if (gender == Male && age > 19 && mate == null) {
                 System.out.println("Starts finding mate");
                 if (findMate(world)) return;
             }
@@ -72,6 +75,26 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
                 }
             }
         }
+    }
+
+    @Override
+    public boolean sameTypeInteraction(World world, Animal animal){
+        grace_period = 1;
+        if (gender != animal.getGender()) return false;
+        if (isCloseToDeath()) moveAway(world, world.getLocation(animal));
+        else attack(world, animal);
+        grace_period = 0;
+        return true;
+    }
+
+    @Override
+    public void attack(World world, Animal animal){
+        if (Objects.equals(type, animal.getType())) {
+            if (!gender.equals(animal.getGender())) {
+                return;
+            }
+        }
+        super.attack(world, animal);
     }
 
     @Override
@@ -163,13 +186,15 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
     }
 
     @Override
-    public void putCubInWorld(World world, Animal cub){
+    public boolean putCubInWorld(World world, Animal cub){
         cub.setHabitat(habitat);
+        if(getSpawnLocation(world) == null) return false;
         world.setTile(getSpawnLocation(world), cub);
         cub.setHabitat(null);
         cub.setGracePeriod(1);
         setMyCub(cub);
         mate.setMyCub(cub);
+        return true;
     }
 
     /**

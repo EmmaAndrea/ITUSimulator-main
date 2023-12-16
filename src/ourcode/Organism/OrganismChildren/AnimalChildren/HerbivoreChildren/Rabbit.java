@@ -42,7 +42,7 @@ public class Rabbit extends Prey implements DynamicDisplayInformationProvider {
         trophic_level = 2;
         power = 1;
         has_burrow = false;
-        max_damage = 18;
+        max_damage = 12;
         consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
         this.has_cordyceps = has_cordyceps;
         bedtime = 9;

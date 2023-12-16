@@ -229,14 +229,14 @@ public class BearTest {
             p.simulate();
         }
 
-        int x = 0;
+        int animal_count = 0;
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Animal) {
-                x++;
+                animal_count++;
             }
         }
 
-        assertEquals(1, x);
+        assertEquals(1, animal_count);
     }
 
     /**
