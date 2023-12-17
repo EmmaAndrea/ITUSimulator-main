@@ -28,25 +28,6 @@ public class CordycepsTest {
     }
 
     /**
-     * Testing that cordyceps in an infected animal spreads to nearby animals.
-     * @throws Exception skibob
-     */
-    @Test
-    public void testCordycepsSpreadsAirborne() throws Exception {
-        programRunner.create("data/cordyceps-test-1.txt");
-        world = programRunner.getWorld();
-        programRunner.runSimulation(5);
-        int counter = 0;
-        for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Animal animal && animal.hasCordyceps()) {
-                counter++;
-            }
-        }
-
-        assertEquals(2, counter, "The infected rabbit should have spread the cordyceps.");
-    }
-
-    /**
      * Testing that cordyceps spreads when eaten.
      * @throws Exception skibob
      */

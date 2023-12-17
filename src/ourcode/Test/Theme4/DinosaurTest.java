@@ -53,6 +53,39 @@ public class DinosaurTest {
     }
 
     /**
+     * Testing a dinosaur egg can be spawned
+     * @throws Exception
+     */
+    @Test
+    public void testDinosaurEggSpawn() throws Exception {
+        programRunner.create("data/dinosaur-test2.txt");
+        world = programRunner.getWorld();
+        int counter = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof DinosaurEgg) {
+                counter++;
+            }
+        }
+
+        assertEquals(1, counter, "There should be 2 dinosaurs.");
+    }
+
+    @Test
+    public void testDinosaurEggToBaby() throws Exception {
+        programRunner.create("data/dinosaur-test2.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(30);
+        int counter = 0;
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Dinosaur) {
+                counter++;
+            }
+        }
+
+        assertEquals(1, counter, "There should be 2 dinosaurs.");
+    }
+
+    /**
      * Testing that T. rex eat each other.
      * To date, only two other predatory dinosaurs—Tyrannosaurus and Majungasaurus—
      * have been shown to feed on the carcasses of their own species.
@@ -226,20 +259,28 @@ public class DinosaurTest {
 
         Bear bear = new Bear(idGenerator, false);
 
+        bear.setGender("Female");
+        bear.spawn(world);
+
+        Bear bear2 = new Bear(idGenerator, false);
+
+        bear2.setGender("Male");
+        bear2.spawn(world);
+
+        p.show();
+
         for (int i = 0; i < 20; i++) {
             p.simulate();
         }
 
         Dinosaur dino = new Dinosaur(idGenerator, false);
 
-        bear.spawn(world);
+        dino.spawn(world);
 
-
-        p.show();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < 20; i++) {
             p.simulate();
-            System.out.println(dino.getTrophicLevel());
-            if (i == 10) dino.spawn(world);
+            //System.out.println(dino.getTrophicLevel());
+            //if (i == 10) dino.spawn(world);
         }
 
         int counter = 0;
