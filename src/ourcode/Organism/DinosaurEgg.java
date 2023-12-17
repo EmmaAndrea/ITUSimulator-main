@@ -60,8 +60,11 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
         Location current_location = world.getLocation(this);
         world.delete(this);
         Dinosaur baby = new Dinosaur(id_generator, has_cordyceps);
-        baby.setMother(mother);
-        mother.becomeMother(baby);
+
+        if (mother != null) {
+            baby.setMother(mother);
+            mother.becomeMother(baby);
+        }
         world.setTile(current_location, baby);
     }
 

@@ -28,7 +28,7 @@ public class Bear extends Predator implements DynamicDisplayInformationProvider 
         type = "bear";
         max_age = 190;
         max_hunger = 60;
-        power = 3;
+        power = 4;
         max_damage = 36;
         consumable_foods.addAll(Arrays.asList("bush", "dinosaur", "grass"));
         bedtime = 12;
