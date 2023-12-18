@@ -1,0 +1,5 @@
+15
+cordyceps rabbit 2
+fungi 5
+dinosaur 3
+grass 3-6

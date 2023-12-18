@@ -1,0 +1,7 @@
+20
+dinosaur 3
+wolf 3-5
+bear 1
+bear 2
+berries 4
+grass 7-12
