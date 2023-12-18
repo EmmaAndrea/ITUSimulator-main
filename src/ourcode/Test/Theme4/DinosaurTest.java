@@ -9,6 +9,7 @@ import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Fossil;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TyrannosaurusRex;
 import ourcode.Setup.IDGenerator;
@@ -258,12 +259,12 @@ public class DinosaurTest {
         world = p.getWorld();
         IDGenerator idGenerator = new IDGenerator();
 
-        Bear bear = new Bear(idGenerator, false);
+        TerritorialPredator bear = new Bear(idGenerator, false);
 
         bear.setGender("Female");
         bear.spawn(world);
 
-        Bear bear2 = new Bear(idGenerator, false);
+        TerritorialPredator bear2 = new Bear(idGenerator, false);
 
         bear2.setGender("Male");
         bear2.spawn(world);

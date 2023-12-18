@@ -8,6 +8,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -362,7 +363,7 @@ public class WolfTest {
 
             programRunner.runSimulation(11);
 
-            Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
+            TerritorialPredator bear = new Bear(programRunner.getOriginal_id_generator(), false);
             bear.spawn(world);
 
             while (world.getEntities().containsKey(bear)) {

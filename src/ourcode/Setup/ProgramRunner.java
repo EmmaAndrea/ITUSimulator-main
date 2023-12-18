@@ -76,7 +76,7 @@ public class ProgramRunner {
             Entity entity = factory.create();
             entity.spawn(world);
 
-            if (entity instanceof Bear) {
+            if (entity instanceof TerritorialPredator) {
                 setBearTerritory(entity, i + 1);
             }
             if (entity instanceof SocialPredator) {
@@ -93,7 +93,7 @@ public class ProgramRunner {
     public void setBearTerritory(Entity entity, int i) {
         String beartype = "bear" + i;
         if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
-            Bear bear = (Bear) entity;
+            TerritorialPredator bear = (TerritorialPredator) entity;
             bear.setTerritoryLocation(input_reader.getTerritory(beartype));
         }
     }

@@ -47,7 +47,7 @@ public class BearTest {
         world = new World(3);
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
 
         bear.spawn(world);
 
@@ -77,7 +77,7 @@ public class BearTest {
         world = new World(3);
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         bear.spawn(world);
 
         bear.setTerritoryLocation(world.getLocation(bear));
@@ -95,10 +95,10 @@ public class BearTest {
         world = program.getWorld();
         id_generator = new IDGenerator();
 
-        Bear male_bear = new Bear(id_generator, false);
+        TerritorialPredator male_bear = new Bear(id_generator, false);
         male_bear.setGender("Male");
 
-        Bear female_bear = new Bear(id_generator, false);
+        TerritorialPredator female_bear = new Bear(id_generator, false);
         female_bear.setGender("Female");
 
         female_bear.spawn(world);
@@ -112,7 +112,7 @@ public class BearTest {
         int counter = 0;
 
         for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Bear) {
+            if (o instanceof TerritorialPredator) {
                 counter++;
             }
         }
@@ -129,7 +129,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Bush bush = new Bush(id_generator);
 
         bear.spawn(world);
@@ -157,7 +157,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Grass grass = new Grass(id_generator);
 
         bear.spawn(world);
@@ -186,7 +186,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Carcass carcass = new Carcass(id_generator, 4, "wolf", false);
 
         bear.spawn(world);
@@ -217,7 +217,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Rodent rabbit = new Rabbit(id_generator, false);
 
         bear.spawn(world);
@@ -248,7 +248,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         bear.spawn(world);
 
         int counter = 0;
@@ -271,7 +271,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Rodent rabbit = new Rabbit(id_generator, false);
 
         bear.spawn(world);
@@ -300,7 +300,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         SocialPredator wolf = new Wolf(id_generator, false);
 
         bear.spawn(world);
@@ -329,7 +329,7 @@ public class BearTest {
         world = p.getWorld();
         id_generator = new IDGenerator();
 
-        Bear bear = new Bear(id_generator, false);
+        TerritorialPredator bear = new Bear(id_generator, false);
         Dinosaur dino = new TyrannosaurusRex(id_generator, false);
 
         bear.spawn(world);
