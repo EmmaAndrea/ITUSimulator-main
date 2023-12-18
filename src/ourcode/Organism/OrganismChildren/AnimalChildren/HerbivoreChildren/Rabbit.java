@@ -1,6 +1,7 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 
 import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -10,7 +11,7 @@ import java.awt.*;
  * This class extends the 'Rodent' class, tailoring specific attributes and behaviors to represent a rabbit.
  * Rabbits are characterized by their age, sleep cycle, and potential infection status.
  */
-public class Rabbit extends Rodent{
+public class Rabbit extends Rodent implements DynamicDisplayInformationProvider {
 
     /**
      * Constructs a new Rabbit with a unique identifier and cordyceps infection status.
@@ -19,7 +20,7 @@ public class Rabbit extends Rodent{
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the rabbit.
      * @param has_cordyceps         Boolean indicating if the rabbit is infected with cordyceps.
      */
-    public Rabbit(IDGenerator original_id_generator, Boolean has_cordyceps){
+    public Rabbit(IDGenerator original_id_generator, Boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
         type = "rabbit";
         max_age = 100;  // Defines the lifespan of the rabbit in the simulation.

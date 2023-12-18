@@ -45,7 +45,7 @@ public class RabbitTest {
      * Checks that entities contains exactly four entities,
      * Checks a rabbit is in entities
      */
-    @org.testng.annotations.Test
+    @Test
     public void testRabbitSpawn1() throws Exception{
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
@@ -69,7 +69,7 @@ public class RabbitTest {
 
     /**
      * Test to see if all rabbits die after expected amount of steps without eating.
-     * Rabbits dont loose hunger during the time when they are in their burrows
+     * Rabbits don't lose hunger during the time when they are in their burrows
      * File spawns 4 rabbits and no grass
      * Spawns one rabbit to track
      */
@@ -211,9 +211,9 @@ public class RabbitTest {
 
         programRunner.runSimulation(115);
 
-        int postsim = countRabbits(world);
+        int post_sim = countRabbits(world);
 
-        assertTrue(postsim == 0, "checks rabbit dies of old age");
+        assertEquals(0, post_sim, "checks rabbit dies of old age");
     }
 
     /**
@@ -257,7 +257,7 @@ public class RabbitTest {
 
     /**
      * Rabbit moves away from wolves
-     * @throws Exception
+     * @throws Exception l
      */
     @org.testng.annotations.Test
     public void RabbitMovesAwayFromFromWolves() throws Exception {

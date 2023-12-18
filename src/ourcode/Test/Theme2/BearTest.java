@@ -63,7 +63,7 @@ public class BearTest {
         programRunner.create("./data/test-bear_2.txt");
         world = programRunner.getWorld();
         id_generator = new IDGenerator();
-        programRunner.getP().setDelay(1000);
+        programRunner.getProgram().setDelay(1000);
 
         programRunner.runSimulation(10);
     }

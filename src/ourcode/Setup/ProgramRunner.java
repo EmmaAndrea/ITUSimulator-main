@@ -7,7 +7,6 @@ import ourcode.Obstacles.Burrow;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.*;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.Fungus;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
@@ -21,19 +20,14 @@ import java.io.File;
  * and controlling the simulation flow based on user-defined parameters and input data.
  */
 public class ProgramRunner {
-    private Program p;
-    private IDGenerator id_generator;
-    private Grass grass;
-    private Rodent rabbit;
-    private Burrow burrow;
-    private InputReader input_reader;
-    private SocialPredator alpha;
-    private int pack_number;
-
-    private int wolf_number;
-
-    private int wolf_place_in_pack;
-    private int packsize;
+    private Program program; // The Program instance for running the simulation.
+    private IDGenerator id_generator; // IDGenerator for creating unique IDs for entities.
+    private InputReader input_reader; // InputReader for reading and processing simulation setup files.
+    private SocialPredator alpha; // Alpha wolf entity for wolf pack simulations.
+    private int pack_number; // Counter to keep track of wolf packs.
+    private int wolf_number; // Counter to keep track of individual wolves.
+    private int wolf_place_in_pack; // Counter to keep track of a wolf's place within its pack.
+    private int pack_size; // Size of the wolf pack.
 
     /**
      * Creates and initializes a simulation based on the specified input file.
@@ -56,11 +50,11 @@ public class ProgramRunner {
         wolf_number = 0;
         wolf_place_in_pack = 0;
         pack_number = 0;
-        packsize = 0;
+        pack_size = 0;
 
         // create world
-        p = new Program(size, 1000, 800); // creates a new program
-        World world = p.getWorld(); // pulls out the world where we can add things
+        program = new Program(size, 1000, 800); // creates a new program
+        World world = program.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.
         input_reader.readSpawns();
@@ -95,22 +89,25 @@ public class ProgramRunner {
     }
 
     /**
-     * find the correct bear territory and assign it to the bear which has just been spawned
-     * @param entity
-     * @param i
+     * Assigns the correct territory to a bear entity based on its order of creation.
+     * Each bear is assigned a unique territory if specified in the input file.
+     *
+     * @param entity The bear entity to set the territory for.
+     * @param i      The index of the bear entity, used to determine its territory.
      */
     public void setBearTerritory(Entity entity, int i) {
         String beartype = "bear" + i;
-        if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
+        if (input_reader.getMapOfBearTerritories().containsKey(beartype)) {
             TerritorialPredator bear = (TerritorialPredator) entity;
             bear.setTerritoryLocation(input_reader.getTerritory(beartype));
         }
     }
 
     /**
-     * If the wolf is the first of its pack to be spawned, it becomes the alpha
-     * Else find the correct wolf pack and assign it to the wolf which has just been spawned
-     * @param entity
+     * Assigns a wolf entity to a pack. If it's the first wolf in a pack, it becomes the alpha.
+     * Subsequent wolves are added to the pack. Handles multiple packs if specified.
+     *
+     * @param entity The wolf entity to assign to a pack.
      */
     public void setPack(Entity entity) {
 
@@ -127,9 +124,9 @@ public class ProgramRunner {
         } else if (input_reader.getMap_of_social_predator_packs().size() > 1) {
             wolf_place_in_pack++;
 
-                packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
+                pack_size = input_reader.getMap_of_social_predator_packs().get(pack_number);
 
-                if (wolf_place_in_pack > packsize) {
+                if (wolf_place_in_pack > pack_size) {
                     wolf_place_in_pack = 1;
                     pack_number++;
                 }
@@ -146,12 +143,13 @@ public class ProgramRunner {
     }
 
     /**
-     * Spawns an entity based on its type via a switch case. This method determines the type of entity to be
-     * spawned and calls the appropriate factory method to create and spawn the specified number of entities in the world.
+     * Spawns entities of a given type in the simulation world. The method determines the entity type,
+     * applies any special conditions like cordyceps or fungi, and uses the appropriate factory method
+     * to create and spawn entities.
      *
-     * @param world The simulation world where the entity will be spawned.
-     * @param entityType The type of entity to spawn (e.g., "rabbit", "grass", "burrow").
-     * @param amount The number of entities of the specified type to spawn.
+     * @param world       The simulation world where the entity will be spawned.
+     * @param entityType  The type of entity to spawn (e.g., "rabbit", "grass", "burrow").
+     * @param amount      The number of entities of the specified type to spawn.
      */
     public void spawnEntity(World world, String entityType, int amount) {
         boolean hasCordyceps = entityType.toLowerCase().startsWith("cordyceps ");
@@ -204,60 +202,66 @@ public class ProgramRunner {
 
 
     /**
-     * Runs the simulation for a specified number of steps. This involves executing a series of simulation cycles,
-     * where each cycle advances the state of the simulation by one step.
+     * Runs the simulation for a specified number of steps, advancing the state of the simulation
+     * with each step.
      *
      * @param step_count The number of steps to run the simulation for.
      */
     public void runSimulation (int step_count) {
         // show the simulation
-        p.show();
+        program.show();
 
         for (int i = 0; i < step_count; i++) {
-            p.simulate();
+            program.simulate();
         }
         // for up to step count
     }
 
     /**
-     * Retrieves the current state of the simulation world. This method allows access to the world object,
-     * which contains information about all entities and their locations within the simulation.
+     * Retrieves the current state of the simulation world, providing information about all entities
+     * and their locations within the simulation.
      *
      * @return The current simulation world object.
      */
     public World getWorld(){
-        return p.getWorld();
+        return program.getWorld();
     }
 
     /**
-     * Retrieves the object located at the current position in the simulation world. This can be used to inspect
-     * or interact with entities at a specific location.
+     * Retrieves the object located at the current position in the simulation world,
+     * allowing for inspection or interaction with entities at that location.
      *
      * @return The object present at the current location in the simulation world, if any.
      */
     public Object getObject(){
-        World world = p.getWorld();
+        World world = program.getWorld();
         Location location = world.getCurrentLocation();
         return world.getEntities().get(location);
     }
 
-    public Program getP() {
-        return p;
+    /**
+     * Retrieves the Program instance used by this ProgramRunner, allowing access to
+     * simulation controls and settings.
+     *
+     * @return The Program instance used by this ProgramRunner.
+     */
+    public Program getProgram() {
+        return program;
     }
 
     /**
-     * Retrieves the specific Organism entity located at the current position in the simulation world. This is
-     * particularly useful for scenarios where interactions or observations of Organism entities are required.
+     * Retrieves a specific Organism entity located at the current position in the simulation world,
+     * useful for interactions or observations involving Organism entities.
      *
      * @return The Organism entity at the current location, if present.
      */
     public Entity getOrganism(){
-        return id_generator.getEntity(p.getWorld().getCurrentLocation());
+        return id_generator.getEntity(program.getWorld().getCurrentLocation());
     }
 
     /**
-     * Provides access to the IDGenerator instance used by this ProgramRunner. This is essential for generating
-     * unique identifiers for new entities within the simulation.
+     * Provides access to the IDGenerator instance used by this ProgramRunner,
+     * essential for generating unique identifiers for new entities in the simulation.
      *
      * @return The IDGenerator instance used by this ProgramRunner.
      */
@@ -265,17 +269,12 @@ public class ProgramRunner {
         return id_generator;
     }
 
-    public Grass getGrass() {
-        return grass;
-    }
-
-    public Rodent getRabbit() {
-        return rabbit;
-    }
-
+    /**
+     * Simulates a single step in the simulation, advancing the state of the world.
+     */
     public void simulate() {
         // show the simulation
-        p.show();
-        p.simulate();
+        program.show();
+        program.simulate();
     }
 }

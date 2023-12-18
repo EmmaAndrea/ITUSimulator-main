@@ -34,7 +34,7 @@ public class BurrowTest {
      * This test demonstrates the usage of the constructor
      */
     @Test
-    public void testConstructor() throws Exception {
+    public void testConstructor() {
         // creates a world with size of 1
         World world = new World(5);
         // creates a new id to create a burrow
