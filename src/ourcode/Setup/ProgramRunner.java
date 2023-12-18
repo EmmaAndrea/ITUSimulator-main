@@ -5,10 +5,9 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.DinosaurEgg;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.*;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.Fungus;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
@@ -25,10 +24,10 @@ public class ProgramRunner {
     private Program p;
     private IDGenerator id_generator;
     private Grass grass;
-    private Rabbit rabbit;
+    private Rodent rabbit;
     private Burrow burrow;
     private InputReader input_reader;
-    private Wolf alpha;
+    private SocialPredator alpha;
     private int pack_number;
 
     /**
@@ -77,10 +76,10 @@ public class ProgramRunner {
             Entity entity = factory.create();
             entity.spawn(world);
 
-            if (entity instanceof Bear) {
+            if (entity instanceof TerritorialPredator) {
                 setBearTerritory(entity, i + 1);
             }
-            if (entity instanceof Wolf) {
+            if (entity instanceof SocialPredator) {
                 setPack(entity, i);
             }
         }
@@ -94,7 +93,7 @@ public class ProgramRunner {
     public void setBearTerritory(Entity entity, int i) {
         String beartype = "bear" + i;
         if (input_reader.getMap_of_bear_territories().containsKey(beartype)) {
-            Bear bear = (Bear) entity;
+            TerritorialPredator bear = (TerritorialPredator) entity;
             bear.setTerritoryLocation(input_reader.getTerritory(beartype));
         }
     }
@@ -108,27 +107,27 @@ public class ProgramRunner {
     public void setPack(Entity entity, int i) {
         int packsize = 0;
 
-        Wolf wolf = (Wolf) entity;
-        if (input_reader.getMap_of_wolf_packs().size() == 1) {
+        SocialPredator predator = (SocialPredator) entity;
+        if (input_reader.getMap_of_social_predator_packs().size() == 1) {
             if (i == 0) {
-                wolf.createPack();
-                alpha = wolf;
+                predator.createPack();
+                alpha = predator;
             }
             if (i > 0) {
-                alpha.addWolfToPack(wolf);
+                alpha.addToPack(predator);
             }
-        } else if (input_reader.getMap_of_wolf_packs().size() > 1) {
-            packsize = input_reader.getMap_of_wolf_packs().get(pack_number);
+        } else if (input_reader.getMap_of_social_predator_packs().size() > 1) {
+            packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
 
             if (i != 0 && i % packsize == 0) pack_number++;
 
-            packsize = input_reader.getMap_of_wolf_packs().get(pack_number);
+            packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
 
             if (i % packsize == 0){
-                wolf.createPack();
-                alpha = wolf;
+                predator.createPack();
+                alpha = predator;
             } else {
-                alpha.addWolfToPack(wolf);
+                alpha.addToPack(predator);
             }
         }
     }
@@ -179,7 +178,7 @@ public class ProgramRunner {
                 spawnEntities(world, amount, () -> new Fungus(id_generator));
                 break;
             case "dinosaur":
-                spawnEntities(world, amount, () -> new Dinosaur(id_generator, false)); // Assuming Dinosaur is a class you have
+                spawnEntities(world, amount, () -> new TyrannosaurusRex(id_generator, false)); // Assuming Dinosaur is a class you have
                 break;
             case "dinosaur egg":
                 spawnEntities(world, amount, () -> new DinosaurEgg(id_generator, false)); // Assuming DinosaurEgg is a class you have
@@ -257,7 +256,7 @@ public class ProgramRunner {
         return grass;
     }
 
-    public Rabbit getRabbit() {
+    public Rodent getRabbit() {
         return rabbit;
     }
 

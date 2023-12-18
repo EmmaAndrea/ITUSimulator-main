@@ -8,11 +8,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -44,7 +47,7 @@ public class WolfTest {
 
     public void countWolves(World world) {
         for (Object entity : world.getEntities().keySet()) {
-            if (entity instanceof Wolf) {
+            if (entity instanceof SocialPredator) {
                 wolf_count++;
             }
         }
@@ -75,16 +78,16 @@ public class WolfTest {
     @Test
     public void testWolfPackDeclarationMethod() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("1 wolf has been spawned and the amount of entities is: " + world.getEntities().size());
 
         wolf1.createPack();
         System.out.println("a wolf pack has been made and has a size of: " + wolf1.getPack().size());
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
         System.out.println("a wolf has been added to the pack");
 
         assertEquals(wolf1.getPack().size(), 2,
@@ -99,20 +102,20 @@ public class WolfTest {
     @Test
     public void testRemovingWolfFromPackMethod() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("a wolf has been added to the world, the amount of entities is: " + world.getEntities().size());
 
         wolf1.createPack();
         System.out.println("wolf1 created a pack with a size of: " + wolf1.getPack().size());
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
         System.out.println("wolf1 added wolf2, the packs size is: " + wolf1.getPack().size());
         System.out.println("wolf2 is now in a pack and 'has_pack boolean is '" + wolf2.getHasPack() + "'");
 
-        wolf1.removeWolfFromPack(wolf2);
+        wolf1.removeFromPack(wolf2);
         System.out.println("wolf2 was removed by wolf1 from the pack and the size of the pack is: " + wolf1.getPack().size());
         System.out.println("wolf2 currently doesn't have a pack and 'has_pack' boolean is '" + wolf2.getHasPack() + "'");
 
@@ -130,13 +133,13 @@ public class WolfTest {
     @Test
     public void testOvertakePackMethod() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
         wolf1.spawn(world);
         System.out.println("wolf1 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
         wolf2.spawn(world);
         System.out.println("wolf2 added to the world, the amount of entities are: " + world.getEntities().size());
-        Wolf wolf3 = new Wolf(id_generator, false);
+        SocialPredator wolf3 = new Wolf(id_generator, false);
         wolf3.spawn(world);
         System.out.println("wolf3 added to the world, the amount of entities are: " + world.getEntities().size());
 
@@ -144,7 +147,7 @@ public class WolfTest {
         wolf1.createPack();
         System.out.println("wolf1 created a pack, wolf1's 'has_pack' boolean is " + wolf1.getHasPack());
         System.out.println("the size of wolf1's pack is " + wolf1.getPack().size());
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
 
         wolf3.overtakePack(wolf1);
 
@@ -158,13 +161,13 @@ public class WolfTest {
     @Test
     public void testCreateCaveMethod() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
         wolf1.createPack();
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
 
         wolf1.makeHabitat(world);
 
@@ -183,14 +186,14 @@ public class WolfTest {
     @Test
     public void testEnterCaveMethod() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
 
         wolf1.createPack();
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
 
         wolf1.makeHabitat(world);
 
@@ -212,14 +215,14 @@ public class WolfTest {
     @Test
     public void testExitCave() {
 
-        Wolf wolf1 = new Wolf(id_generator, false);
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
 
         wolf1.spawn(world);
         wolf2.spawn(world);
 
         wolf1.createPack();
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
 
         wolf1.makeHabitat(world);
 
@@ -248,8 +251,8 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        Wolf wolf1 = new Wolf(id_generator, false);
-        Wolf wolf2 = new Wolf(id_generator, false);
+        SocialPredator wolf1 = new Wolf(id_generator, false);
+        SocialPredator wolf2 = new Wolf(id_generator, false);
 
         wolf1.setGender("MALE");
         wolf2.setGender("FEMALE");
@@ -258,7 +261,7 @@ public class WolfTest {
         wolf2.spawn(world);
 
         wolf1.createPack();
-        wolf1.addWolfToPack(wolf2);
+        wolf1.addToPack(wolf2);
 
         programRunner.runSimulation(20);
 
@@ -279,9 +282,9 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        Wolf lone_wolf = null;
+        SocialPredator lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Wolf wolf) {
+            if (object instanceof SocialPredator wolf) {
                 if (wolf.getMyAlpha().getPack().size() == 1) {
                     lone_wolf = wolf;
                 }
@@ -303,9 +306,9 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        Wolf lone_wolf = null;
+        SocialPredator lone_wolf = null;
         for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Wolf wolf) {
+            if (object instanceof SocialPredator wolf) {
                 if (wolf.getMyAlpha().getPack().size() == 1) {
                     lone_wolf = wolf;
                 }
@@ -334,7 +337,7 @@ public class WolfTest {
 
         world = programRunner.getWorld();
 
-        Wolf wolf1 = new Wolf(programRunner.getOriginal_id_generator() , false);
+        SocialPredator wolf1 = new Wolf(programRunner.getOriginal_id_generator() , false);
         Location wolf_spawn_location = new Location(0,0);
         world.setTile(wolf_spawn_location, wolf1);
 
@@ -360,7 +363,7 @@ public class WolfTest {
 
             programRunner.runSimulation(11);
 
-            Bear bear = new Bear(programRunner.getOriginal_id_generator(), false);
+            TerritorialPredator bear = new Bear(programRunner.getOriginal_id_generator(), false);
             bear.spawn(world);
 
             while (world.getEntities().containsKey(bear)) {
@@ -378,15 +381,15 @@ public class WolfTest {
 
             assertEquals(12, bear_carcass.getNutritionalValue());
 
-            Wolf wolf1 = null;
+            SocialPredator wolf1 = null;
             for (Object object : world.getEntities().keySet()) {
-                if (object instanceof Wolf wolf) {
+                if (object instanceof SocialPredator wolf) {
                     wolf1 = wolf;
                     break;
                 }
             }
 
-            Wolf hungriest_wolf_before = wolf1.getHungriestWolf();
+            SocialPredator hungriest_wolf_before = wolf1.getHungriestWolf();
 
             /**
             int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
@@ -411,7 +414,7 @@ public class WolfTest {
 
             // int wolf1_hunger_after = wolf1.getHunger();
 
-            Wolf hungriest_wolf_after = wolf1.getHungriestWolf();
+            SocialPredator hungriest_wolf_after = wolf1.getHungriestWolf();
 
             programRunner.runSimulation(1);
             programRunner.runSimulation(1);
@@ -465,9 +468,9 @@ public class WolfTest {
         Location location3 = new Location(3,3);
 
         // added wolves to world
-        Wolf wolf = new Wolf(idGenerator, false);
-        Wolf wolf1 = new Wolf(idGenerator, false);
-        Wolf wolf2 = new Wolf(idGenerator, false);
+        SocialPredator wolf = new Wolf(idGenerator, false);
+        SocialPredator wolf1 = new Wolf(idGenerator, false);
+        SocialPredator wolf2 = new Wolf(idGenerator, false);
 
         // makes wolves appropriate age to hunt
         wolf.setAge(20);
@@ -476,10 +479,10 @@ public class WolfTest {
 
         wolf.createPack();
 
-        wolf.addWolfToPack(wolf1);
-        wolf.addWolfToPack(wolf2);
+        wolf.addToPack(wolf1);
+        wolf.addToPack(wolf2);
 
-        Rabbit rabbit = new Rabbit(idGenerator, false);
+        Rodent rabbit = new Rabbit(idGenerator, false);
 
         // spawns wolves at given locations
         world.setTile(location, wolf);

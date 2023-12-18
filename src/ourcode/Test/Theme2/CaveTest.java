@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Obstacles.Cave;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
@@ -84,7 +84,7 @@ public class CaveTest {
 
         int amount = 0;
         for (Object o : world.getEntities().keySet()) {
-            if (o instanceof Wolf wolf) {
+            if (o instanceof SocialPredator wolf) {
                 amount = wolf.getMyCave().getResidents().size();
             }
         }

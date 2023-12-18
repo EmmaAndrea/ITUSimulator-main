@@ -17,7 +17,7 @@ public class InputReader {
     Map<String, Integer> map_of_spawns;
     private final List<String> lines;
     private Map<String, Location> map_of_bear_territories;
-    private Map<Integer, Integer> map_of_wolf_packs;
+    private Map<Integer, Integer> map_of_social_predator_packs;
 
     /**
      * Constructs an input reader, taking a file path as a parameter.
@@ -30,7 +30,7 @@ public class InputReader {
         map_of_spawns = new HashMap<>();
         lines = new ArrayList<>();
         map_of_bear_territories = new HashMap<>();
-        map_of_wolf_packs = new HashMap<>();
+        map_of_social_predator_packs = new HashMap<>();
 
         String line;
         while ((line = bufferedReader.readLine()) != null) {
@@ -99,7 +99,7 @@ public class InputReader {
 
             // Additional processing for specific types
             if (type.equals("wolf")) {
-                map_of_wolf_packs.put(pack_count++, amount);
+                map_of_social_predator_packs.put(pack_count++, amount);
                 wolf_count += amount;
             } else if (type.startsWith("bear")) {
                 bear_count++;
@@ -144,8 +144,8 @@ public class InputReader {
         return map_of_bear_territories.get(bear);
     }
 
-    public Map<Integer, Integer> getMap_of_wolf_packs(){
-        return map_of_wolf_packs;
+    public Map<Integer, Integer> getMap_of_social_predator_packs(){
+        return map_of_social_predator_packs;
     }
 }
 

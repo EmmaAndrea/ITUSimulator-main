@@ -11,6 +11,7 @@ import org.junit.jupiter.api.BeforeEach;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.IDGenerator;
@@ -76,7 +77,7 @@ public class RabbitTest {
     public void testRabbitDeath() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
-        Rabbit rabbit0 = new Rabbit(programRunner.getOriginal_id_generator(), false);
+        Rodent rabbit0 = new Rabbit(programRunner.getOriginal_id_generator(), false);
         rabbit0.spawn(world);
 
         // Run the simulation for a certain number of steps that would lead to the rabbit's death.
@@ -94,7 +95,7 @@ public class RabbitTest {
 
         // Create a rabbit and grass
         IDGenerator idGenerator = new IDGenerator();
-        Rabbit rabbit = new Rabbit(idGenerator, false);
+        Rodent rabbit = new Rabbit(idGenerator, false);
         Grass grass = new Grass(idGenerator);
 
         // Spawn both rabbit and grass at the same location
@@ -122,7 +123,7 @@ public class RabbitTest {
 
         // Create a rabbit and grass
         IDGenerator idGenerator = new IDGenerator();
-        Rabbit rabbit = new Rabbit(idGenerator, false);
+        Rodent rabbit = new Rabbit(idGenerator, false);
         Grass grass = new Grass(idGenerator);
 
         // Spawn both rabbit and grass at the same location
@@ -164,7 +165,7 @@ public class RabbitTest {
     private int countRabbits(World world) {
         int counter = 0;
         for (Object object : world.getEntities().keySet()) {
-            if (object instanceof Rabbit) {
+            if (object instanceof Rodent) {
                 counter++;
             }
         }
@@ -277,7 +278,7 @@ public class RabbitTest {
         Location location1 = new Location(0,1);
         Location location2 = new Location(1,0);
         Location location3 = new Location(0,1);
-        Rabbit rabbit = new Rabbit(idGenerator, false);
+        Rodent rabbit = new Rabbit(idGenerator, false);
         Carcass carcass = new Carcass(idGenerator, 4, "bear", false);
         DinosaurEgg egg = new DinosaurEgg(idGenerator, false);
         Burrow burrow = new Burrow(idGenerator);

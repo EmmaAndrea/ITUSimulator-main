@@ -6,9 +6,11 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TyrannosaurusRex;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
+import java.util.Objects;
 
 /**
  * Represents a dinosaur egg in the simulation environment. This class extends 'Animal' and
@@ -29,6 +31,7 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
     public DinosaurEgg(IDGenerator id_generator, boolean has_cordyceps) {
         super(id_generator, has_cordyceps);
         max_age = 28;
+        type = "tyrannosaurus";
     }
 
     /**
@@ -54,6 +57,7 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
      */
     public void setMother(Dinosaur mother){
         this.mother = mother;
+        type = mother.getType();
     }
 
     /**
@@ -65,8 +69,10 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
     public void becomeDinosaur(World world) {
         Location current_location = world.getLocation(this);
         world.delete(this);
-        Dinosaur baby = new Dinosaur(id_generator, has_cordyceps);
-
+        Dinosaur baby = null;
+        if (Objects.equals(type, "tyrannosaurus")) {
+            baby = new TyrannosaurusRex(id_generator, has_cordyceps);
+        }
         if (mother != null) {
             baby.setMother(mother);
             mother.becomeMother(baby);
