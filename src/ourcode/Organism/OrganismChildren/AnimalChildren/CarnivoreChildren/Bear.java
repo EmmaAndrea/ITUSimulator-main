@@ -23,36 +23,36 @@ public class Bear extends TerritorialPredator{
     public DisplayInformation getInformation() {
         if (!has_cordyceps) {
             if (age >= 11) {
-                if (damage_taken > 0) {
-                    return new DisplayInformation(Color.yellow, "bear-large-wounded");
-                } else if (is_hiding) {
+                if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.yellow, "bear-large-wounded");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large");
                 }
             } else {
-                if (damage_taken > 0) {
-                    return new DisplayInformation(Color.yellow, "bear-small-wounded");
-                } else if (is_hiding) {
+                if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.yellow, "bear-small-wounded");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small");
                 }
             }
         } else {
             if (age >= 11) {
-                if (damage_taken > 0) {
-                    return new DisplayInformation(Color.yellow, "bear-large-wounded-cordyceps");
-                } else if (is_hiding) {
+                if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-large-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.yellow, "bear-large-wounded-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-large-cordyceps");
                 }
             } else {
-                if (damage_taken > 0) {
-                    return new DisplayInformation(Color.yellow, "bear-small-wounded-cordyceps");
-                } else if (is_hiding) {
+                if (is_hiding) {
                     return new DisplayInformation(Color.yellow, "bear-small-sleeping-cordyceps");
+                } else if (damage_taken > 0) {
+                    return new DisplayInformation(Color.yellow, "bear-small-wounded-cordyceps");
                 } else {
                     return new DisplayInformation(Color.yellow, "bear-small-cordyceps");
                 }
