@@ -22,13 +22,9 @@ public class IDGenerator {
     protected HashMap<Location, Integer> map_location_to_id;
     protected HashMap<Integer, Entity> map_id_to_entity;
     protected HashMap<Integer, Burrow> map_id_to_burrow;
-
     protected HashMap<Location, Habitat> map_location_to_habitat;
-
     protected ArrayList<Location> locations_of_habitats;
-
     protected HashMap<Location, Grass> map_location_to_grass;
-
     protected HashMap<Integer, Grass> map_id_to_grass;
 
     /**
@@ -73,9 +69,6 @@ public class IDGenerator {
         map_id_to_entity.put(id, entity);
     }
 
-    public void addGrassToIdMap(int id, Grass grass){
-        map_id_to_grass.put(id, grass);
-    }
     public Entity getEntity(Location location) {
         return map_id_to_entity.get(map_location_to_id.get(location));
     }
@@ -86,25 +79,7 @@ public class IDGenerator {
 
     }
 
-    public Habitat getHabitat(Location location){
-        return map_location_to_habitat.get(location);
-    }
-
-    public ArrayList<Location> getLocationOfBurrows(){
-        return locations_of_habitats;
-    }
-
     public void addGrassToLocationMap(Location location, Grass grass){
         map_location_to_grass.put(location, grass);
     }
-
-    public Grass getGrass(Location location){
-        return map_location_to_grass.get(location);
-    }
-
-    public Grass getGrass(int id){
-        return map_id_to_grass.get(id);
-    }
 }
-
-// burrow to id, burrow to location, location to burrow, id to burrow
