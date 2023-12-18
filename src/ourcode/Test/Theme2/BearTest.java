@@ -7,10 +7,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ourcode.Organism.OrganismChildren.Animal;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.*;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -219,7 +218,7 @@ public class BearTest {
         id_generator = new IDGenerator();
 
         Bear bear = new Bear(id_generator, false);
-        Rabbit rabbit = new Rabbit(id_generator, false);
+        Rodent rabbit = new Rabbit(id_generator, false);
 
         bear.spawn(world);
         rabbit.spawn(world);
@@ -273,7 +272,7 @@ public class BearTest {
         id_generator = new IDGenerator();
 
         Bear bear = new Bear(id_generator, false);
-        Rabbit rabbit = new Rabbit(id_generator, false);
+        Rodent rabbit = new Rabbit(id_generator, false);
 
         bear.spawn(world);
         rabbit.spawn(world);
@@ -302,7 +301,7 @@ public class BearTest {
         id_generator = new IDGenerator();
 
         Bear bear = new Bear(id_generator, false);
-        Wolf wolf = new Wolf(id_generator, false);
+        SocialPredator wolf = new Wolf(id_generator, false);
 
         bear.spawn(world);
         wolf.spawn(world);
@@ -331,7 +330,7 @@ public class BearTest {
         id_generator = new IDGenerator();
 
         Bear bear = new Bear(id_generator, false);
-        Dinosaur dino = new Dinosaur(id_generator, false);
+        Dinosaur dino = new TyrannosaurusRex(id_generator, false);
 
         bear.spawn(world);
         dino.spawn(world);

@@ -6,6 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TyrannosaurusRex;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
@@ -65,8 +66,10 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
     public void becomeDinosaur(World world) {
         Location current_location = world.getLocation(this);
         world.delete(this);
-        Dinosaur baby = new Dinosaur(id_generator, has_cordyceps);
-
+        Dinosaur baby = null;
+        if (type == "tyrannosaurus") {
+            baby = new TyrannosaurusRex(id_generator, has_cordyceps);
+        }
         if (mother != null) {
             baby.setMother(mother);
             mother.becomeMother(baby);

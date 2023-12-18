@@ -10,6 +10,7 @@ import ourcode.Obstacles.Fossil;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TyrannosaurusRex;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
@@ -118,7 +119,7 @@ public class DinosaurTest {
         //Dinosaur male_rex = new Dinosaur(id_generator, false);
         //male_rex.setGender("Male");
         //male_rex.setAge(40);
-        Dinosaur female_rex = new Dinosaur(id_generator, false);
+        Dinosaur female_rex = new TyrannosaurusRex(id_generator, false);
         female_rex.setGender("Female");
         female_rex.setAge(30);
 
@@ -213,7 +214,7 @@ public class DinosaurTest {
         IDGenerator id_generator = new IDGenerator();
 
         program.show();
-        Dinosaur dino = new Dinosaur(id_generator, false);
+        Dinosaur dino = new TyrannosaurusRex(id_generator, false);
         dino.spawn(world);
         program.simulate();
         Location previous_location = world.getLocation(dino);
@@ -233,7 +234,7 @@ public class DinosaurTest {
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
 
-        Dinosaur dino = new Dinosaur(id_generator, false);
+        Dinosaur dino = new TyrannosaurusRex(id_generator, false);
         dino.setGender("Male");
         dino.spawn(world);
 
@@ -273,7 +274,7 @@ public class DinosaurTest {
             p.simulate();
         }
 
-        Dinosaur dino = new Dinosaur(idGenerator, false);
+        Dinosaur dino = new TyrannosaurusRex(idGenerator, false);
 
         dino.spawn(world);
 

@@ -6,8 +6,8 @@ import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.*;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
 import ourcode.Setup.ProgramRunner;
 
@@ -98,7 +98,7 @@ public class GrassTest {
         world.setTile(baseLocation, grass1);
         Location grassBeforeRabbit = world.getEntities().get(grass1);
 
-        Rabbit rabbit1 = new Rabbit(programRunner.getOriginal_id_generator(), false);
+        Rodent rabbit1 = new Rabbit(programRunner.getOriginal_id_generator(), false);
         world.setTile(baseLocation, rabbit1);
 
         Location grassAfterRabbit = world.getLocation(grass1);

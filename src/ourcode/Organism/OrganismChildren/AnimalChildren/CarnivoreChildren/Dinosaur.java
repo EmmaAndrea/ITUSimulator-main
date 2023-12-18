@@ -14,7 +14,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
+public abstract class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
     private Dinosaur mother;
 
@@ -27,14 +27,10 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     public Dinosaur(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
         trophic_level = 2;
-        type = "dinosaur";
-        max_age = 200;
         max_hunger = 80;
         power = 3;
         max_damage = 120;
         consumable_foods.add("dinosaur");
-        bedtime = 12;
-        wakeup = 18;
         nutritional_value = 20;
         friends = new ArrayList<>();
     }
@@ -153,50 +149,5 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
 
     public boolean kaboomOdds() {
         return new Random().nextInt(150) < 1;
-    }
-
-    /**
-     * Determines the graphic of the dinosaur based on its current condition and age.
-     * @return Returns the graphics information for the dinosaur.
-     */
-    @Override
-    public DisplayInformation getInformation() {
-        if (!has_cordyceps) {
-            if (age >= 14) {
-                if (is_sleeping) {
-                    return new DisplayInformation(Color.black, "dinosaur-adult-sleeping");
-                } else if (damage_taken > 0) {
-                    return new DisplayInformation(Color.black, "dinosaur-adult-wounded");
-                } else {
-                    return new DisplayInformation(Color.black, "dinosaur-adult");
-                }
-            } else {
-                if (is_sleeping) {
-                    return new DisplayInformation(Color.black, "dinosaur-baby-sleeping");
-                } else if (damage_taken > 0) {
-                    return new DisplayInformation(Color.black, "dinosaur-baby-wounded");
-                } else {
-                    return new DisplayInformation(Color.black, "dinosaur-baby");
-                }
-            }
-        } else {
-            if (age >= 14) {
-                if (is_sleeping) {
-                    return new DisplayInformation(Color.black, "dinosaur-adult-sleeping-cordyceps");
-                } else if (damage_taken > 0) {
-                    return new DisplayInformation(Color.black, "dinosaur-adult-wounded-cordyceps");
-                } else {
-                    return new DisplayInformation(Color.black, "dinosaur-adult-cordyceps");
-                }
-            } else {
-                if (is_sleeping) {
-                    return new DisplayInformation(Color.black, "dinosaur-baby-sleeping-cordyceps");
-                } else if (damage_taken > 0) {
-                    return new DisplayInformation(Color.black, "dinosaur-baby-wounded-cordyceps");
-                } else {
-                    return new DisplayInformation(Color.black, "dinosaur-baby-cordyceps");
-                }
-            }
-        }
     }
 }

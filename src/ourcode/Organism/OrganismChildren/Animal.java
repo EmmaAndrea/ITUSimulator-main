@@ -5,7 +5,7 @@ import itumulator.world.World;
 import ourcode.Obstacles.Habitat;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -247,9 +247,9 @@ public abstract class Animal extends Organism {
         cub.setInHiding();
         System.out.println(type + " made cub");
 
-        if (cub instanceof Wolf wolf_cub) {
-            if (this instanceof Wolf this_wolf){
-                this_wolf.getMyAlpha().addWolfToPack(wolf_cub);
+        if (cub instanceof SocialPredator s_cub) {
+            if (this instanceof SocialPredator this_s){
+                this_s.getMyAlpha().addToPack(s_cub);
             }
         }
 
@@ -689,7 +689,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Retrieves the amount of damage this wolf has taken.
+     * Retrieves the amount of damage this animal has taken.
      *
      * @return The damage taken.
      */
