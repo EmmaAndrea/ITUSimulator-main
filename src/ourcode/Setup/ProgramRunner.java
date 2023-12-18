@@ -107,7 +107,7 @@ public class ProgramRunner {
     public void setPack(Entity entity, int i) {
         int packsize = 0;
 
-        SocialPredator predator = (SocialPredator) entity;
+        SocialPredator predator = (Wolf) entity;
         if (input_reader.getMap_of_social_predator_packs().size() == 1) {
             if (i == 0) {
                 predator.createPack();
