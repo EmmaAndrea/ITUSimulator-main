@@ -1,7 +1,12 @@
 20
-dinosaur 3
+dinosaur 4
 wolf 3-5
-bear 1
-bear 2
-berries 4
+bear 4-7
+wolf 4-6
+berries 7
 grass 7-12
+rabbit 7
+dinosaur egg 7
+carcass 3-4
+carcass fungi 2
+cordyceps rabbit 4

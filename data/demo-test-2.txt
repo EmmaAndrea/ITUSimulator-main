@@ -1,5 +1,8 @@
-15
-cordyceps rabbit 2
-fungi 5
-dinosaur 3
-grass 3-6
+20
+bear 1
+rabbit 3-5
+grass 5-7
+wolf 4
+wolf 3-5
+bear 5
+berries 7
