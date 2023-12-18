@@ -103,16 +103,4 @@ public abstract class Entity implements Actor {
             world.delete(world.getTile(location));
         }
     }
-
-    /**
-     * Returns 0 if it is currently night.
-     * Else, returns how many steps until it is night.
-     */
-    public int timeToNight(World world){
-        if (world.getCurrentTime() >= 10){
-            return 0;
-        } else {
-            return 10 - world.getCurrentTime();
-        }
-    }
 }

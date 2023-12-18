@@ -26,57 +26,54 @@ import static ourcode.Organism.Gender.Male;
  * and breeding mechanisms. It serves as a base for different animal types within the simulation.
  */
 public abstract class Animal extends Organism {
-    protected int hunger; // Current hunger level of the animal.
-    protected int max_hunger; // Maximum hunger level an animal can sustain before dying.
-    protected int steps_since_last_birth; // Number of simulation steps since the animal last gave birth.
-    protected boolean is_hiding; // Flag indicating if the animal is currently in hiding.
-    protected Gender gender; // Gender of the animal, affecting its breeding behaviors.
-    protected ArrayList<String> consumable_foods; // List of food types that the animal can consume.
-    protected int damage_taken; // Amount of damage the animal has taken.
-    protected int power; // Power level of the animal, used in combat scenarios.
-    protected int max_damage; // Maximum amount of damage the animal can sustain before dying.
-    protected boolean has_cordyceps; // Indicates whether the animal is infected with the cordyceps fungus.
-    protected ArrayList<Animal> friends; // List of other animals considered as friends.
-    protected Habitat habitat; // The habitat associated with the animal.
-    protected boolean has_habitat; // Indicates whether the animal has an associated habitat.
-    private final ReentrantLock lock; // A lock for managing concurrency in multithreaded environments.
-    protected int bedtime; // The simulation step when the animal goes to sleep.
-    protected int wakeup; // The simulation step when the animal wakes up.
-    protected boolean pack_hunting; // Indicates if the animal is currently engaged in pack hunting.
+    protected int hunger; // Current hunger level, determines the need for food.
+    protected int max_hunger; // Maximum hunger level before the animal succumbs to starvation.
+    protected int steps_since_last_birth; // Steps elapsed since the animal last reproduced.
+    protected boolean is_hiding; // Indicates if the animal is currently in hiding.
+    protected Gender gender; // Gender of the animal, crucial for reproduction processes.
+    protected ArrayList<String> consumable_foods; // Types of food that the animal can consume.
+    protected int damage_taken; // Accumulated damage sustained by the animal.
+    protected int power; // Determines the animal's strength in conflicts or predation.
+    protected int max_damage; // Threshold of damage beyond which the animal cannot survive.
+    protected boolean has_cordyceps; // Indicates infection with the cordyceps fungus.
+    protected ArrayList<Animal> friends; // List of friendly animals, usually excluded from predation.
+    protected Habitat habitat; // The animal's designated living or nesting area.
+    protected boolean has_habitat; // Flag indicating whether the animal has an established habitat.
+    private final ReentrantLock lock; // Lock for synchronizing actions in a multithreaded context.
+    protected int bedtime; // Simulation step at which the animal begins its resting period.
+    protected int wakeup; // Simulation step at which the animal ends its resting period and becomes active.
+    protected boolean pack_hunting; // Status indicating if the animal is engaged in group hunting activities.
+    protected Location my_carcass_location; // Stores the location of the animal's carcass, if applicable.
+    protected int carcass_count; // Counter for the number of carcasses 'associated' with the animal.
 
-    protected Location my_carcass_location;
-
-    protected int carcass_count;
     /**
-     * Constructs a new Animal with a unique identifier.
-     * Initializes hunger levels, breeding steps, hiding state, and randomly assigns gender.
+     * Constructor for the Animal class, initializing basic attributes and setting up the animal in the simulation.
      *
      * @param original_id_generator The IDGenerator instance that provides the unique identifier for the animal.
      * @param has_cordyceps Indicates whether the animal is infected with the cordyceps fungus.
      */
     public Animal(IDGenerator original_id_generator, boolean has_cordyceps) {
-        super(original_id_generator); // life_counter = 1;
-        carcass_count = 0;
-        hunger = 1;
-        max_hunger = 1; // this value is random and will get initialized to another value in the children classes.
-        steps_since_last_birth = 0;
-        is_hiding = false;
-        gender = new Random().nextBoolean() ? Male : Female; // Randomly male or female.
-        damage_taken = 0;
-        grace_period = 0;
-        this.has_cordyceps = has_cordyceps;
-        friends = new ArrayList<>();
-        habitat = null;
-        has_habitat = false;
-        lock = new ReentrantLock();
-        bedtime = 0;
-        wakeup = 0;
-        pack_hunting = false;
+        super(original_id_generator);
+        hunger = 1; // Initial hunger level
+        max_hunger = 1; // Max hunger level, set in subclasses
+        steps_since_last_birth = 0; // Counter for breeding interval
+        is_hiding = false; // Initial hiding state
+        gender = new Random().nextBoolean() ? Male : Female; // Random gender assignment
+        damage_taken = 0; // Initial damage state
+        grace_period = 0; // Initial grace period
+        this.has_cordyceps = has_cordyceps; // Cordyceps infection state
+        friends = new ArrayList<>(); // List of friend animals
+        habitat = null; // Initial habitat state
+        has_habitat = false; // Habitat possession state
+        lock = new ReentrantLock(); // Lock for concurrency control
+        bedtime = 0; // Initial bedtime
+        wakeup = 0; // Initial wakeup time
+        pack_hunting = false; // Pack hunting state
+        carcass_count = 0; // Carcass interaction counter
     }
 
     /**
-     * Performs the action sequence for an animal during a simulation step. This includes increasing hunger,
-     * checking for survival, moving, breeding, and performing species-specific actions.
+     * Executes the animal's behavior during each simulation step, including movement, feeding, and other species-specific actions.
      *
      * @param world The simulation world in which the animal exists.
      */
@@ -93,9 +90,6 @@ public abstract class Animal extends Organism {
             hunger++;
         }
 
-        if (hunger==70){
-            //hi
-        }
         if (hasBeenKilled || (age >= max_age) || (hunger >= max_hunger) || isDead()) {
 
                 grace_period = 1;
@@ -162,8 +156,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Method for reducing code duplication of this sequence
-     * Used to allow animals to make habitats
+     * Checks if there is empty spaces. Though, if there is grass, it will delete the grass and return true.
      *
      * @param world The simulation world.
      * @param location The location to check for available space.
@@ -180,11 +173,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
-     * Creates and spawns a new entity of the same type as this animal.
+     * Consumes a specified organism, reducing hunger and potentially affecting health.
      *
-     * @param world    The simulation world in which breeding occurs.
-     * @param organism The organism to be eaten.
+     * @param world    The simulation world where feeding occurs.
+     * @param organism The organism that the animal consumes.
      */
     public void eat(World world, Organism organism) {
         int nutrition = organism.getNutritionalValue();
@@ -217,10 +209,9 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Initiates the breeding process if certain conditions are met, such as the presence of a mate and suitable breeding conditions.
-     * Creates and spawns a new entity of the same type as this animal.
+     * Initiates the breeding process if conditions are met, resulting in the creation of offspring.
      *
-     * @param world The simulation world in which breeding occurs.
+     * @param world The simulation world where breeding occurs.
      */
     public void breed(World world) throws Exception {
         Class<? extends Animal> animalClass = this.getClass();
@@ -266,10 +257,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Checks whether the conditions for breeding are met, such as gender compatibility, age, and proximity to a potential mate.
+     * Checks whether the conditions are favorable for breeding, such as presence of a mate and suitable age.
      *
      * @param world The simulation world where breeding might occur.
-     * @return true if the animal can breed, false otherwise.
+     * @return True if the animal can breed, false otherwise.
      */
     public boolean checkBreedStats(World world) {
         // Only females can give birth.
@@ -301,7 +292,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Determines and executes the animal's next move in the simulation world, considering available free tiles.
+     * Determines the most suitable next action for the animal, such as moving towards food or away from danger.
      *
      * @param world The simulation world where the animal moves.
      */
@@ -318,10 +309,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Moves the animal closer to a target location, considering available paths and obstacles.
+     * Moves the animal towards a specified target location, considering obstacles and other factors.
      *
      * @param world           The simulation world where the movement occurs.
-     * @param target_location The target location towards which the animal moves.
+     * @param target_location The destination towards which the animal is moving.
      */
     public void moveCloser(World world, Location target_location) {
         Location current_location = world.getLocation(this);
@@ -332,10 +323,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Moves the animal away from a danger location, considering available paths and obstacles.
+     * Moves the animal away from a specified danger location, such as predators or harmful environments.
      *
-     * @param world The simulation world where the movement occurs.
-     * @param danger_location The location from which the animal moves away.
+     * @param world           The simulation world where the movement occurs.
+     * @param danger_location The location from which the animal should distance itself.
      */
     public void moveAway(World world, Location danger_location) {
         Location current_location = world.getLocation(this);
@@ -402,10 +393,9 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Enters the habitat that the animal is standing on, if it is empty and is the animal's habitat.
-     * This action hides the animal from the simulation world.
+     * Enters the animal's habitat, such as a burrow or nest, making it hidden in the simulation.
      *
-     * @param world The simulation world where the habitat entrance occurs.
+     * @param world The simulation world where the habitat is located.
      */
     public void enterHabitat(World world) {
 
@@ -423,8 +413,7 @@ public abstract class Animal extends Organism {
 
 
     /**
-     * Exits the habitat in which the animal is currently hiding.
-     * This action makes the animal visible and active again in the simulation world.
+     * Exits the animal's habitat, making it visible and active again in the simulation world.
      *
      * @param world The simulation world where the habitat exit occurs.
      */
@@ -447,11 +436,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Determines the spawn location for the animal when exiting its habitat.
-     * This location is chosen from available spots surrounding the habitat.
+     * Determines the best location for the animal to spawn when exiting its habitat.
      *
      * @param world The simulation world where the habitat is located.
-     * @return The chosen location for the animal to spawn.
+     * @return The location where the animal should spawn upon exiting its habitat.
      */
     public Location getSpawnLocation(World world) {
         if (!world.contains(habitat)) return null;
@@ -480,8 +468,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Assigns a habitat to the animal.
-     * This habitat is used for hiding and potential breeding activities.
+     * Assigns a specific habitat to the animal.
      *
      * @param habitat The habitat to be assigned to the animal.
      */
@@ -491,8 +478,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Retrieves the gender of the animal.
-     * This information is crucial for breeding and other gender-specific behaviors.
+     * Retrieves the animal's gender, important for breeding and other behaviors.
      *
      * @return The gender of the animal.
      */
@@ -501,20 +487,18 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Placeholder method for animal attacks, to be implemented in subclasses.
-     * Defines how an animal attacks another entity in the simulation world.
+     * Initiates an attack on another animal in the simulation.
      *
-     * @param world The simulation world where the attack occurs.
+     * @param world  The simulation world where the attack occurs.
      * @param animal The target animal of the attack.
      */
     public void attack(World world, Animal animal) {
     }
 
     /**
-     * Inflicts damage on the animal.
-     * This method increases the damage taken by the animal, affecting its health and survival.
+     * Inflicts damage on the animal, affecting its health and survival.
      *
-     * @param power The amount of damage to be inflicted on the animal.
+     * @param power The amount of damage to inflict on the animal.
      */
     public void damage(int power) {
         damage_taken += power;
@@ -522,8 +506,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Checks if the animal is dead due to sustained damage.
-     * Returns true if the damage taken exceeds the maximum damage threshold.
+     * Checks if the animal has died due to excessive damage.
      *
      * @return True if the animal is dead, false otherwise.
      */
@@ -532,8 +515,7 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Retrieves the grace period of the animal.
-     * This period is used in specific scenarios to avoid simulation errors.
+     * Retrieves the grace period of the animal, used in specific scenarios.
      *
      * @return The grace period of the animal.
      */
@@ -542,10 +524,9 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Manually sets the gender of the animal, typically used for testing purposes.
-     * Changes the gender to either male or female based on the input parameter.
+     * Manually sets the gender of the animal, typically for testing purposes.
      *
-     * @param gender The gender to be assigned to the animal.
+     * @param gender The new gender to assign to the animal.
      */
     public void setGender(String gender) {
         if (gender.equalsIgnoreCase("male")) {
@@ -556,11 +537,10 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Determines if it is currently the animal's bedtime based on the simulation world's time.
-     * This method is used to control the animal's sleep cycle.
+     * Checks if it is currently the animal's bedtime based on the world's time.
      *
-     * @param world The simulation world where the time is checked.
-     * @return True if it is bedtime for the animal, false otherwise.
+     * @param world The simulation world where the time check occurs.
+     * @return True if it's bedtime for the animal, false otherwise.
      */
     public boolean isBedtime(World world){
         if (world.getCurrentTime() > bedtime) {
@@ -717,10 +697,26 @@ public abstract class Animal extends Organism {
         return damage_taken;
     }
 
+    /**
+     * Defines interaction with another animal of the same type.
+     * This method is a placeholder and should be overridden in subclasses for specific interactions.
+     *
+     * @param world The simulation world.
+     * @param animal The animal of the same type to interact with.
+     * @return False by default. Should return true if an interaction occurs in an overridden method.
+     */
     public boolean sameTypeInteraction(World world, Animal animal) {
         return false;
     }
 
+    /**
+     * Defines interaction with another animal of a different type.
+     * This method handles interactions based on the trophic level and hunger of the animal.
+     *
+     * @param world The simulation world.
+     * @param animal The animal of a different type to interact with.
+     * @return True if an interaction occurs (either moving away or attacking), false otherwise.
+     */
     public boolean differentTypeInteraction(World world, Animal animal){
         // If the organism has a higher trophic level than itself, this will move away.
         if (animal.getTrophicLevel() > trophic_level) {
@@ -764,21 +760,41 @@ public abstract class Animal extends Organism {
         }
     }
 
+    /**
+     * Sets the animal's state to 'in hiding'.
+     * This method is used to mark the animal as hidden within its habitat or other shelter,
+     * making it invisible and inactive in the simulation world until it exits the hiding state.
+     */
     public void setInHiding(){
         is_hiding = true;
     }
 
+    /**
+     * Determines if the animal is infected with cordyceps, affecting its health and behavior.
+     *
+     * @return True if the animal is infected with the cordyceps fungus, false otherwise.
+     */
     public boolean hasCordyceps() {
         return has_cordyceps;
     }
 
+    /**
+     * Infects the animal with the cordyceps fungus, altering its lifespan and behavior.
+     */
     public void infect() {
         has_cordyceps = true;
         max_age = max_age - 18;
     }
 
+    /**
+     * Checks if there is a habitat of an enemy animal nearby.
+     * If an enemy habitat is found, the animal moves away to avoid danger.
+     *
+     * @param world The simulation world to check for enemy habitats.
+     * @return True if an enemy habitat is nearby, false otherwise.
+     */
     public boolean enemyHabitatNearby(World world) {
-        Location current = null;
+        Location current;
         try {
             current = world.getLocation(this);
         } catch (IllegalArgumentException e) {
@@ -813,39 +829,75 @@ public abstract class Animal extends Organism {
         return false;
     }
 
+    /**
+     * Checks if the animal is currently in hiding.
+     * Being in hiding affects the animal's visibility and interactions in the simulation.
+     *
+     * @return True if the animal is hiding, false otherwise.
+     */
     public boolean isHiding() {
         return is_hiding;
     }
 
+    /**
+     * Retrieves the current hunger level of the animal.
+     * Hunger level influences the animal's need to find food.
+     *
+     * @return The current hunger level of the animal.
+     */
     public int getHunger() {
         return hunger;
     }
 
+    /**
+     * Sets the hunger level of the animal to a specified value.
+     * This method can be used to simulate feeding or starvation effects.
+     *
+     * @param i The new hunger level to be set.
+     */
     public void setHunger(int i) {
         hunger = i;
     }
 
+    /**
+     * Determines if the animal is close to death due to damage taken.
+     * This method is useful for making decisions related to health and survival.
+     *
+     * @return True if the animal is close to death, false otherwise.
+     */
     public boolean isCloseToDeath(){
         return max_damage - damage_taken < 4;
     }
 
+    /**
+     * Marks the animal as killed, changing its state and interactions in the simulation.
+     */
     public void setHasBeenKilled(){
         hasBeenKilled = true;
     }
 
-    public void setCarcassLocation(Location location){
+    /**
+     * Sets the location of the carcass for the animal when it dies.
+     * This method is used to manage the placement of carcasses in the simulation.
+     *
+     * @param location The location where the carcass will be placed.
+     */
+    public void setCarcassLocation(Location location) {
         if (my_carcass_location == null) {
             my_carcass_location = location;
         }
     }
 
-    public Location getCarcassLocation(){
+    /**
+     * Retrieves the location of the animal's carcass.
+     * This method is used to find the carcass of the animal after its death.
+     *
+     * @return The location of the carcass, or null if it's not available.
+     */
+    public Location getCarcassLocation() {
         if (carcass_count == 0) {
             carcass_count++;
             return my_carcass_location;
         } else return null;
-
     }
 }
-
-

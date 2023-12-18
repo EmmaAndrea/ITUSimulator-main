@@ -6,7 +6,7 @@ import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Meteor;
 import ourcode.Organism.DinosaurEgg;
-import ourcode.Organism.Footprint;
+import ourcode.Obstacles.Footprint;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
@@ -16,8 +16,8 @@ import java.util.Random;
 
 public class Dinosaur extends Predator implements DynamicDisplayInformationProvider {
     protected Location previous_location;
-
     private Dinosaur mother;
+
     /**
      * Constructs a dinosaur instance. Calls the constructor of the superclass Animal
      * and initializes specific attributes for a predator.
@@ -91,7 +91,6 @@ public class Dinosaur extends Predator implements DynamicDisplayInformationProvi
     }
 
     /**
-     * Lays egg.
      * @param world The simulation world in which breeding occurs.
      */
     @Override

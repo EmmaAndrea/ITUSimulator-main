@@ -2,22 +2,22 @@ package ourcode.Obstacles;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
-import itumulator.world.Location;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 
 /**
- * Represents a territory in the simulation environment.
- * This class extends 'Habitat' and is part of the obstacles package, providing a specific type of habitat
- * that can be used to define territories for various entities in the simulation.
- * It also implements 'DynamicDisplayInformationProvider' for graphical representation.
+ * Represents a territory in the simulation environment. Extends the 'Habitat' class and is part of the obstacles package,
+ * providing a specific type of habitat that is used to define territories for various entities within the simulation.
+ * Territories can be assigned to different animal species, delineating their living or hunting grounds.
+ * This class also implements 'DynamicDisplayInformationProvider' for graphical representation, aiding in the
+ * visualization of territories within the simulation.
  */
 public class Territory extends Habitat implements DynamicDisplayInformationProvider {
 
     /**
      * Constructs a Territory object with a specific ID generator.
-     * Initializes the territory with the given ID generator.
+     * Initializes the territory with the given ID generator, setting up its unique identity within the simulation.
      *
      * @param id_generator The IDGenerator used for generating unique IDs for the territory.
      */
@@ -27,8 +27,8 @@ public class Territory extends Habitat implements DynamicDisplayInformationProvi
     }
 
     /**
-     * Provides the display information for this territory.
-     * This method defines how the territory is visually represented in the simulation.
+     * Provides the display information for this territory. This method defines the visual characteristics of the territory
+     * in the simulation, which can be used to distinguish it from other environmental elements.
      *
      * @return DisplayInformation object containing color and image data for the territory's representation.
      */

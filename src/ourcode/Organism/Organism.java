@@ -15,13 +15,17 @@ import java.util.Random;
  * providing common properties and behaviors that are shared across different types of organisms.
  */
 public abstract class Organism extends Entity implements Actor {
-    // Represents how much hunger to deduct when particular organism is eaten.
+    // Represents the nutritional value of the organism. This value indicates how much hunger
+    // is satisfied when the organism is consumed by another entity.
     protected int nutritional_value;
 
+    // Represents the trophic level of the organism within the ecological food chain.
+    // Higher trophic levels generally indicate predators or higher order consumers.
     protected int trophic_level;
 
-    protected int grace_period; // A grace period used for specific scenarios to avoid simulation errors.
-
+    // A grace period used for specific scenarios to avoid simulation errors.
+    // This can be particularly useful in managing transitions or interactions that require a delay.
+    protected int grace_period;
 
     /**
      * Constructor for Organism, initializing common attributes for all organisms in the world.
@@ -73,12 +77,8 @@ public abstract class Organism extends Entity implements Actor {
 
     /**
      * Retrieves a random location from the list of surrounding free locations in the given world.
-     * This method first checks if there are any free locations around in the world. If there are,
-     * it selects one at random and returns it. If there are no free locations available,
-     * it returns null.
-     *
-     * @param world the World object representing the environment where the free locations are to be found.
-     * @return a randomly selected Location from the list of free locations if available, otherwise null.
+     * @param world The World object representing the environment where the free locations are to be found.
+     * @return A randomly selected Location from the list of free locations if available, otherwise null.
      */
     public Location getRandomMoveLocation(World world){
         // Finds a random index in this list of locations.
@@ -97,7 +97,7 @@ public abstract class Organism extends Entity implements Actor {
     /**
      * Returns the trophic level of the entity.
      * This integer describes the entity's place in the food chain.
-     * @return trophic level.
+     * @return The trophic level.
      */
     public int getTrophicLevel() {
         return trophic_level;
@@ -111,18 +111,25 @@ public abstract class Organism extends Entity implements Actor {
         return nutritional_value;
     }
 
+    /**
+     * Sets the grace period for the organism.
+     * @param i The number of steps to set for the grace period.
+     */
     public void setGracePeriod(int i){
         grace_period = i;
     }
 
+    /**
+     * Retrieves the current grace period of the organism.
+     * @return The current grace period.
+     */
     public int getGracePeriod(){
         return grace_period;
     }
 
     /**
      * Sets the trophic level of an organism.
-     *
-     * @param i The new trophic level to be set for the wolf.
+     * @param i The new trophic level to be set for the organism.
      */
     public void setTrophicLevel(int i) {
         trophic_level = i;

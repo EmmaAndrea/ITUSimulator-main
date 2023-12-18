@@ -17,13 +17,13 @@ import java.awt.*;
  */
 public class DinosaurEgg extends Animal implements DynamicDisplayInformationProvider {
 
-    Dinosaur mother;
+    Dinosaur mother; // Reference to the dinosaur that laid the egg.
 
     /**
      * Constructs a DinosaurEgg with a unique identifier and cordyceps status.
-     * Sets the maximum age after which the egg will hatch into a dinosaur.
+     * Initializes the egg's properties, including the maximum age for hatching.
      *
-     * @param id_generator The IDGenerator instance that provides the unique identifier for the egg.
+     * @param id_generator The IDGenerator instance providing the unique identifier for the egg.
      * @param has_cordyceps Boolean indicating if the egg is infected with cordyceps.
      */
     public DinosaurEgg(IDGenerator id_generator, boolean has_cordyceps) {
@@ -32,10 +32,10 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
     }
 
     /**
-     * Defines the behavior of the dinosaur egg in each simulation step. The egg hatches
-     * into a dinosaur upon reaching its maximum age.
+     * Defines the behavior of the dinosaur egg in each simulation step, particularly focusing on the hatching process.
+     * The egg hatches into a dinosaur upon reaching its maximum age.
      *
-     * @param world The simulation world in which the egg exists.
+     * @param world The simulation world where the egg exists.
      */
     @Override
     public void act(World world) {
@@ -46,15 +46,21 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
         }
     }
 
+    /**
+     * Sets the reference to the mother dinosaur of this egg. This association is used for lineage tracking
+     * and potential inherited behaviors or attributes in the simulation.
+     *
+     * @param mother The dinosaur that laid this egg, considered as the mother.
+     */
     public void setMother(Dinosaur mother){
         this.mother = mother;
     }
 
     /**
-     * Transforms the dinosaur egg into a baby dinosaur. The egg is removed from the world,
-     * and a new dinosaur is created at the same location.
+     * Transforms the egg into a baby dinosaur at its current location, simulating the hatching process.
+     * The egg is replaced by a new dinosaur entity in the simulation world.
      *
-     * @param world The simulation world where the transformation occurs.
+     * @param world The simulation world where the hatching occurs.
      */
     public void becomeDinosaur(World world) {
         Location current_location = world.getLocation(this);
@@ -69,10 +75,10 @@ public class DinosaurEgg extends Animal implements DynamicDisplayInformationProv
     }
 
     /**
-     * Provides the display information for the dinosaur egg. The appearance changes based on the egg's age,
-     * representing different stages of hatching.
+     * Provides the display information for the dinosaur egg, depicting various stages of its development.
+     * The appearance changes based on the egg's age, indicating different stages of hatching.
      *
-     * @return DisplayInformation object containing color and image data for the egg's representation.
+     * @return DisplayInformation object containing color and image data for the egg's visual representation.
      */
     public DisplayInformation getInformation() {
         if (age < 10) {

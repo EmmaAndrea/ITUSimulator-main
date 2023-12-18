@@ -2,16 +2,12 @@ package ourcode.Obstacles;
 
 import itumulator.executable.DisplayInformation;
 import itumulator.executable.DynamicDisplayInformationProvider;
-import itumulator.world.World;
-import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * Represents a burrow in the simulation, primarily used as a home for rabbits.
+ * Represents a burrow in the simulation, used as a home for rabbits.
  * This class provides functionalities to manage the rabbits residing in the burrow,
  * and to display the burrow within the simulation's world.
  */

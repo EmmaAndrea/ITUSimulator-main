@@ -1,21 +1,26 @@
 package ourcode.Obstacles;
 
+import itumulator.world.NonBlocking;
 import itumulator.world.World;
 import ourcode.Organism.OrganismChildren.Animal;
+import ourcode.Setup.Entity;
 import ourcode.Setup.IDGenerator;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Habitat extends Obstacle {
-    /** List of rabbits which are currently residing in the burrow. */
-    List<Animal> residents;
+/**
+ * Represents an abstract habitat in the simulation environment. Extends the 'Obstacle' class.
+ * Habitats provide shelter and living space for various animal entities within the simulation.
+ */
+public abstract class Habitat extends Entity implements NonBlocking {
+    List<Animal> residents; // List of animals which are currently residing in the habitat.
 
     /**
      * Constructs a new habitat with a unique identifier.
-     * Initializes the list of residents and sets the burrow's type in the simulation world.
+     * Initializes the list of residents and sets the habitat's type in the simulation world.
      *
-     * @param id The unique identifier for the habitat, typically provided by an IDGenerator.
+     * @param id_generator The unique identifier for the habitat, typically provided by an IDGenerator.
      */
     public Habitat(IDGenerator id_generator) {
         super(id_generator);
@@ -23,8 +28,8 @@ public abstract class Habitat extends Obstacle {
     }
 
     /**
-     * Spawns the burrow in the given world.
-     * This method should be called to initialize and place the burrow in the simulation.
+     * Spawns the habitat in the given world.
+     * This method should be called to initialize and place the habitat in the simulation.
      *
      * @param world The world in which the habitat will be placed.
      */
@@ -33,22 +38,27 @@ public abstract class Habitat extends Obstacle {
     }
 
     /**
-     * Adds a rabbit to the list of residents in the burrow.
+     * Adds an animal to the list of residents in the habitat.
      *
-     * @param animal The rabbit to be added as a resident of the burrow.
+     * @param animal The animal to be added as a resident of the habitat.
      */
     public void addResident(Animal animal) {
         residents.add(animal);
     }
 
+    /**
+     * Removes an animal from the list of residents in the habitat.
+     *
+     * @param animal The animal to be removed from the habitat's residency.
+     */
     public void removeResident(Animal animal) {
         residents.remove(animal);
     }
 
     /**
-     * Retrieves the list of rabbits currently residing in the burrow.
+     * Retrieves the list of animals currently residing in the habitat.
      *
-     * @return A list of rabbits residing in the burrow.
+     * @return A list of animals residing in the habitat.
      */
     public List<Animal> getResidents() {
         return residents;
