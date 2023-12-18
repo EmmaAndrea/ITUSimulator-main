@@ -1,7 +1,5 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 
-import itumulator.executable.DisplayInformation;
-import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Territory;
@@ -10,17 +8,25 @@ import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Setup.IDGenerator;
 
-import java.awt.*;
 import java.util.Arrays;
 import java.util.Objects;
 
 import static ourcode.Organism.Gender.Male;
 
-public abstract class TerritorialPredator extends Predator implements DynamicDisplayInformationProvider {
+/**
+ * Represents a territorial predator in the simulated world, characterized by its territorial behavior.
+ * This abstract class extends 'Predator', adding specific behaviors and interactions related to territory management and mating.
+ */
+public abstract class TerritorialPredator extends Predator {
     protected Location territory_location;
     protected TerritorialPredator mate;
     protected Animal my_cub;
 
+    /**
+     * Constructs a TerritorialPredator with specific characteristics and initializes its territorial properties.
+     * @param idGenerator  The IDGenerator instance providing the unique identifier for the predator.
+     * @param has_cordyceps Boolean indicating if the predator is born with cordyceps infection.
+     */
     public TerritorialPredator(IDGenerator idGenerator, boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
         trophic_level = 3;
@@ -33,10 +39,8 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
     }
 
     /**
-     * Bears are extremely territorial, and therefore rarely wander outside their territory.
-     * If the bear is very hungry, it will go further away from its territory than normal to hunt.
-     * The bear will always sleep in its territory.
-     * @param world The simulation world in which the omnivore exists.
+     * Defines the behavior of a territorial predator in each simulation step. Includes territory management, hunting, and mating behaviors.
+     * @param world The simulation world in which the territorial predator exists.
      */
     public void act(World world) {
         super.act(world);
@@ -73,6 +77,11 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         }
     }
 
+    /**
+     * Initiates an interaction with another animal of the same type. Adjusts behavior based on gender and health status.
+     * @param world The simulation world.
+     * @param animal The animal to interact with.
+     */
     @Override
     public boolean sameTypeInteraction(World world, Animal animal){
         grace_period = 1;
@@ -83,6 +92,11 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         return true;
     }
 
+    /**
+     * Attacks a specified animal in the world. Adjusts behavior based on the type and gender of the animal.
+     * @param world The simulation world where the attack happens.
+     * @param animal The animal to be attacked.
+     */
     @Override
     public void attack(World world, Animal animal){
         if (Objects.equals(type, animal.getType())) {
@@ -93,6 +107,10 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         super.attack(world, animal);
     }
 
+    /**
+     * Creates a habitat for the territorial predator. Establishes a territory at the current location.
+     * @param world The simulation world where the habitat is created.
+     */
     @Override
     public void makeHabitat(World world) {
         if (territory_location == null) {
@@ -104,6 +122,10 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         }
     }
 
+    /**
+     * Enters the habitat (territory) for resting or protection.
+     * @param world The simulation world where the habitat is located.
+     */
     @Override
     public void enterHabitat(World world) {
         moveCloser(world, world.getLocation(habitat));
@@ -111,6 +133,10 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         is_hiding = true;
     }
 
+    /**
+     * Exits the habitat (territory). Resumes active participation in the simulation world.
+     * @param world The simulation world where the habitat is located.
+     */
     @Override
     public void exitHabitat(World world){
         habitat.removeResident(this);
@@ -119,10 +145,8 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
     }
 
     /**
-     * Searches for a mate within a specified range in the world. If a potential mate
-     * is found, the bear moves closer and establishes a mating pair.
-     *
-     * @param world The simulation world where the bear searches for a mate.
+     * Searches for a mate within the world. Establishes a mating pair if a suitable mate is found.
+     * @param world The simulation world where the predator searches for a mate.
      */
     public boolean findMate(World world) {
         if (!world.contains(this)) return false;
@@ -142,11 +166,8 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
     }
 
     /**
-     * Checks if the bear meets the conditions for breeding. If the bear is female
-     * and has a mate within proximity, breeding may occur.
-     *
-     * @param world The simulation world where breeding is checked.
-     * @return true if breeding conditions are met, false otherwise.
+     * Checks for breeding conditions. Determines if breeding can occur based on the presence of a mate and other conditions.
+     * @param world The simulation world where breeding conditions are checked.
      */
     @Override
     public boolean checkHasBreedMate(World world) {
@@ -158,10 +179,9 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
     }
 
     /**
-     * Sets the bear's mate to a specified bear and updates its territory
-     * to match that of its mate.
-     *
-     * @param female_bear The bear to be set as the mate.
+     * Sets the mate for this predator and updates its territory to match that of its mate.
+     * @param female_bear The predator to be set as the mate.
+     * @param world The simulation world where the mating occurs.
      */
     public boolean maleSetMate(TerritorialPredator female_bear, World world) {
         mate = female_bear;
@@ -175,12 +195,21 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         } return false;
     }
 
+    /**
+     * Sets this female predator's mate to the specified male predator.
+     * @param male_bear The predator to be set as the mate for this female predator.
+     */
     public void femaleSetMate(TerritorialPredator male_bear) {
         mate = male_bear;
         friends.add(male_bear);
         System.out.println("GIRL GOT MATE");
     }
 
+    /**
+     * Places the offspring of this predator in the world, specifically within its territory.
+     * @param world The simulation world where the offspring is to be placed.
+     * @param cub The offspring to be placed in the world.
+     */
     @Override
     public boolean putCubInWorld(World world, Animal cub){
         cub.setHabitat(habitat);
@@ -194,18 +223,16 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
     }
 
     /**
-     * Retrieves the territory of the bear.
-     *
-     * @return The current territory of the bear.
+     * Retrieves the current territory location of this predator.
+     * @return The location of the predator's territory.
      */
     public Location getTerritory(){
         return territory_location;
     }
 
     /**
-     * Retrieves the amount of damage this bear has taken.
-     *
-     * @return The damage taken.
+     * Retrieves the amount of damage this predator has taken.
+     * @return The total damage taken by this predator.
      */
     public int getDamageTaken() {
         return damage_taken;
@@ -213,14 +240,18 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
 
 
     /**
-     * Sets the bear's territory to a specified location.
-     *
-     * @param territory The location to be set as the bear's new territory.
+     * Sets the territory location of this predator to a specified location.
+     * @param territory The location to be set as the new territory.
      */
     public void setTerritoryLocation(Location territory) {
         this.territory_location = territory;
     }
 
+    /**
+     * Establishes a new territory for this predator at a specified location.
+     * @param world The simulation world where the territory is to be established.
+     * @param location The location at which the new territory is created.
+     */
     public void setTerritory(World world, Location location) {
         if (habitat != null && world.contains(habitat)) {
             world.delete(habitat);
@@ -229,6 +260,10 @@ public abstract class TerritorialPredator extends Predator implements DynamicDis
         world.setTile(location, habitat);
     }
 
+    /**
+     * Sets the offspring of this predator, updating its relationship status within the pack or family.
+     * @param cub The offspring to be associated with this predator.
+     */
     public void setMyCub(Animal cub) {
         my_cub = cub;
         friends.add(cub);

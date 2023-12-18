@@ -21,14 +21,13 @@ public abstract class Prey extends Animal {
         super(original_id_generator, has_cordyceps);
         trophic_level = 2;
     }
-
+    /**
+     * Defines the standard behavior of a prey during each simulation step.
+     *
+     * @param world The simulation world in which the prey exists.
+     */
     @Override
     public void act(World world) {
         super.act(world);
-    }
-
-    @Override
-    public boolean sameTypeInteraction(World world, Animal animal){
-        return false;
     }
 }

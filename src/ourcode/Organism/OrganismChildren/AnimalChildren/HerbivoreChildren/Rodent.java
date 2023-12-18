@@ -1,7 +1,5 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren;
 
-import itumulator.executable.DisplayInformation;
-import itumulator.executable.DynamicDisplayInformationProvider;
 import itumulator.world.Location;
 import itumulator.world.World;
 import ourcode.Obstacles.Burrow;
@@ -11,20 +9,19 @@ import ourcode.Organism.OrganismChildren.Animal;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Prey;
 import ourcode.Setup.IDGenerator;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Represents a Rabbit entity in the simulated world.
- * Rabbits are a type of Herbivore, characterized by their interactions with burrows.
- * They have unique behaviors like seeking burrows for shelter and foraging for food.
+ * Represents an abstract Rodent entity in the simulated world.
+ * This class extends 'Prey', focusing on behaviors and characteristics specific to rodents,
+ * such as their interaction with burrows and foraging activities.
  */
-public abstract class Rodent extends Prey implements DynamicDisplayInformationProvider {
+public abstract class Rodent extends Prey {
 
-    ArrayList <Habitat> my_burrows;
-    Rodent mate;
-    boolean has_burrow; // Indicates whether the rabbit has a burrow.
+    ArrayList<Habitat> my_burrows; // List of burrows associated with the rodent.
+    Rodent mate;                   // Potential mate for breeding purposes.
+    boolean has_burrow;            // Indicates whether the rodent has a burrow.
 
     /**
      * Constructs a Rabbit with a unique identifier, initializes its basic characteristics and
@@ -35,17 +32,23 @@ public abstract class Rodent extends Prey implements DynamicDisplayInformationPr
      */
     public Rodent(IDGenerator original_id_generator, boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
-        max_hunger = 24;
-        nutritional_value = 4;
-        trophic_level = 2;
-        power = 1;
-        has_burrow = false;
-        max_damage = 12;
-        consumable_foods = new ArrayList<>(List.of("grass")); // Can only eat grass.
-        this.has_cordyceps = has_cordyceps;
-        mate = null;
+        max_hunger = 24;                             // Maximum hunger level before the rodent starves.
+        nutritional_value = 4;                       // Nutritional value when consumed by predators.
+        trophic_level = 2;                           // Position in the food chain.
+        power = 1;                                   // Combat power level in interactions.
+        has_burrow = false;                          // Initially, the rodent does not have a burrow.
+        max_damage = 12;                             // Maximum damage the rodent can sustain.
+        consumable_foods = new ArrayList<>(List.of("grass")); // Rodents can only consume grass.
+        this.has_cordyceps = has_cordyceps;          // Infection status of the rodent.
+        mate = null;                                 // Initially, the rodent does not have a mate.
     }
 
+    /**
+     * Defines the actions performed by the rodent in each simulation step.
+     * This includes checking for bedtime, seeking burrows, and making next moves.
+     *
+     * @param world The simulation world where the rodent acts.
+     */
     @Override
     public void act(World world) {
         super.act(world);
@@ -109,6 +112,13 @@ public abstract class Rodent extends Prey implements DynamicDisplayInformationPr
         has_burrow = true;
     }
 
+    /**
+     * Checks if there is a potential mate for breeding available in the vicinity of the rodent.
+     * This method is particularly used to determine if breeding conditions are met while the rodent is hiding.
+     *
+     * @param world The simulation world where the rodent and other entities exist.
+     * @return True if a potential mate is found, false otherwise.
+     */
     @Override
     public boolean checkHasBreedMate(World world){
         if (is_hiding) {

@@ -200,9 +200,9 @@ public class WolfTest {
         wolf1.enterHabitat(world);
         wolf2.enterHabitat(world);
 
-        assertEquals(wolf1.getMyCave().getResidents().size(), 2,
+        assertEquals(wolf1.getMyHabitat().getResidents().size(), 2,
                 "the amount of wolfs in the cave should be 2, but there is: "
-                        + wolf1.getMyCave().getResidents().size());
+                        + wolf1.getMyHabitat().getResidents().size());
 
 
     }
@@ -234,9 +234,9 @@ public class WolfTest {
         wolf1.nextMove(world);
         wolf2.exitHabitat(world);
 
-        assertEquals(wolf1.getMyCave().getResidents().size(), 0,
+        assertEquals(wolf1.getMyHabitat().getResidents().size(), 0,
                 "the amount of wolves in the cave should be 0, but is: "
-                        + wolf1.getMyCave().getResidents().size());
+                        + wolf1.getMyHabitat().getResidents().size());
     }
 
     /**
@@ -389,7 +389,7 @@ public class WolfTest {
                 }
             }
 
-            SocialPredator hungriest_wolf_before = wolf1.getHungriestWolf();
+            SocialPredator hungriest_wolf_before = wolf1.getHungriestSocialPredator();
 
             /**
             int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
@@ -414,7 +414,7 @@ public class WolfTest {
 
             // int wolf1_hunger_after = wolf1.getHunger();
 
-            SocialPredator hungriest_wolf_after = wolf1.getHungriestWolf();
+            SocialPredator hungriest_wolf_after = wolf1.getHungriestSocialPredator();
 
             programRunner.runSimulation(1);
             programRunner.runSimulation(1);

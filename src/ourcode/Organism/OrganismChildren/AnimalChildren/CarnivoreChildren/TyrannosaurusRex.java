@@ -5,9 +5,21 @@ import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 
-public class TyrannosaurusRex extends Dinosaur{
+/**
+ * Represents a Tyrannosaurus Rex in a simulation environment, extending the Dinosaur class.
+ * This class characterizes the Tyrannosaurus Rex with specific behaviors and attributes, such as its lifespan,
+ * sleeping patterns, and visual representation based on its condition and age.
+ */
+public class TyrannosaurusRex extends Dinosaur {
 
-    public TyrannosaurusRex(IDGenerator original_id_generator, Boolean has_cordyceps){
+    /**
+     * Constructs a Tyrannosaurus Rex with a unique identifier and potential cordyceps infection.
+     * Initializes specific properties of the Tyrannosaurus Rex, such as type, maximum age, and sleep schedule.
+     *
+     * @param original_id_generator The IDGenerator instance that provides the unique identifier for the Tyrannosaurus Rex.
+     * @param has_cordyceps Indicates whether the Tyrannosaurus Rex is initially infected with cordyceps.
+     */
+    public TyrannosaurusRex(IDGenerator original_id_generator, Boolean has_cordyceps) {
         super(original_id_generator, has_cordyceps);
         type = "tyrannosaurus";
         max_age = 200;
@@ -16,8 +28,11 @@ public class TyrannosaurusRex extends Dinosaur{
     }
 
     /**
-     * Determines the graphic of the dinosaur based on its current condition and age.
-     * @return Returns the graphics information for the dinosaur.
+     * Provides the display information for the Tyrannosaurus Rex.
+     * The appearance changes based on its age, whether it is sleeping, and if it has sustained any damage.
+     * It also varies if the Tyrannosaurus Rex is infected with cordyceps.
+     *
+     * @return DisplayInformation object containing color and image data for the Tyrannosaurus Rex representation.
      */
     @Override
     public DisplayInformation getInformation() {

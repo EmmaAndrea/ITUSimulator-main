@@ -1,13 +1,28 @@
 package ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren;
 
 import itumulator.executable.DisplayInformation;
+import itumulator.executable.DynamicDisplayInformationProvider;
 import ourcode.Setup.IDGenerator;
 
 import java.awt.*;
 
-public class Bear extends TerritorialPredator{
+/**
+ * Represents a Bear in the simulation environment.
+ * Bears are territorial predators with specific behaviors such as a defined sleep cycle,
+ * territorial dominance, and unique interactions based on their status in the environment.
+ * This class extends from TerritorialPredator and implements DynamicDisplayInformationProvider
+ * for graphical representation.
+ */
+public class Bear extends TerritorialPredator implements DynamicDisplayInformationProvider {
 
-    public Bear(IDGenerator idGenerator, Boolean has_cordyceps){
+    /**
+     * Constructs a Bear with specific characteristics, including type, maximum age, and sleep cycle.
+     * Initializes the bear's attributes and sets up its basic behaviors.
+     *
+     * @param idGenerator The IDGenerator instance providing the unique identifier for the bear.
+     * @param has_cordyceps A boolean indicating if the bear is born with cordyceps infection.
+     */
+    public Bear(IDGenerator idGenerator, Boolean has_cordyceps) {
         super(idGenerator, has_cordyceps);
         type = "bear";
         max_age = 190;
@@ -16,8 +31,10 @@ public class Bear extends TerritorialPredator{
     }
 
     /**
-     * Graphics for old, young and wounded bear.
-     * @return the display information for the bear in its current state.
+     * Provides the display information for the bear. Changes the appearance of the bear based on its age,
+     * sleeping status, and whether it is infected with cordyceps.
+     *
+     * @return DisplayInformation containing the color and icon representation of the bear.
      */
     @Override
     public DisplayInformation getInformation() {

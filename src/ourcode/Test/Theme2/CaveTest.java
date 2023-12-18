@@ -85,7 +85,7 @@ public class CaveTest {
         int amount = 0;
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof SocialPredator wolf) {
-                amount = wolf.getMyCave().getResidents().size();
+                amount = wolf.getMyHabitat().getResidents().size();
             }
         }
 
