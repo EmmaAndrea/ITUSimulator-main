@@ -94,13 +94,15 @@ public class InputReader {
                 amount = Integer.parseInt(parts[amountIndex]); // Fixed amount
             }
 
-            // Updating the map for each type
-            map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
-
             // Additional processing for specific types
             if (type.equals("wolf")) {
-                map_of_social_predator_packs.put(pack_count++, amount);
+                map_of_social_predator_packs.put(pack_count, amount);
+                pack_count++;
                 wolf_count += amount;
+                if (map_of_spawns.containsKey("wolf")) {
+                    map_of_spawns.remove("wolf");
+                }
+                map_of_spawns.put("wolf", wolf_count);
             } else if (type.startsWith("bear")) {
                 bear_count++;
                 String bear_type = "bear" + bear_count;
@@ -114,7 +116,13 @@ public class InputReader {
                     map_of_bear_territories.put(bear_type, territory);
                 }
 
+                if (map_of_spawns.containsKey("bear")) {
+                    map_of_spawns.remove("bear");
+                }
                 map_of_spawns.put("bear", total_bear_amount);
+            } else {
+                // Updating the map for each type
+                map_of_spawns.put(type, map_of_spawns.getOrDefault(type, 0) + amount);
             }
         }
     }
