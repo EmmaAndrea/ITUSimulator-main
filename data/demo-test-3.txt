@@ -2,11 +2,11 @@
 dinosaur 4
 wolf 3-5
 bear 4-7
-wolf 4-6
-berries 7
-grass 7-12
-rabbit 7
-dinosaur egg 7
-carcass 3-4
+wolf 2-3
+berries 3
+grass 5-9
+rabbit 6
+dinosaur egg 4
+carcass 3
 carcass fungi 2
 cordyceps rabbit 4
