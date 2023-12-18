@@ -39,7 +39,6 @@ public abstract class Animal extends Organism {
     protected ArrayList<Animal> friends; // List of friendly animals, usually excluded from predation.
     protected Habitat habitat; // The animal's designated living or nesting area.
     protected boolean has_habitat; // Flag indicating whether the animal has an established habitat.
-    private final ReentrantLock lock; // Lock for synchronizing actions in a multithreaded context.
     protected int bedtime; // Simulation step at which the animal begins its resting period.
     protected int wakeup; // Simulation step at which the animal ends its resting period and becomes active.
     protected boolean pack_hunting; // Status indicating if the animal is engaged in group hunting activities.
@@ -65,7 +64,6 @@ public abstract class Animal extends Organism {
         friends = new ArrayList<>(); // List of friend animals
         habitat = null; // Initial habitat state
         has_habitat = false; // Habitat possession state
-        lock = new ReentrantLock(); // Lock for concurrency control
         bedtime = 0; // Initial bedtime
         wakeup = 0; // Initial wakeup time
         pack_hunting = false; // Pack hunting state
@@ -107,8 +105,6 @@ public abstract class Animal extends Organism {
             return;
         }
 
-        lock.lock();
-
         // If the animal is currently inside its habitat.
         if (is_hiding) {
             if (checkBreedStats(world)) {
@@ -130,7 +126,6 @@ public abstract class Animal extends Organism {
                 nextMove(world);
             }
         }
-        lock.unlock();
     }
 
     public void goToHabitat(World world, Location habitat_location) {
@@ -187,7 +182,6 @@ public abstract class Animal extends Organism {
                 world.delete(grass);
             }
         } else if (organism instanceof Carcass carcass) {
-            synchronized (carcass) {
                     if (carcass.isRotten) {
                         damage_taken -= 4;
                     }
@@ -204,7 +198,7 @@ public abstract class Animal extends Organism {
                         }
                     }
                     carcass.setGracePeriod(0);
-            }
+
         }
     }
 
@@ -427,7 +421,6 @@ public abstract class Animal extends Organism {
         try {
             world.setTile(spawn_location, this);
         } catch (Exception e) {
-            System.out.println(e.getMessage());
             return;
         }
         is_hiding = false;
@@ -578,7 +571,6 @@ public abstract class Animal extends Organism {
             return true;
         }
 
-        lock.lock();
         try {
             // Get surrounding tiles to iterate through them.
             Set<Location> surrounding_tiles = world.getSurroundingTiles(world.getLocation(this), 1);
@@ -625,7 +617,6 @@ public abstract class Animal extends Organism {
                                         eat(world, carcass);
                                     }
                                 }
-                                lock.unlock();
                                 return true;
                             }
                         }
@@ -658,7 +649,6 @@ public abstract class Animal extends Organism {
                                 eat(world, bush);
                             }
                             System.out.println(type + " ate berries");
-                            lock.unlock();
                             return true;
                         }
                     } else if (world.containsNonBlocking(location)) {
@@ -668,7 +658,6 @@ public abstract class Animal extends Organism {
                                 if (hunger >= grass.getNutritionalValue()) {
                                     moveCloser(world, location);
                                     eat(world, grass);
-                                    lock.unlock();
                                     return true;
                                 }
                             }
@@ -678,11 +667,9 @@ public abstract class Animal extends Organism {
             }
 
             // If no food or danger is found, return false.
-            lock.unlock();
             return false;
         } catch (IllegalArgumentException iae) {
             System.out.println(iae + "this has been eaten");
-            lock.unlock();
             // returns true to stop act
             return true;
         }
@@ -721,7 +708,6 @@ public abstract class Animal extends Organism {
         // If the organism has a higher trophic level than itself, this will move away.
         if (animal.getTrophicLevel() > trophic_level) {
             moveAway(world, world.getLocation(animal));
-            lock.unlock();
             return true;
 
         }
@@ -730,7 +716,6 @@ public abstract class Animal extends Organism {
             if (hunger >= animal.getNutritionalValue()) {
                 if (animal.getGracePeriod() == 0) {
                     attack(world, animal);
-                    lock.unlock();
                     return true;
                 }
             }

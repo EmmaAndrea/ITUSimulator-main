@@ -89,7 +89,6 @@ public abstract class Predator extends Animal {
 
                 // Casts object to Organism class and checks if the object is an Organism.
                 if (object instanceof Animal animal) {
-                    synchronized (animal) {
                         if (animal.getGracePeriod() == 0) {
                             if (!friends.contains(animal)) {
                                 if (animal.getTrophicLevel() <= trophic_level) {
@@ -105,7 +104,7 @@ public abstract class Predator extends Animal {
                                 }
                             }
                         }
-                    }
+
                 }
             }
         }
