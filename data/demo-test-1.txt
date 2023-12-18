@@ -1,0 +1,8 @@
+20
+bear 1
+rabbit 3-5
+grass 5-7
+bear 1
+wolf 2
+bear 3
+berries 4
