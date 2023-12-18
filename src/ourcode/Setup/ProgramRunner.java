@@ -30,6 +30,11 @@ public class ProgramRunner {
     private SocialPredator alpha;
     private int pack_number;
 
+    private int wolf_number;
+
+    private int wolf_place_in_pack;
+    private int packsize;
+
     /**
      * Creates and initializes a simulation based on the specified input file.
      * Reads the file to set up the simulation environment and spawns entities as dictated by the file.
@@ -48,6 +53,11 @@ public class ProgramRunner {
 
         int size = input_reader.readWorldSize();
 
+        wolf_number = 0;
+        wolf_place_in_pack = 0;
+        pack_number = 0;
+        packsize = 0;
+
         // create world
         p = new Program(size, 1000, 800); // creates a new program
         World world = p.getWorld(); // pulls out the world where we can add things
@@ -61,7 +71,6 @@ public class ProgramRunner {
         }
 
         alpha = new Wolf(id_generator, false);
-        pack_number = 0;
     }
 
     /**
@@ -80,7 +89,7 @@ public class ProgramRunner {
                 setBearTerritory(entity, i + 1);
             }
             if (entity instanceof SocialPredator) {
-                setPack(entity, i);
+                setPack(entity);
             }
         }
     }
@@ -102,33 +111,37 @@ public class ProgramRunner {
      * If the wolf is the first of its pack to be spawned, it becomes the alpha
      * Else find the correct wolf pack and assign it to the wolf which has just been spawned
      * @param entity
-     * @param i
      */
-    public void setPack(Entity entity, int i) {
-        int packsize = 0;
+    public void setPack(Entity entity) {
 
         SocialPredator predator = (Wolf) entity;
+
         if (input_reader.getMap_of_social_predator_packs().size() == 1) {
-            if (i == 0) {
+            if (wolf_number == 0) {
                 predator.createPack();
                 alpha = predator;
             }
-            if (i > 0) {
+            else {
                 alpha.addToPack(predator);
             }
         } else if (input_reader.getMap_of_social_predator_packs().size() > 1) {
-            packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
+            wolf_place_in_pack++;
 
-            if (i != 0 && i % packsize == 0) pack_number++;
+                packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
 
-            packsize = input_reader.getMap_of_social_predator_packs().get(pack_number);
+                if (wolf_place_in_pack > packsize) {
+                    wolf_place_in_pack = 1;
+                    pack_number++;
+                }
 
-            if (i % packsize == 0){
-                predator.createPack();
-                alpha = predator;
-            } else {
-                alpha.addToPack(predator);
-            }
+                if (wolf_place_in_pack == 1) {
+                    predator.createPack();
+                    alpha = predator;
+                } else {
+                    alpha.addToPack(predator);
+                }
+
+
         }
     }
 
