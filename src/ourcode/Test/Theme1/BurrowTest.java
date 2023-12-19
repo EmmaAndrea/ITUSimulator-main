@@ -31,10 +31,10 @@ public class BurrowTest {
     }
 
     /**
-     * This test demonstrates the usage of the constructor
+     * This test demonstrates the creation of a burrow.
      */
     @Test
-    public void testConstructor() {
+    public void testCreateBurrow() {
         // creates a world with size of 1
         World world = new World(5);
         // creates a new id to create a burrow
@@ -52,7 +52,29 @@ public class BurrowTest {
     }
 
     /**
-     * the 'testRabbitStandingOnBurrow()' test demonstrates if a rabbit can stand directly on top of a burrow
+     * Requirement a for burrows.
+     * This test shows a burrow can be spawned when a file dictates this
+     */
+    @Test
+    public void testBurrowSpawnByFile() throws Exception{
+        programRunner.create("./data/t1-3a.txt");
+
+        world = programRunner.getWorld();
+
+        int burrow_counter = 0;
+
+        for(Object object: world.getEntities().keySet()){
+            if (object instanceof Burrow) {
+                burrow_counter++;
+            }
+        }
+
+        assertEquals(burrow_counter, 1);
+    }
+
+    /**
+     * Requirement b for burrows.
+     * the test demonstrates if a rabbit can stand directly on top of a burrow
      */
     @Test
     public void testRabbitStandingOnBurrow() throws RuntimeException {
@@ -88,7 +110,7 @@ public class BurrowTest {
      * Tests both addResident() method and getResident() method.
      */
     @Test
-    public void testResidents() {
+    public void testResidentsOfBurrow() {
         // generates a new id for a burrow and rabbits
         IDGenerator id = new IDGenerator();
         // declares a new burrow
