@@ -1,5 +1,5 @@
-15
+12
 cordyceps rabbit 2
-rabbit 3-5
+rabbit 8-11
 burrow 2
-grass 3-6
+grass 9-12
