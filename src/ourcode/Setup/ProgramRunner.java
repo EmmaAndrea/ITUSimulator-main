@@ -121,7 +121,6 @@ public class ProgramRunner {
             else {
                 alpha.addToPack(predator);
             }
-            wolf_number++;
         } else if (input_reader.getMap_of_social_predator_packs().size() > 1) {
             wolf_place_in_pack++;
 
