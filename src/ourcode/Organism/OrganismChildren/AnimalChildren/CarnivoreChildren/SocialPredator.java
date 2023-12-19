@@ -200,13 +200,13 @@ public abstract class SocialPredator extends Predator {
      * @return The hungriest SocialPredator in the pack.
      */
     public SocialPredator getHungriestSocialPredator(){
-        SocialPredator hungriest = null;
+        SocialPredator hungriest = this;
         for (SocialPredator member : my_alpha.getPack()) {
-            synchronized (member) {
+
                 if (member.getHunger() > hungriest.getHunger()) {
                     hungriest = member;
                 }
-            }
+
         }
         return hungriest;
     }
@@ -558,5 +558,9 @@ public abstract class SocialPredator extends Predator {
      */
     public boolean isAlpha(){
         return alpha;
+    }
+
+    public boolean isWolfHunting(){
+        return pack_hunting;
     }
 }

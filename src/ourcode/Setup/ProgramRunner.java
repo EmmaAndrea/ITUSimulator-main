@@ -53,7 +53,7 @@ public class ProgramRunner {
         pack_size = 0;
 
         // create world
-        program = new Program(size, 1000, 800); // creates a new program
+        program = new Program(size, 1000, 200); // creates a new program
         World world = program.getWorld(); // pulls out the world where we can add things
 
         // Reads the input file.
@@ -121,6 +121,7 @@ public class ProgramRunner {
             else {
                 alpha.addToPack(predator);
             }
+            wolf_number++;
         } else if (input_reader.getMap_of_social_predator_packs().size() > 1) {
             wolf_place_in_pack++;
 
@@ -137,8 +138,6 @@ public class ProgramRunner {
                 } else {
                     alpha.addToPack(predator);
                 }
-
-
         }
     }
 

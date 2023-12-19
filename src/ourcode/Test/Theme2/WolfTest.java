@@ -21,7 +21,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class WolfTest {
     private Program p;
-
     private ProgramRunner programRunner;
     private World world;
     private int wolf_count;
@@ -54,8 +53,9 @@ public class WolfTest {
     }
 
     /**
-     * this test will check if a wolf can be declared through the input of a file. Also checks if the
-     * constructor of a Wolf functions
+     * Requirement a for wolves: spawn.
+     * This test will check if a wolf can be spawned if dictated by an input file.
+     * Also checks if the constructor of a Wolf functions
      */
     @Test
     public void testWolfDeclaration() throws Exception {
@@ -72,6 +72,25 @@ public class WolfTest {
     }
 
     /**
+     * Requirement b for wolves: die.
+     * Check is wolves die of hunger.
+     */
+    @Test
+    public void testWolfDiesOfHUnger() throws Exception {
+        programRunner.create("./data/t2-1ab.txt");
+
+        programRunner.runSimulation(110);
+
+        world = programRunner.getWorld();
+
+        countWolves(world);
+
+        assertEquals(0, wolf_count,
+                "the amount of entities in the world should be 1 but is " + world.getEntities().size());
+    }
+
+    /**
+     * Requirement for wolves: packs
      * This test will check the list 'pack' in the Wolf class along with some of the methods for retrieving
      * and adding a wolf to the list
      */
@@ -96,6 +115,7 @@ public class WolfTest {
     }
 
     /**
+     * Requirement for wolves: packs
      * This test will check the 'removeWolfFromPack()' method from the Wolf class
      * This will ensure
      */
@@ -126,6 +146,7 @@ public class WolfTest {
     }
 
     /**
+     * Optional requirement for wolves: hurt wolf can be overtaken
      * This test will check the 'OvertakePack()' method from the Wolf class to see if the correct wolf is the new 'alpha'
      * By checking this method the test will also use 'getMy_alpha()' method
      * to check if the correct information is displayed
@@ -156,7 +177,46 @@ public class WolfTest {
     }
 
     /**
+     * Requirement for wolves: becoming a pack based on an input file
+     * Checks each wolf is in the same pack and has the same alpha
+     */
+    @Test
+    public void TestingWolfPackSpawns() throws Exception{
+        programRunner.create("./data/wolf-test4.txt");
+
+        world = programRunner.getWorld();
+
+        programRunner.runSimulation(1);
+
+        boolean same_alpha = false;
+
+        Wolf alpha = null;
+        for(Object object: world.getEntities().keySet()){
+            if (object instanceof Wolf wolf){
+                alpha = (Wolf) wolf.getMyAlpha();
+                break;
+            }
+        }
+        for(Object object: world.getEntities().keySet()){
+            if (object instanceof Wolf wolf){
+                if (wolf.getMyAlpha() == alpha){
+                    same_alpha= true;
+                } else {
+                    same_alpha = false;
+                    break;
+                }
+            }
+        }
+
+        assertTrue(same_alpha, "each wolf should have the same alpha");
+
+        assertTrue(alpha.getPack().size() == 6, "there should be 6 wolves in the pack");
+    }
+
+    /**
+     * Requirement for wolves: caves
      * Tests if wolves can create caves.
+     * In a real simulation, only the alpha wolf will create a cave.
      */
     @Test
     public void testCreateCaveMethod() {
@@ -183,6 +243,9 @@ public class WolfTest {
         assertTrue(isCave, "There should be a cave in the world, but there isn't");
     }
 
+    /**
+     * Requirement for wolves: caves
+     */
     @Test
     public void testEnterCaveMethod() {
 
@@ -240,10 +303,12 @@ public class WolfTest {
     }
 
     /**
+     * Requirement for wolves: breeding in caves (K2-3a)
      * This test checks if wolves breed in caves
      * Certain elements have been tampered to focus the test case.
      * Tampered elements are: setGender 'Male' and 'Female' for wolves,
-     * Checks for three wolves existing in the world
+     * The alpha will create a pack and then create a cave, which the pack then belongs to
+     * Checks there are more than the original two wolves existing in the world.
      */
     @Test
     public void testWolfBreedingMethod() throws Exception {
@@ -274,7 +339,11 @@ public class WolfTest {
 
 
     /**
-     * Testing that wolves attack lone wolves
+     * Requirement for wolves: wolves attack other wolves if not in same pack.
+     * Testing that wolves attack lone wolves.
+     * This test is dependent on circumstances, and which act happens first,
+     * however the lone wolf should never be able to attack the pack wolves
+     * Sometimes it must be run twice to succeed
      */
     @Test
     public void TestWolfPackAttacksLoneWolf() throws Exception {
@@ -300,6 +369,10 @@ public class WolfTest {
     }
 
 
+    /**
+     * Optional requirement for wolves: hurt wolf can be overtaken
+     * @throws Exception
+     */
     @Test
     public void TestWolfPackTakesLoneWolf() throws Exception {
         programRunner.create("./data/wolf-test2.txt");
@@ -353,7 +426,8 @@ public class WolfTest {
 
 
         /**
-         * checking wolves eat together
+         * Requirement for wolves: hunt together (share food)
+         * Testing wolves eat together
          */
         @Test
         public void TestWolfPackSharesFoodWhenHungry () throws Exception {
@@ -391,28 +465,8 @@ public class WolfTest {
 
             SocialPredator hungriest_wolf_before = wolf1.getHungriestSocialPredator();
 
-            /**
-            int hungriest_wolf_hunger_before = hungriest_wolf.getHunger();
-
-            if (hungriest_wolf == wolf1) {
-                for (Object object : world.getEntities().keySet()) {
-                    if (object instanceof Wolf wolf) {
-                        if (wolf1 != wolf) {
-                            wolf1 = wolf;
-                            break;
-                        }
-                    }
-                }
-            }
-            int wolf1_hunger_before = wolf1.getHunger();
-             */
-
 
             programRunner.runSimulation(1);
-
-            // int hungries_wolf_hunger_after = hungriest_wolf.getHunger();
-
-            // int wolf1_hunger_after = wolf1.getHunger();
 
             SocialPredator hungriest_wolf_after = wolf1.getHungriestSocialPredator();
 
@@ -426,6 +480,7 @@ public class WolfTest {
         }
 
     /**
+     * Requirement: wolves don't like other packs
      * Testing that wolves move away from each other
      */
 
@@ -442,6 +497,11 @@ public class WolfTest {
         // visual check
     }
 
+    /**
+     * Requiremnt: pack animal
+     * Testing wolves stay together
+     * @throws Exception
+     */
     @Test
     public void TestWolvesMoveCloserToTheirPack() throws Exception {
         programRunner.create("./data/wolf_test6.txt");
@@ -455,6 +515,10 @@ public class WolfTest {
         // visual check
     }
 
+    /**
+     * Requirement: wolves hunt together.
+     * Testing if all wolves in the pack og into hunt mode together
+     */
     @Test
     public void testWolvesHuntTogether() {
         Program p = new Program(4, 500, 2000);
@@ -492,21 +556,14 @@ public class WolfTest {
         // spawns rabbit at given location
         world.setTile(location3, rabbit);
 
-        // check if wolves has hunted
-        boolean hasHunted = false;
-
         // display information
         p.show();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 20; i++) {
             p.simulate();
         }
 
-        // checks if the rabbit took damage in the simulation resolving to wolves hunting
-        if (rabbit.getDamageTaken() > 0) {
-            hasHunted = true;
-        }
-        System.out.println("Rabbit has been hit for " + rabbit.getDamageTaken() + " damage");
-
-        assertTrue(hasHunted);
+        assertTrue(wolf1.isWolfHunting());
+        assertTrue(wolf2.isWolfHunting());
+        assertTrue(wolf.isWolfHunting());
     }
 }
