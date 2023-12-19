@@ -143,10 +143,19 @@ public class RabbitTest {
         programRunner.create("./data/t1-2b.txt");
         world = programRunner.getWorld();
 
+        IDGenerator idGenerator = programRunner.getOriginal_id_generator();
         for (int i = 0; i < 6; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
+
+        Rabbit rabbit = new Rabbit(idGenerator, false);
+        rabbit.setGender("Female");
+        rabbit.spawn(world);
+
+        Rabbit rabbit2 = new Rabbit(idGenerator, false);
+        rabbit2.setGender("Male");
+        rabbit2.spawn(world);
 
         // Get the initial count of rabbits
         int initialRabbitCount = countRabbits(world);

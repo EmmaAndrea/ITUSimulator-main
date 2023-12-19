@@ -2,13 +2,18 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
+import ourcode.Obstacles.Burrow;
 import ourcode.Obstacles.Habitat;
+import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.*;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
+import ourcode.Setup.Entity;
+import ourcode.Setup.EntityFactory;
 import ourcode.Setup.IDGenerator;
 
 import java.lang.reflect.Constructor;
@@ -128,6 +133,13 @@ public abstract class Animal extends Organism {
         }
     }
 
+    /**
+     * Mpves an animal closer to its habitat if it is far away.
+     * If it is nearby, it goes in.
+     *
+     * @param world
+     * @param habitat_location
+     */
     public void goToHabitat(World world, Location habitat_location) {
         if (distanceTo(world, habitat_location) > 0) {
             moveCloser(world, habitat_location);
@@ -204,14 +216,10 @@ public abstract class Animal extends Organism {
 
     /**
      * Initiates the breeding process if conditions are met, resulting in the creation of offspring.
-     *
+     * Uses similar switch case to program runner.
      * @param world The simulation world where breeding occurs.
      */
     public void breed(World world) throws Exception {
-        Class<? extends Animal> animalClass = this.getClass();
-
-        Constructor<? extends Animal> constructor = animalClass.getDeclaredConstructor(IDGenerator.class, boolean.class);
-
         int max_cubs = 12; // Maximum number of cubs that can be born.
         int family_size = 0;
 
@@ -224,15 +232,73 @@ public abstract class Animal extends Organism {
         int amount_of_cubs = Math.max(max_cubs - family_size, 1);
 
         for (int i = 0; i < amount_of_cubs; i++) {
-            Animal cub = constructor.newInstance(id_generator, has_cordyceps);
-            if (!putCubInWorld(world, cub)){
+            if (!spawnEntity(world, type, 1, has_cordyceps)){
                 break;
             }
         }
-
         steps_since_last_birth = 0;
     }
 
+    /**
+     * Spawns entities of a given type in the simulation world. The method determines the entity type,
+     * applies the special condition cordyceps, and uses the appropriate factory method
+     * to create entities.
+     *
+     * @param world       The simulation world where the entity will be spawned.
+     * @param entityType  The type of entity to spawn (e.g., "rabbit", "grass", "burrow").
+     * @param amount      The number of entities of the specified type to spawn.
+     */
+    public boolean spawnEntity(World world, String entityType, int amount, boolean hasCordyceps) {
+        switch (entityType) {
+            case "rabbit":
+                if (!spawnEntities(world, () -> new Rabbit(id_generator, hasCordyceps))){
+                    return false;
+                }
+                return true;
+
+            case "wolf":
+                if (!spawnEntities(world, () -> new Wolf(id_generator, hasCordyceps))){
+                    return false;
+                }
+                return true;
+
+            case "bear":
+                if (!spawnEntities(world, () -> new Bear(id_generator, hasCordyceps))){
+                    return false;
+                }
+                return true;
+
+            // Include other cases as needed based on your entity types
+            default:
+                System.out.println("Unknown entity type: " + entityType);
+        }
+        return true;
+    }
+
+    /**
+     * Spawns an entity in the world as per the given factory method.
+     * Puts the created cub in the world
+     *
+     * @param world The simulation world where entities are to be spawned.
+     * @param factory A factory method to create instances of the entity.
+     */
+    public boolean spawnEntities(World world, EntityFactory factory) {
+        Entity entity = factory.create();
+        Animal cub = (Animal) entity;
+
+        if (!putCubInWorld(world, cub)){
+            return false;
+        }
+        return true;
+    }
+
+    /**
+     * This method is used to put the cubs in the world
+     * It makes sure the parents don't eat the cubs, as well as making sure it stays in its habitat until wakeup time.
+     * @param world
+     * @param cub
+     * @return
+     */
     public boolean putCubInWorld(World world, Animal cub){
         world.add(cub);
         habitat.addResident(cub);
@@ -275,6 +341,11 @@ public abstract class Animal extends Organism {
         return false;
     }
 
+    /**
+     * This method checks the female has a mate to breed with. This method is different for each type of animal.
+     * @param world
+     * @return
+     */
     public boolean checkHasBreedMate(World world){
         if (has_habitat && habitat.getResidents().size() > 1) {
             for (Animal animal : habitat.getResidents()) {
