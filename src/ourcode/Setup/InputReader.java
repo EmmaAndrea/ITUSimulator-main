@@ -126,9 +126,13 @@ public class InputReader {
                 total_bear_amount += amount; // Update total bear count.
 
                 // Parse and store territory information if provided.
-                if (parts.length > 2 + amountIndex) {
-                    int x = Integer.parseInt(String.valueOf(parts[2 + amountIndex].charAt(1)));
-                    int y = Integer.parseInt(String.valueOf(parts[2 + amountIndex].charAt(3)));
+                if (parts.length > 2) {
+                    String[] numbers = parts[2].split(",");
+                    String xx = numbers[0].substring(1);
+                    String yy = numbers[1].substring(0, numbers[1].length()-1);
+
+                    int x = Integer.parseInt(xx);
+                    int y = Integer.parseInt(yy);
                     Location territory = new Location(x, y);
                     map_of_bear_territories.put(bear_type, territory); // Map bear type to its territory location.
                 }

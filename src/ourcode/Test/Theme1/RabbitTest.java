@@ -3,11 +3,7 @@ package ourcode.Test.Theme1;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
-import org.junit.Test;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
 import ourcode.Obstacles.Burrow;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
@@ -20,7 +16,7 @@ import ourcode.Setup.ProgramRunner;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
- * A class which tests the rabbit-related requirements.
+ * A class which tests the rabbit-related requirements, and our own new functions.
  */
 public class RabbitTest {
     private final ProgramRunner programRunner;
@@ -41,11 +37,12 @@ public class RabbitTest {
     }
 
     /**
+     * Requirement a for rabbits
      * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
      * Checks that entities contains exactly four entities,
      * Checks a rabbit is in entities
      */
-    @Test
+    @org.testng.annotations.Test
     public void testRabbitSpawn1() throws Exception{
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
@@ -68,12 +65,14 @@ public class RabbitTest {
     }
 
     /**
+     * Requirement b for rabbits: rabbits can die
+     * Requirement c fro raqbbits: rabbits die if they don't eat.
      * Test to see if all rabbits die after expected amount of steps without eating.
      * Rabbits don't lose hunger during the time when they are in their burrows
      * File spawns 4 rabbits and no grass
      * Spawns one rabbit to track
      */
-    @Test
+    @org.testng.annotations.Test
     public void testRabbitDeath() throws Exception {
         programRunner.create("./data/t1-2fg.txt");
         world = programRunner.getWorld();
@@ -87,6 +86,37 @@ public class RabbitTest {
         assertFalse(world.getEntities().containsKey(rabbit0), "Rabbit should be removed from the world after death");
     }
 
+    /**
+     * Requirement d for rabbits: energy.
+     * For each step, rabbits age increases, and their hunger increases simultaneously.
+     * This is our interpretation of energy.
+     *
+     * @throws Exception
+     */
+    @org.testng.annotations.Test
+    public void testRabbitHungerIncrease() throws Exception {
+        programRunner.create("./data/t1-2fg.txt");
+        world = programRunner.getWorld();
+        Rodent rabbit0 = new Rabbit(programRunner.getOriginal_id_generator(), false);
+        rabbit0.spawn(world);
+
+        int rabbit_hunger = rabbit0.getHunger();
+
+        programRunner.runSimulation(1);
+
+        int rabbit_age_after_step = rabbit0.getAge();
+        int rabbit_hunger_after_step = rabbit0.getHunger();
+
+        assertTrue(rabbit_age_after_step == 2, "age should be 2, since age starts at 1 at spawn");
+        assertTrue(rabbit_hunger < rabbit_hunger_after_step, "hunger should increase");
+        assertTrue(rabbit_age_after_step == rabbit_hunger_after_step, "hunger should be the same as age");
+    }
+
+    /**R
+     * Requirement c for rabbits: rabbits eat grass.
+     * If they are sufficiently hungry, they will eat grass.
+     * Checks that rabbit sare able to eat, and that eating removes hunger.
+     */
     @org.testng.annotations.Test
     public void testHungerAfterEat() {
         // Create a 1x1 world
@@ -115,7 +145,10 @@ public class RabbitTest {
         assertTrue(postFeedingHungerLevel < initialHungerLevel, "Rabbit's hunger should decrease after eating grass");
     }
 
-    @Test
+    /**
+     * Checks the grass is removed after being eaten
+     */
+    @org.testng.annotations.Test
     public void testDeleteAfterEat() {
         // Create a 1x1 world
         Program p = new Program(1, 800, 2000);
@@ -137,6 +170,13 @@ public class RabbitTest {
         assertFalse(world.containsNonBlocking(world.getLocation(rabbit)), "Grass should be deleted after getting eaten.");
     }
 
+    /**
+     * Requirement e for rabbits: reproduction.
+     * Rabbits can breed.
+     * Only females give birth.
+     * The females checks that there is a male to breed with in the world. Rabbits are extremely reproductive.
+     * @throws Exception
+     */
     @org.testng.annotations.Test
     public void testRabbitBreeding() throws Exception {
         // Create a world
@@ -171,6 +211,11 @@ public class RabbitTest {
         assertTrue(postSimulationRabbitCount > initialRabbitCount, "Rabbits should breed and increase in number");
     }
 
+    /**
+     * Counter to be used for any rabbit tests which may need it.
+     * @param world
+     * @return
+     */
     private int countRabbits(World world) {
         int counter = 0;
         for (Object object : world.getEntities().keySet()) {
@@ -181,7 +226,13 @@ public class RabbitTest {
         return counter;
     }
 
-    @Test
+    /**
+     * We had a bug where rabbits could breed themselves.
+     * This test was used to evaluate and fix the problem.
+     *
+     * @throws Exception
+     */
+    @org.testng.annotations.Test
     public void testRabbitsDontBreedThemselves() throws Exception{
         // Create a world
         programRunner.create("./data/t1-2a.txt");
@@ -206,7 +257,7 @@ public class RabbitTest {
      * Creates a world based on file "t1-2fg", such that some rabbits and grass are spawned.
      * Spawns one specific rabbit which we track
      * Before the program runs, we check the rabbit is in entities
-     * After the program runs 100 times, check rabbit is dead
+     * After the program runs 100 times, check rabbit is dead.
      */
     @org.testng.annotations.Test
     public void testRabbitAgeDeath() throws Exception{
@@ -226,8 +277,9 @@ public class RabbitTest {
     }
 
     /**
+     * Requirement f for rabbits. Each rabbit makes its own burrow.
      * Creates a world based on file "t1-2fg", such that 4 rabbits are spawned.
-     * Checks that they each make burrows at age 6,
+     * Checks that they each make burrows at age 6.
      */
     @org.testng.annotations.Test
     public void testRabbitsMakeBurrows() throws Exception{
@@ -243,41 +295,49 @@ public class RabbitTest {
         assertEquals(4, burrowCount, "checks each rabbit creates their own burrow");
     }
 
+    /**
+     * Requirement g for rabbits: enter burrows.
+     * Rabbits go into their burrows at night, moving closer if they are not close enough.
+     *
+     * @throws Exception
+     */
     @org.testng.annotations.Test
     public void testRabbitGoesIntoBurrowAtNight() throws Exception {
-        programRunner.create("./data/t1-2fg.txt");
+        programRunner.create("./data/t1-2b.txt");
         world = programRunner.getWorld();
 
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 5; i++) {
             Grass grass = new Grass(programRunner.getOriginal_id_generator());
             grass.spawn(world);
         }
 
-        programRunner.runSimulation(19);
+        programRunner.runSimulation(12);
         int rabbits_in_burrows = 0;
 
         for (Object o : world.getEntities().keySet()) {
-            if (world.getLocation(o) == null) {
+            if (world.getEntities().get(o) == null) {
                 rabbits_in_burrows++;
             }
         }
-        assertEquals(4, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
+        assertEquals(2, rabbits_in_burrows, "Rabbits should be in their burrows at night.");
     }
 
     /**
-     * Rabbit moves away from wolves
-     * @throws Exception l
+     * Rabbit moves away from wolves, visual test for our own debugging.
+     *
+     * @throws Exception
      */
     @org.testng.annotations.Test
     public void RabbitMovesAwayFromFromWolves() throws Exception {
         programRunner.create("./data/rabbit-test1.txt");
         world = programRunner.getWorld();
         programRunner.runSimulation(50);
-
-
     }
 
-    @Test
+    /**
+     * We experienced a bug which was difficult to debug. We used this test to evaluate it.
+     */
+    @org.testng.annotations.Test
     public void rabbitInfinity() {
         Program p = new Program(3, 500, 800);
         world = p.getWorld();

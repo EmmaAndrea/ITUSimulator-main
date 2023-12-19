@@ -60,7 +60,7 @@ public abstract class TerritorialPredator extends Predator {
             }
 
             // stay close to territory
-            if (distanceTo(world, territory_location) > 2) {
+            if (distanceTo(world, territory_location) > 1) {
                 moveCloser(world, territory_location);
                 // if very hungry, go hunt
             } else if (hunger >= 20) {
@@ -267,5 +267,9 @@ public abstract class TerritorialPredator extends Predator {
     public void setMyCub(Animal cub) {
         my_cub = cub;
         friends.add(cub);
+    }
+
+    public TerritorialPredator getMate(){
+        return mate;
     }
 }
