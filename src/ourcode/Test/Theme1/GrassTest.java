@@ -2,10 +2,8 @@ package ourcode.Test.Theme1;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.*;
+
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent;
 import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.Grass;
@@ -37,10 +35,11 @@ public class GrassTest {
     }
 
     /**
+     * Requirement a for grass.
      * Creates a world based on file "t1-1c", such that 1 grass is spawned.
      * Checks that one grass is in entities
      */
-    @org.junit.Test
+    @Test
     public void testGrassSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -53,7 +52,7 @@ public class GrassTest {
      * Creates one new grass in world and spawns it twice, catching the locations in variables
      * Checks the locations are different, and thereby random
      */
-    @org.junit.Test
+    @Test
     public void testGrassRandomSpawn() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -67,11 +66,13 @@ public class GrassTest {
     }
 
     /**
+     * Requirement b for grass
      * Creates a world based on file "t1-1c", such that 1 grass is spawned.
      * Creates one new grass in world and spawns it, then runs the simulation for 31 steps.
+     * Visually possible to see grass develop from young grass to fully grown grass
      * Checks entities does not contain grass1, showing that it is deleted and thereby dead.
      */
-    @org.junit.Test
+    @Test
     public void testGrassDies() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -80,14 +81,38 @@ public class GrassTest {
         programRunner.runSimulation(31);
         assertFalse(world.getEntities().containsKey(grass1));
     }
+
     /**
+     * Requirement c for grass
+     * Creates a world based on file "t1-1c", such that 1 grass is spawned.
+     * Checks there is more grass after 10 steps without manually spawning extra.
+     */
+    @Test
+    public void testGrassSpreads() throws Exception {
+        programRunner.create("./data/t1-1c.txt");
+        world = programRunner.getWorld();
+        programRunner.runSimulation(10);
+
+        int grass_counter = 0;
+
+        for(Object object: world.getEntities().keySet()){
+            if (object instanceof Grass){
+                grass_counter++;
+            }
+
+        }
+        assertTrue(grass_counter > 1);
+    }
+
+    /**
+     * Requirement d for grass
      * Creates a world based on file "t1-1c", such that 1 grass is spawned.
      * Creates one new grass and one new rabbit, and adds them to the same location
      * Checks the rabbit has the location we wanted
-     * Checks grass location is the same as before adding rabbit
-     * and didn't crash the program
+     * Checks grass location is the same as before adding rabbit and thereby still exists in the world
+     * Checks the rabbit is still in the world
      */
-    @org.junit.Test
+    @Test
     public void testRabbitStandingOnGrassTile() throws Exception {
         programRunner.create("./data/t1-1c.txt");
         world = programRunner.getWorld();
@@ -105,6 +130,7 @@ public class GrassTest {
 
         assertEquals(world.getEntities().get(rabbit1), baseLocation);
         assertEquals(grassBeforeRabbit, grassAfterRabbit);
+        assertTrue(world.getEntities().containsKey(rabbit1));
     }
 
 
