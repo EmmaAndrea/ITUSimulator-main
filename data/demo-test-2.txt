@@ -5,4 +5,4 @@ grass 5-7
 wolf 4
 wolf 3-5
 bear 5
-berries 7
+berry 7

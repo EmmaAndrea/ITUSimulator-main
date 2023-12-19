@@ -1,7 +1,9 @@
 package ourcode.Test.Theme2;
 
 import itumulator.executable.Program;
+import itumulator.world.Location;
 import itumulator.world.World;
+import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,6 +20,7 @@ import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.testng.AssertJUnit.assertSame;
 
 /**
  *
@@ -40,7 +43,7 @@ public class BearTest {
     }
 
     /**
-     * This test checks the declaration of a 'new Bear()'. Checks if a bear is being spawned into the world.
+     * This test checks the declaration of a new Bear. Checks if a bear is spawned into the world.
      */
     @Test
     public void testBearDeclaration() {
@@ -56,16 +59,37 @@ public class BearTest {
     }
 
     /**
+     * Requirement for bears: spawn.
      * This test will demonstrate if a bear can be spawned through an input file.
      */
     @Test
     public void testBearInput() throws Exception {
-        programRunner.create("./data/test-bear_2.txt");
+        programRunner.create("./data/t2-5a.txt");
         world = programRunner.getWorld();
         id_generator = new IDGenerator();
         programRunner.getProgram().setDelay(1000);
 
-        programRunner.runSimulation(10);
+        programRunner.runSimulation(1);
+
+        int counter = countBears(world);
+
+        assertTrue(counter == 1);
+    }
+
+    /**
+     * Method to count bears for any test.
+     * @param world
+     * @return bear count
+     */
+    public int countBears(World world){
+        int counter = 0;
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof TerritorialPredator) {
+                counter++;
+            }
+        }
+        return counter;
     }
 
     /**
@@ -86,6 +110,7 @@ public class BearTest {
     }
 
     /**
+     * Optional requirement for bears, they search for mates and don't attack the opposite gender
      * This test checks if bears, being spawned through an input file, can use the 'findMate' method correctly.
      * @throws Exception
      */
@@ -105,22 +130,18 @@ public class BearTest {
         male_bear.spawn(world);
 
         program.show();
-        for (int i = 0; i < 40; i++) {
+        for (int i = 0; i < 30; i++) {
             program.simulate();
         }
 
-        int counter = 0;
+        int counter = countBears(world);
 
-        for (Object o : world.getEntities().keySet()) {
-            if (o instanceof TerritorialPredator) {
-                counter++;
-            }
-        }
-
-        assertTrue(counter > 2, "The bears should have mated.");
+        assertSame(female_bear.getMate(), male_bear);
+        assertSame(male_bear.getMate(), female_bear);
     }
 
     /**
+     * Requirement for bear: eat everything
      * This test will demonstrate a bears eating 'capabilities'. It will showcase if a bear can eat 'berries'
      */
     @Test
@@ -149,6 +170,7 @@ public class BearTest {
     }
 
     /**
+     * Requirement for bear: eat everything
      * This test will demonstrate a bears eating 'capabilities'. It will showcase if a bear can eat 'grass'
      */
     @Test
@@ -178,6 +200,7 @@ public class BearTest {
     }
 
     /**
+     * Requirement for bear: eat everything
      * This test will demonstrate a bears eating 'capabilities'. It will showcase if a bear can eat 'carcass'
      */
     @Test
@@ -208,6 +231,7 @@ public class BearTest {
     }
 
     /**
+     * Requirement for bear: can hunt
      * This test demonstrates a bears 'hunting' capabilities. For this test it will check if a bear can 'hunt' a rabbit
      * and then eat the rabbit.
      */
@@ -239,32 +263,9 @@ public class BearTest {
     }
 
     /**
-     * This test will check if a bears walks outside its territory. The test will fail if the bear walks outside the
-     * territory too much
+     * Requirement for bear: eats everything
+     * the following tests show bear eats all other animals
      */
-    @Test
-    public void testBearTerritory() {
-        Program p = new Program(6, 800, 500);
-        world = p.getWorld();
-        id_generator = new IDGenerator();
-
-        TerritorialPredator bear = new Bear(id_generator, false);
-        bear.spawn(world);
-
-        int counter = 0;
-
-        p.show();
-        for (int i = 0; i < 40; i++) {
-            p.simulate();
-            if (bear.distanceTo(world, bear.getTerritory()) > 3) {
-                counter++;
-            }
-        }
-
-        System.out.println(counter);
-        assertTrue(counter <= 7);
-    }
-
     @Test
     public void testBearEatingRabbit() {
         Program p = new Program(2, 500, 800);
@@ -353,4 +354,68 @@ public class BearTest {
         System.out.println("in hiding: " + bear.isHiding());
         assertTrue(hasEaten);
     }
+
+    /**
+     * Requirement for bear: stay near territory
+     * This test will check if a bears walks outside its territory.
+     * It will only leave its territory to hunt or find mate
+     * Creates territory immediately after spawn
+     */
+    @Test
+    public void testBearTerritory() {
+        Program p = new Program(6, 800, 500);
+        world = p.getWorld();
+        id_generator = new IDGenerator();
+
+        TerritorialPredator bear = new Bear(id_generator, false);
+        bear.spawn(world);
+
+        int counter = 0;
+
+        p.show();
+
+        p.simulate();
+        assertTrue(bear.getTerritory() != null);
+
+        for (int i = 0; i < 19; i++) {
+            p.simulate();
+            if (bear.distanceTo(world, bear.getTerritory()) > 3) {
+                counter++;
+            }
+        }
+
+        System.out.println(counter);
+        assertTrue(counter < 3);
+    }
+
+    /**
+     * This test will check bear territories can be determined by the input file.
+     * The file dictates the territory should be at (12,15)
+     */
+    @Test
+    public void testSpawnBearWithTerritory() throws Exception{
+        programRunner.create("./data/t2-6a.txt");
+        world = programRunner.getWorld();
+        id_generator = new IDGenerator();
+
+        programRunner.runSimulation(1);
+
+        Location actual_territory_location = null;
+        for (Object object: world.getEntities().keySet()){
+            if (object instanceof Bear bear){
+                actual_territory_location = bear.getTerritory();
+            }
+        }
+
+        Location expected_territory_location = new Location(12,15);
+
+        int expected_x = expected_territory_location.getX();
+        int actual_x = actual_territory_location.getX();
+        int expected_y = expected_territory_location.getY();
+        int actual_y = actual_territory_location.getY();
+
+        assertEquals(expected_x, actual_x);
+        assertEquals(expected_y, actual_y);
+    }
+
 }

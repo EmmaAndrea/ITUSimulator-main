@@ -94,12 +94,10 @@ public abstract class Animal extends Organism {
         }
 
         if (hasBeenKilled || (age >= max_age) || (hunger >= max_hunger) || isDead()) {
-
-                grace_period = 1;
-                dieAndBecomeCarcass(world);
-                System.out.println(type + id + " died of natural causes");
-                return;
-
+            grace_period = 1;
+            dieAndBecomeCarcass(world);
+            System.out.println(type + id + " died of natural causes");
+            return;
         }
 
         if (isBedtime(world) && !is_hiding && habitat != null && world.contains(habitat)) {
@@ -128,6 +126,9 @@ public abstract class Animal extends Organism {
                 makeHabitat(world);
             }
             if (!findFoodOrSafety(world)) {
+                if (this instanceof TerritorialPredator) {
+                    return;
+                }
                 nextMove(world);
             }
         }
