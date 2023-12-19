@@ -72,6 +72,10 @@ public class DinosaurTest {
         assertEquals(1, counter, "There should be 2 dinosaurs.");
     }
 
+    /**
+     * Tests a dinosaur egg turns into a baby
+     * @throws Exception
+     */
     @Test
     public void testDinosaurEggToBaby() throws Exception {
         programRunner.create("data/dinosaur-test2.txt");
@@ -117,24 +121,13 @@ public class DinosaurTest {
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
 
-        //Dinosaur male_rex = new Dinosaur(id_generator, false);
-        //male_rex.setGender("Male");
-        //male_rex.setAge(40);
         Dinosaur female_rex = new TyrannosaurusRex(id_generator, false);
         female_rex.setGender("Female");
         female_rex.setAge(30);
 
-        //male_rex.spawn(world);
         female_rex.spawn(world);
 
         program.show();
-        //for (int i = 0; i < 19; i++) {
-            // program.simulate();
-            //male_rex = new Dinosaur(id_generator, false);
-            //male_rex.setGender("Male");
-            //if (i%8 == 0) male_rex.spawn(world);
-
-        //}
 
         program.simulate();
         female_rex.breed(world);
@@ -253,6 +246,9 @@ public class DinosaurTest {
         assertEquals(0, counter, "The male should not have laid an agg.");
     }
 
+    /**
+     * Checks dino has a lower trophic level in the beginning
+     */
     @Test
     public void testDinosaurTrophicLevel() {
         Program p = new Program(3,500,800);
@@ -281,8 +277,6 @@ public class DinosaurTest {
 
         for (int i = 0; i < 20; i++) {
             p.simulate();
-            //System.out.println(dino.getTrophicLevel());
-            //if (i == 10) dino.spawn(world);
         }
 
         int counter = 0;
