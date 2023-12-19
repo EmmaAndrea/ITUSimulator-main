@@ -4,8 +4,11 @@ import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
+import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.Carcass;
 import ourcode.Organism.OrganismChildren.Fungus;
+import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -21,7 +24,7 @@ public class CarcassTest {
 
     @BeforeAll
     public static void setUp() {
-        System.out.println("Testing for Fungus");
+        System.out.println("Testing for Carcass");
     }
 
     @BeforeEach
@@ -30,6 +33,7 @@ public class CarcassTest {
     }
 
     /**
+     * Requirement a for carcass.
      * Testing that fungus is spawned correctly into thw world.
      * The file should spawn five to eight fungi
      */
@@ -57,6 +61,10 @@ public class CarcassTest {
         assertEquals(6, carcass_with_fungi_counter, "The amount of fungus should be 6, but is: " + carcass_with_fungi_counter);
     }
 
+    /**
+     * testing that carcass is replaced by fungus after deteriorating
+     * @throws Exception
+     */
     @Test
     public void testFungusReplacesCarcass() throws Exception {
 
@@ -78,6 +86,7 @@ public class CarcassTest {
     }
 
     /**
+     * Requirement a for fungus: carcass spawn with fungus.
      * Testing that carcass with fungus is spawned correctly into thw world.
      * @throws Exception skibob
      */
@@ -100,6 +109,8 @@ public class CarcassTest {
     }
 
     /**
+     * Requirement b for carcass: being eaten.
+     * Following tests assure this is true for all animals
      * Testing that carcass gets eaten by bear.
      * @throws Exception skibob
      */
@@ -157,6 +168,7 @@ public class CarcassTest {
     }
 
     /**
+     * Requirement b for carcass: animal dies and becomes carcass.
      * Testing that a dead animal becomes a carcass.
      * @throws Exception skibob
      */
@@ -173,5 +185,47 @@ public class CarcassTest {
         }
 
         assertEquals(1, counter, "Wolf should have died of natural causes and become a carcass.");
+    }
+
+    /**
+     * Requirement b for carcass: size of carcass depends on animal size
+     * @throws Exception skibob
+     */
+    @Test
+    public void testSizeOfCarcass() throws Exception {
+        programRunner.create("data/wolf-test3.txt");
+        world = programRunner.getWorld();
+        IDGenerator idGenerator = programRunner.getOriginal_id_generator();
+
+        programRunner.runSimulation(1);
+
+        Rabbit rabbit = new Rabbit(idGenerator, false);
+        rabbit.spawn(world);
+        int rabbit_nutrition = rabbit.getNutritionalValue();
+
+        rabbit.dieAndBecomeCarcass(world);
+        int carcass_nutrition = 0;
+
+        for (Object object: world.getEntities().keySet()){
+            if (object instanceof Carcass carcass){
+                carcass_nutrition = carcass.getNutritionalValue();
+                world.delete(carcass);
+            }
+        }
+
+        assertEquals(rabbit_nutrition, carcass_nutrition);
+
+        Wolf wolf = new Wolf(idGenerator, false);
+        wolf.spawn(world);
+        int wolf_nutrition = wolf.getNutritionalValue();
+
+        wolf.dieAndBecomeCarcass(world);
+
+        for (Object object: world.getEntities().keySet()){
+            if (object instanceof Carcass carcass){
+                carcass_nutrition = carcass.getNutritionalValue();
+            }
+        }
+        assertEquals(wolf_nutrition, carcass_nutrition);
     }
 }

@@ -47,6 +47,10 @@ public class FungusTest {
         assertEquals(1, world.getEntities().size());
     }
 
+    /**
+     * Tests fungus can find carcass
+     * @throws Exception
+     */
     @Test
     public void testFungusCheckCarcassMethod() throws Exception {
         world = new World(3);
@@ -61,7 +65,9 @@ public class FungusTest {
     }
 
     /**
+     * Requirement fungus: can spread
      * This test checks if the spread method from Fungus class is working.
+     * Fungus should exist in the carcass without being seen
      */
     @Test
     public void testFungusSpreadMethod() {
@@ -75,6 +81,10 @@ public class FungusTest {
         assertTrue(carcass.hasFungus());
     }
 
+    /**
+     * Requirement b for fungus.
+     * Test fungus spreads further because of "sporer"
+     */
     @Test
     public void testFungusSpreadRadius() {
         Program p = new Program(3,500,800);
@@ -111,6 +121,10 @@ public class FungusTest {
         assertEquals(0, world.getEntities().size());
     }
 
+    /**
+     * Tests fungus development
+     * @throws Exception
+     */
     @Test
     public void testFungusSimulation() throws Exception {
         programRunner.create("./data/test-fungus.txt");

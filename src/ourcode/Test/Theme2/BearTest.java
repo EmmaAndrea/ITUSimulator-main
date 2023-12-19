@@ -265,6 +265,7 @@ public class BearTest {
     /**
      * Requirement for bear: eats everything
      * the following tests show bear eats all other animals
+     * bear eats rabbit
      */
     @Test
     public void testBearEatingRabbit() {
@@ -295,6 +296,9 @@ public class BearTest {
         assertTrue(x == 1, "There should only be 1 animal in the world");
     }
 
+    /**
+     * bear eats wolf
+     */
     @Test
     public void testBearEatingWolf() {
         Program p = new Program(2, 500, 800);
@@ -324,6 +328,9 @@ public class BearTest {
         assertTrue(x == 1, "There should only be 1 animal in the world");
     }
 
+    /**
+     * bear eats dino
+     */
     @Test
     public void testBearEatingDinosaur() {
         Program p = new Program(2, 500, 800);
@@ -349,12 +356,43 @@ public class BearTest {
                 hasEaten = false;
             }
         }
-        System.out.println("the dinosaur was hit for " + dino.getDamageTaken() + " damage");
-        System.out.println(bear.getHunger());
-        System.out.println("in hiding: " + bear.isHiding());
         assertTrue(hasEaten);
     }
 
+    /**
+     * Requirement: bear attacks bear near territory
+     * Bears attack other bears that are not potential mates
+     * bear eats bear
+     */
+    @Test
+    public void testBearEatingBear() {
+        Program p = new Program(2, 500, 800);
+        world = p.getWorld();
+        id_generator = new IDGenerator();
+
+        TerritorialPredator bear = new Bear(id_generator, false);
+        bear.setGender("Male");
+        TerritorialPredator bear2 = new Bear(id_generator, false);
+        bear2.setGender("Male");
+
+        bear.spawn(world);
+        bear2.spawn(world);
+        bear.setHunger(20);
+
+        int bear_count = 0;
+        p.show();
+        for (int i = 0; i < 15; i++) {
+            p.simulate();
+        }
+
+        for (Object o : world.getEntities().keySet()) {
+            if (o instanceof Bear) {
+                bear_count++;
+            }
+        }
+
+        assertTrue(bear_count < 2);
+    }
     /**
      * Requirement for bear: stay near territory
      * This test will check if a bears walks outside its territory.
