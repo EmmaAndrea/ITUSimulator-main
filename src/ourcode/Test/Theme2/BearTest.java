@@ -418,4 +418,33 @@ public class BearTest {
         assertEquals(expected_y, actual_y);
     }
 
-}
+    /**
+     * Optional requirement for bear
+     * Tests the wolves will kill the bear if the pack is large enough
+     */
+    @Test
+    public void TestWolfPackSharesFoodWhenHungry () throws Exception {
+        programRunner.create("./data/wolf-test4.txt");
+
+        world = programRunner.getWorld();
+
+        programRunner.runSimulation(11);
+
+        TerritorialPredator bear = new Bear(programRunner.getOriginal_id_generator(), false);
+        bear.spawn(world);
+
+        while (world.getEntities().containsKey(bear)) {
+            programRunner.runSimulation(1);
+        }
+
+        Carcass bear_carcass = null;
+        for (Object object : world.getEntities().keySet()) {
+            if (object instanceof Carcass carcass) {
+                if (carcass.getType().equals("bear")) {
+                    bear_carcass = carcass;
+                }
+            }
+        }
+        assertEquals(12, bear_carcass.getNutritionalValue(), "program should stop when the bear is killed");
+        }
+    }
