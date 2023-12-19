@@ -2,12 +2,13 @@ package ourcode.Organism.OrganismChildren;
 
 import itumulator.world.Location;
 import itumulator.world.World;
-import ourcode.Obstacles.Burrow;
 import ourcode.Obstacles.Habitat;
-import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.Gender;
 import ourcode.Organism.Organism;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.*;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.SocialPredator;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Wolf;
 import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rabbit;
 import ourcode.Organism.OrganismChildren.AnimalChildren.Predator;
 import ourcode.Organism.OrganismChildren.PlantChildren.Bush;
@@ -16,11 +17,9 @@ import ourcode.Setup.Entity;
 import ourcode.Setup.EntityFactory;
 import ourcode.Setup.IDGenerator;
 
-import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Set;
-import java.util.concurrent.locks.ReentrantLock;
 
 import static ourcode.Organism.Gender.Female;
 import static ourcode.Organism.Gender.Male;
@@ -96,7 +95,6 @@ public abstract class Animal extends Organism {
         if (hasBeenKilled || (age >= max_age) || (hunger >= max_hunger) || isDead()) {
             grace_period = 1;
             dieAndBecomeCarcass(world);
-            System.out.println(type + id + " died of natural causes");
             return;
         }
 
@@ -271,7 +269,6 @@ public abstract class Animal extends Organism {
 
             // Include other cases as needed based on your entity types
             default:
-                System.out.println("Unknown entity type: " + entityType);
         }
         return true;
     }
@@ -300,13 +297,12 @@ public abstract class Animal extends Organism {
      * @param cub
      * @return
      */
-    public boolean putCubInWorld(World world, Animal cub){
+    public boolean putCubInWorld(World world, Animal cub) {
         world.add(cub);
         habitat.addResident(cub);
         cub.setGracePeriod(1);
         cub.setHabitat(habitat);
         cub.setInHiding();
-        System.out.println(type + " made cub");
 
         if (cub instanceof SocialPredator s_cub) {
             if (this instanceof SocialPredator this_s){
@@ -347,7 +343,7 @@ public abstract class Animal extends Organism {
      * @param world
      * @return
      */
-    public boolean checkHasBreedMate(World world){
+    public boolean checkHasBreedMate(World world) {
         if (has_habitat && habitat.getResidents().size() > 1) {
             for (Animal animal : habitat.getResidents()) {
                 if (animal.getGender() == Male) {
@@ -487,7 +483,6 @@ public abstract class Animal extends Organism {
         habitat.removeResident(this);
         Location spawn_location = getSpawnLocation(world);
         if (spawn_location == null){
-            System.out.println(type + id + " could not leave habitat");
             return;
         }
         try {
@@ -496,8 +491,6 @@ public abstract class Animal extends Organism {
             return;
         }
         is_hiding = false;
-        System.out.println(type + id + "left habitat");
-        // overridden by bear
     }
 
     /**
@@ -567,7 +560,6 @@ public abstract class Animal extends Organism {
      */
     public void damage(int power) {
         damage_taken += power;
-        System.out.println(type + id + " was hit for " + power + " damage");
     }
 
     /**
@@ -625,22 +617,16 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Attempts to find food or safety for the animal in the simulation world.
-     * The method first checks for blocking organisms in the surrounding tiles. If it encounters an organism
-     * with a higher trophic level (indicating a predator), it moves away from that organism. If it finds
-     * an organism that is a viable food source (as listed in consumable_foods), it moves closer to that organism.
-     * If no food or threats are found, it checks for non-blocking organisms like grass and moves closer if
-     * food is found. Otherwise, the animal moves to a random location.
+     * Attempts to find food or safety for the organism within its immediate surroundings.
+     * Checks for blocking organisms and potential food sources, and takes appropriate actions.
      *
-     * @param world The simulation world in which the animal is trying to find food or safety.
-     * @return true if the animal moves towards food or away from a predator, false if it moves to a random location.
+     * @param world The world in which the organism searches for food or safety.
+     * @return True if the organism finds food or safety, resulting in the action being stopped; otherwise, false.
      */
     public boolean findFoodOrSafety(World world) {
         // Validate if the animal is on the map
         if (!world.contains(this) || is_hiding) {
-            System.out.println("Warning: Animal not on the map");
-            // returns true to stop act
-            return true;
+            return true; // returns true to stop act
         }
 
         try {
@@ -650,101 +636,133 @@ public abstract class Animal extends Organism {
             // First, check for blocking organisms.
             // Though, if there is an animal of higher trophic level, move away from this animal.
             for (Location location : surrounding_tiles) {
-
                 // If the tile at given location isn't empty.
                 if (!world.isTileEmpty(location)) {
-
-                    // Declares a new object at given location.
-                    Object object = world.getTile(location);
+                    Object object = world.getTile(location); // Declares a new object at given location.
 
                     // Casts object to Organism class and checks if the object is an Organism.
-                    if (object instanceof Animal animal) {
-                        if (animal.getGracePeriod() == 0) {
-                            if (!friends.contains(animal)) {
-                                if (animal.getType().equals(type)) {
-                                    if (sameTypeInteraction(world, animal)) {
-                                        return true;
-                                    } else continue;
-                                } else if (differentTypeInteraction(world, animal)) {
-                                    return true;
-                                } else continue;
-                            } continue;
-                        }
-                    }
+                    if (interactWithAnimalIfApplicable(world, object)) return true;
+
                     // if the object is a carcass this will eat part of it.
-                    if (object instanceof Carcass carcass) {
-                        if (this instanceof Predator) {
-                            if (hunger >= 4) {
-                                if (carcass.isRotten) {
-                                    damage_taken -= 4;
-                                    moveAway(world, world.getLocation(carcass));
-                                }
-                                if (carcass.has_fungus) {
-                                    infect();
-                                    moveAway(world, world.getLocation(carcass));
-                                }
-                                else {
-                                    if (carcass.getGracePeriod() == 0) {
-                                        carcass.setGracePeriod(1);
-                                        eat(world, carcass);
-                                    }
-                                }
-                                return true;
-                            }
-                        }
-                    }
+                    if (handleCarcassInteractions(world, object)) return true;
                 }
             }
 
-            if (world.containsNonBlocking(world.getLocation(this))) {
-                Object object = world.getNonBlocking(world.getLocation(this));
-                if (object instanceof Grass grass) {
-                    if (consumable_foods.contains(grass.getType())) {
-                        if (hunger >= grass.getNutritionalValue()) {
+            if (consumeGrassIfHungry(world)) return true;
+            return consumeSurroundingOrganisms(world, surrounding_tiles); // False if no food is found.
+
+        } catch (IllegalArgumentException iae) {
+            System.out.println(iae + "this has been eaten");
+            return true; // returns true to stop act
+        }
+    }
+
+    /**
+     * Interacts with an animal if applicable, based on specific conditions.
+     *
+     * @param world              The world in which the interaction occurs.
+     * @param potentialInteraction The potential interaction object to be checked.
+     * @return True if the interaction is successful; otherwise, false.
+     */
+    public boolean interactWithAnimalIfApplicable(World world, Object potentialInteraction) {
+        if (potentialInteraction instanceof Animal animal) {
+            if (animal.getGracePeriod() == 0) {
+                if (!friends.contains(animal)) {
+                    if (animal.getType().equals(type) && sameTypeInteraction(world, animal)) {
+                        return true;
+                    } else if (differentTypeInteraction(world, animal)) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Handles interactions with a carcass if the current organism is a predator and hungry.
+     *
+     * @param world The world in which the interaction occurs.
+     * @param object The potential carcass object to be checked.
+     * @return True if the interaction is successful; otherwise, false.
+     */
+    public boolean handleCarcassInteractions(World world, Object object) {
+        if (object instanceof Carcass carcass) {
+            if (this instanceof Predator) {
+                if (hunger >= 4) {
+                    if (carcass.isRotten) {
+                        damage_taken -= 4;
+                        moveAway(world, world.getLocation(carcass));
+                    }
+                    if (carcass.has_fungus) {
+                        infect();
+                        moveAway(world, world.getLocation(carcass));
+                    }
+                    else {
+                        if (carcass.getGracePeriod() == 0) {
+                            carcass.setGracePeriod(1);
+                            eat(world, carcass);
+                        }
+                    }
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Attempts to consume grass if the organism is hungry and there is consumable grass nearby.
+     *
+     * @param world The world in which the consumption occurs.
+     * @return True if grass is successfully consumed; otherwise, false.
+     */
+    public boolean consumeGrassIfHungry(World world) {
+        if (world.containsNonBlocking(world.getLocation(this))) {
+            Object potentialFood = world.getNonBlocking(world.getLocation(this));
+            if (potentialFood instanceof Grass grass) {
+                if (consumable_foods.contains(grass.getType()) && hunger >= grass.getNutritionalValue()) {
+                    eat(world, grass);
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Attempts to consume surrounding organisms based on specific conditions.
+     *
+     * @param world           The world in which the consumption occurs.
+     * @param surroundingTiles The set of surrounding tiles to check for organisms.
+     * @return True if any surrounding organism is successfully consumed; otherwise, false.
+     */
+    public boolean consumeSurroundingOrganisms(World world, Set<Location> surroundingTiles) {
+        for (Location location : surroundingTiles) {
+            if (!world.isTileEmpty(location)) {
+                // Declares a new object at the given location.
+                Object potentialOrganism = world.getTile(location);
+
+                // Casts the object to the Organism class and checks if it is an Organism.
+                if (potentialOrganism instanceof Bush bush) {
+                    if (consumable_foods.contains("bush") && hunger > 2 && bush.getBerriesAmount() > 2) {
+                        bush.eatBerries();
+                        eat(world, bush);
+                        return true;
+                    }
+                } else if (world.containsNonBlocking(location)) {
+                    potentialOrganism = world.getNonBlocking(location);
+                    if (potentialOrganism instanceof Grass grass) {
+                        if (consumable_foods.contains(grass.getType()) && hunger >= grass.getNutritionalValue()) {
+                            moveCloser(world, location);
                             eat(world, grass);
                             return true;
                         }
                     }
                 }
             }
-            // Next, check for plants.
-            for (Location location : surrounding_tiles) {
-                if (!world.isTileEmpty(location)) {
-                    // Declares a new object at given location.
-                    Object object = world.getTile(location);
-
-                    // Casts object to Organism class and checks if the object is an Organism.
-                    if (object instanceof Bush bush) {
-                        if (consumable_foods.contains("bush")) {
-                            if (hunger > 2 && bush.getBerriesAmount() > 2) {
-                                bush.eatBerries();
-                                eat(world, bush);
-                            }
-                            System.out.println(type + " ate berries");
-                            return true;
-                        }
-                    } else if (world.containsNonBlocking(location)) {
-                        object = world.getNonBlocking(location);
-                        if (object instanceof Grass grass) {
-                            if (consumable_foods.contains(grass.getType())) {
-                                if (hunger >= grass.getNutritionalValue()) {
-                                    moveCloser(world, location);
-                                    eat(world, grass);
-                                    return true;
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-
-            // If no food or danger is found, return false.
-            return false;
-        } catch (IllegalArgumentException iae) {
-            System.out.println(iae + "this has been eaten");
-            // returns true to stop act
-            return true;
         }
+        return false;
     }
 
     /**
@@ -855,7 +873,6 @@ public abstract class Animal extends Organism {
         try {
             current = world.getLocation(this);
         } catch (IllegalArgumentException e) {
-            System.out.println(e.getMessage() + " animal has been eaten");
             return true;
         }
 

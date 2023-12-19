@@ -67,7 +67,6 @@ public abstract class Rodent extends Prey {
             try {
                 world.getLocation(habitat);
             } catch (Exception e) {
-                System.out.println("habitat missing");
                 habitat = null;
                 return;
             }

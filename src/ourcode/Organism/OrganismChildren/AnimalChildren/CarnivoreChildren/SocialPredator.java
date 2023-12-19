@@ -66,7 +66,6 @@ public abstract class SocialPredator extends Predator {
         }
         else if (my_alpha != null && my_alpha.getPack().size() < 2) {
             deletePack();
-            System.out.println("pack deleted");
         }
         else if (my_alpha != null) {
             if (my_alpha.getPack().size() > 4) {
@@ -155,7 +154,6 @@ public abstract class SocialPredator extends Predator {
                     } else {
                         moveAway(world, world.getLocation(animal));
                         moveAway(world, world.getLocation(animal));
-                        System.out.println("moved away");
                         return true;
                     }
                 }
@@ -421,7 +419,7 @@ public abstract class SocialPredator extends Predator {
                         my_alpha.addToPack(s);
                     }
                 } catch (ConcurrentModificationException e) {
-                    System.out.println("member has been eaten");
+                    System.out.println(e.getMessage() + "member has been eaten");
 
                 }
             }

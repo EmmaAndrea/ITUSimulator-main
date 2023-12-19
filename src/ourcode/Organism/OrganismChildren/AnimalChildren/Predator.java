@@ -51,7 +51,6 @@ public abstract class Predator extends Animal {
     @Override
     public void attack(World world, Animal animal) {
         animal.damage(power);
-        System.out.println(type + " hit " + animal.getType() + " for " + power + " damage");
         if (animal.isDead()) {
             animal.setHasBeenKilled();
         } animal.setGracePeriod(0);
@@ -104,10 +103,8 @@ public abstract class Predator extends Animal {
                                 if (animal.getTrophicLevel() <= trophic_level) {
                                     if (consumable_foods.contains(animal.getType())) {
                                         for (int i = 1; i <= distanceTo(world, location); i++) {
-                                            System.out.println(type + id + " moves closer to " + animal.getType() + animal.getId() + " in hunt mode");
                                             moveCloser(world, location);
                                         }
-                                        System.out.println(type + id + " attacks " + animal.getType() + animal.getId() + " in hunt mode");
                                         attack(world, animal);
                                         return true;
                                     }

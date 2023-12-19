@@ -55,7 +55,6 @@ public abstract class TerritorialPredator extends Predator {
         if (!is_hiding && !isBedtime(world)) {
             // if ready to mate and if single, start finding a partner
             if (gender == Male && age > 19 && mate == null) {
-                System.out.println("Starts finding mate");
                 if (findMate(world)) return;
             }
 
@@ -171,11 +170,7 @@ public abstract class TerritorialPredator extends Predator {
      */
     @Override
     public boolean checkHasBreedMate(World world) {
-        if (mate != null) {
-            System.out.println("tries to breed");
-                return true;
-        }
-        return false;
+        return mate != null;
     }
 
     /**
@@ -189,7 +184,6 @@ public abstract class TerritorialPredator extends Predator {
         for (Location location : world.getSurroundingTiles(female_bear.getTerritory())) {
             if (checkEmptySpace(world, location)) {
                 setTerritory(world, location);
-                System.out.println("BOY GOT MATE");
                 return true;
             }
         } return false;
@@ -202,7 +196,6 @@ public abstract class TerritorialPredator extends Predator {
     public void femaleSetMate(TerritorialPredator male_bear) {
         mate = male_bear;
         friends.add(male_bear);
-        System.out.println("GIRL GOT MATE");
     }
 
     /**

@@ -108,7 +108,6 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
         try {
             my_location = world.getLocation(this);
         } catch (Exception e) {
-            System.out.println("dinosaur died");
             return false;
         }
         for (Location location : world.getSurroundingTiles(my_location, 4)) {
@@ -128,7 +127,6 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
      */
     @Override
     public void breed(World world) {
-        System.out.println(type + id + " made baby dino");
         DinosaurEgg dinosaurEgg = new DinosaurEgg(id_generator, has_cordyceps);
         dinosaurEgg.setMother(this);
             for (Location location: world.getSurroundingTiles(world.getLocation(this), 1)) {
@@ -182,7 +180,6 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
      * @param world The simulation world where the extinction event occurs.
      */
     public void goExtinct(World world) {
-        System.out.println("went extinct");
         Meteor meteor = new Meteor(id_generator);
         Location current_location = world.getLocation(this);
         deleteEverythingOnTile(world, current_location);
