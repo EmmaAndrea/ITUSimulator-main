@@ -2,6 +2,7 @@ package ourcode.Setup;
 
 import itumulator.simulator.Actor;
 import itumulator.world.Location;
+import itumulator.world.NonBlocking;
 import itumulator.world.World;
 
 import java.util.Random;
@@ -50,12 +51,13 @@ public abstract class Entity implements Actor {
     public void spawn(World world) {
         Location location = getRandomLocation(world); // Finds a random location.
 
-        while (!world.isTileEmpty(location)) { // If it's not empty, find a new random location.
+        // Handles whether a blocking or non-blocking entity is to be spawned into an occupied location.
+        while ((this instanceof NonBlocking && world.containsNonBlocking(location)) ||
+                (!(this instanceof NonBlocking) && !world.isTileEmpty(location))) {
             location = getRandomLocation(world);
         }
 
-        world.setTile(location, this); // If it's empty, spawn organism into this location.
-
+        world.setTile(location, this); // Spawn entity into this empty location.
         id_generator.addLocationToIdMap(location, id);
         id_generator.addEntityToIdMap(id, this);
     }
@@ -64,12 +66,11 @@ public abstract class Entity implements Actor {
      * Generates and returns a random location within the simulation world.
      *
      * @param world The simulation world to generate a location in.
-     * @return A randomly generated location within the world.
+     * @return A random location within the world.
      */
     protected Location getRandomLocation(World world) {
         Random random = new Random();
 
-        // generates random x and y coordinates
         int randomX = random.nextInt(world.getSize());
         int randomY = random.nextInt(world.getSize());
 
