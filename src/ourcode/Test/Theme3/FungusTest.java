@@ -49,10 +49,9 @@ public class FungusTest {
 
     /**
      * Tests fungus can find carcass
-     * @throws Exception
      */
     @Test
-    public void testFungusCheckCarcassMethod() throws Exception {
+    public void testFungusCheckCarcassMethod() {
         world = new World(3);
 
         Carcass carcass = new Carcass(idGenerator, 4, "bear", false);

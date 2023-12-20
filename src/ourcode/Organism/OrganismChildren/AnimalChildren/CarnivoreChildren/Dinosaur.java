@@ -52,8 +52,15 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
         }
 
         previous_location = world.getLocation(this);
-        Location current_location = world.getLocation(this);
         super.act(world);
+        Location current_location = world.getLocation(this);
+
+        // Make footprint
+        if (checkEmptySpace(world, current_location)) {
+            if (!world.containsNonBlocking(current_location)) {
+                world.setTile(current_location, new Footprint(id_generator));
+            }
+        }
 
         if (!world.getEntities().containsKey(mother)) {
             mother = null;
@@ -70,13 +77,6 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
         // Stop at once if something happened that killed the dinosaur.
         if (!world.contains(this)) {
             return;
-        }
-
-        // Make footprint
-        if (checkEmptySpace(world, current_location)) {
-            if (!world.containsNonBlocking(current_location)) {
-                world.setTile(previous_location, new Footprint(id_generator));
-            }
         }
 
         if (kaboomOdds()) {

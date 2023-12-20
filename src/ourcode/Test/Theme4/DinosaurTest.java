@@ -1,16 +1,16 @@
 package ourcode.Test.Theme4;
 
 import itumulator.executable.Program;
-import itumulator.world.Location;
 import itumulator.world.World;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import ourcode.Obstacles.Footprint;
 import ourcode.Obstacles.Fossil;
 import ourcode.Organism.DinosaurEgg;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Bear;
-import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.Dinosaur;
+import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TerritorialPredator;
 import ourcode.Organism.OrganismChildren.AnimalChildren.CarnivoreChildren.TyrannosaurusRex;
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
@@ -203,20 +203,26 @@ public class DinosaurTest {
      */
     @Test
     public void testDinosaurFootprint() {
-        Program program = new Program(2, 500, 200);
+        Program program = new Program(2, 500, 2000);
         world = program.getWorld();
         IDGenerator id_generator = new IDGenerator();
 
         program.show();
         Dinosaur dino = new TyrannosaurusRex(id_generator, false);
         dino.spawn(world);
-        program.simulate();
-        Location previous_location = world.getLocation(dino);
-        program.simulate();
+        boolean correct_footstep = false;
+        for (int i = 0; i < 10; i++) {
+            program.simulate();
 
-        //boolean correct_footstep = world.getNonBlocking(previous_location) instanceof Footprint;
+            for (Object o : world.getEntities().keySet()) {
+                if (o instanceof Footprint) {
+                    correct_footstep = true;
+                    break;
+                }
+            }
+        }
 
-        //assertTrue(correct_footstep, "The dinosaur should have left a footprint.");
+        assertTrue(correct_footstep, "The dinosaur should have left a footprint.");
     }
 
     /**

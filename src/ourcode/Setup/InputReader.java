@@ -80,7 +80,7 @@ public class InputReader {
             String[] parts = lines.get(i).split(" "); // Split each line into parts.
             boolean isCordyceps = parts[0].equalsIgnoreCase("cordyceps"); // Check if spawn is cordyceps-infected.
             boolean isFungi = parts.length > 1 && parts[1].equalsIgnoreCase("fungi"); // Check if spawn is a carcass with fungi.
-            String type = parts[0]; // The type of spawn (e.g., bear, wolf).
+            String type = parts[0].toLowerCase(); // The type of spawn (e.g., bear, wolf).
 
             // Special handling for dinosaur eggs.
             if (type.equals("dinosaur")) {

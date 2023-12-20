@@ -20,7 +20,6 @@ import ourcode.Organism.OrganismChildren.AnimalChildren.HerbivoreChildren.Rodent
 import static org.junit.jupiter.api.Assertions.*;
 
 public class WolfTest {
-    private Program p;
     private ProgramRunner programRunner;
     private World world;
     private int wolf_count;
@@ -40,7 +39,6 @@ public class WolfTest {
         wolf_count = 0;
         world = new World(4);
         id_generator = new IDGenerator();
-        p = new Program(4, 1000, 100);
         programRunner = new ProgramRunner();
     }
 
@@ -210,7 +208,7 @@ public class WolfTest {
 
         assertTrue(same_alpha, "each wolf should have the same alpha");
 
-        assertTrue(alpha.getPack().size() == 6, "there should be 6 wolves in the pack");
+        assertEquals(6, alpha.getPack().size(), "there should be 6 wolves in the pack");
     }
 
     /**
@@ -455,20 +453,14 @@ public class WolfTest {
 
             assertEquals(12, bear_carcass.getNutritionalValue());
 
-            SocialPredator wolf1 = null;
             for (Object object : world.getEntities().keySet()) {
-                if (object instanceof SocialPredator wolf) {
-                    wolf1 = wolf;
+                if (object instanceof SocialPredator) {
                     break;
                 }
             }
 
-            SocialPredator hungriest_wolf_before = wolf1.getHungriestSocialPredator();
-
 
             programRunner.runSimulation(1);
-
-            SocialPredator hungriest_wolf_after = wolf1.getHungriestSocialPredator();
 
             programRunner.runSimulation(1);
             programRunner.runSimulation(1);
@@ -498,7 +490,7 @@ public class WolfTest {
     }
 
     /**
-     * Requiremnt: pack animal
+     * Requirement: pack animal
      * Testing wolves stay together
      * @throws Exception
      */

@@ -3,7 +3,6 @@ package ourcode.Test.Theme2;
 import itumulator.executable.Program;
 import itumulator.world.Location;
 import itumulator.world.World;
-import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,9 +17,7 @@ import ourcode.Organism.OrganismChildren.PlantChildren.NonBlockingPlantChildren.
 import ourcode.Setup.IDGenerator;
 import ourcode.Setup.ProgramRunner;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.testng.AssertJUnit.assertSame;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  *
@@ -73,12 +70,11 @@ public class BearTest {
 
         int counter = countBears(world);
 
-        assertTrue(counter == 1);
+        assertEquals(1, counter);
     }
 
     /**
      * Method to count bears for any test.
-     * @param world
      * @return bear count
      */
     public int countBears(World world){
@@ -112,10 +108,9 @@ public class BearTest {
     /**
      * Optional requirement for bears, they search for mates and don't attack the opposite gender
      * This test checks if bears, being spawned through an input file, can use the 'findMate' method correctly.
-     * @throws Exception
      */
     @Test
-    public void testBearFindMate() throws Exception {
+    public void testBearFindMate() {
         Program program = new Program(3, 500, 200);
         world = program.getWorld();
         id_generator = new IDGenerator();
@@ -134,10 +129,8 @@ public class BearTest {
             program.simulate();
         }
 
-        int counter = countBears(world);
-
-        assertSame(female_bear.getMate(), male_bear);
-        assertSame(male_bear.getMate(), female_bear);
+        Assertions.assertSame(female_bear.getMate(), male_bear);
+        Assertions.assertSame(male_bear.getMate(), female_bear);
     }
 
     /**
@@ -174,7 +167,7 @@ public class BearTest {
      * This test will demonstrate a bears eating 'capabilities'. It will showcase if a bear can eat 'grass'
      */
     @Test
-    public void testBearEatingGrass() throws Exception {
+    public void testBearEatingGrass() {
         Program p = new Program(2, 800, 500);
         world = p.getWorld();
         id_generator = new IDGenerator();
@@ -193,6 +186,7 @@ public class BearTest {
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Grass) {
                 hasEaten = false;
+                break;
             }
         }
 
@@ -224,6 +218,7 @@ public class BearTest {
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Carcass) {
                 hasEatenCarcass = false;
+                break;
             }
         }
 
@@ -293,7 +288,7 @@ public class BearTest {
             }
         }
 
-        assertTrue(x == 1, "There should only be 1 animal in the world");
+        assertEquals(1, x, "There should only be 1 animal in the world");
     }
 
     /**
@@ -325,7 +320,7 @@ public class BearTest {
             }
         }
 
-        assertTrue(x == 1, "There should only be 1 animal in the world");
+        assertEquals(1, x, "There should only be 1 animal in the world");
     }
 
     /**
@@ -354,6 +349,7 @@ public class BearTest {
         for (Object o : world.getEntities().keySet()) {
             if (o instanceof Dinosaur) {
                 hasEaten = false;
+                break;
             }
         }
         assertTrue(hasEaten);
@@ -413,7 +409,7 @@ public class BearTest {
         p.show();
 
         p.simulate();
-        assertTrue(bear.getTerritory() != null);
+        assertNotNull(bear.getTerritory());
 
         for (int i = 0; i < 19; i++) {
             p.simulate();
