@@ -115,7 +115,6 @@ public abstract class Animal extends Organism {
                     System.out.println(e.getMessage());
                 }
             }
-            return;
         }
         // If the animal is outside its habitat.
         else {
@@ -133,11 +132,11 @@ public abstract class Animal extends Organism {
     }
 
     /**
-     * Mpves an animal closer to its habitat if it is far away.
+     * Moves an animal closer to its habitat if it is far away.
      * If it is nearby, it goes in.
      *
-     * @param world
-     * @param habitat_location
+     * @param world The simulation world where the animal exists.
+     * @param habitat_location The animals habitat to go to.
      */
     public void goToHabitat(World world, Location habitat_location) {
         if (distanceTo(world, habitat_location) > 0) {
@@ -218,7 +217,7 @@ public abstract class Animal extends Organism {
      * Uses similar switch case to program runner.
      * @param world The simulation world where breeding occurs.
      */
-    public void breed(World world) throws Exception {
+    public void breed(World world) {
         int max_cubs = 12; // Maximum number of cubs that can be born.
         int family_size = 0;
 
@@ -231,7 +230,7 @@ public abstract class Animal extends Organism {
         int amount_of_cubs = Math.max(max_cubs - family_size, 1);
 
         for (int i = 0; i < amount_of_cubs; i++) {
-            if (!spawnEntity(world, type, 1, has_cordyceps)){
+            if (!spawnEntity(world, type, has_cordyceps)) {
                 break;
             }
         }
@@ -245,27 +244,17 @@ public abstract class Animal extends Organism {
      *
      * @param world       The simulation world where the entity will be spawned.
      * @param entityType  The type of entity to spawn (e.g., "rabbit", "grass", "burrow").
-     * @param amount      The number of entities of the specified type to spawn.
      */
-    public boolean spawnEntity(World world, String entityType, int amount, boolean hasCordyceps) {
+    public boolean spawnEntity(World world, String entityType, boolean hasCordyceps) {
         switch (entityType) {
             case "rabbit":
-                if (!spawnEntities(world, () -> new Rabbit(id_generator, hasCordyceps))){
-                    return false;
-                }
-                return true;
+                return spawnEntities(world, () -> new Rabbit(id_generator, hasCordyceps));
 
             case "wolf":
-                if (!spawnEntities(world, () -> new Wolf(id_generator, hasCordyceps))){
-                    return false;
-                }
-                return true;
+                return spawnEntities(world, () -> new Wolf(id_generator, hasCordyceps));
 
             case "bear":
-                if (!spawnEntities(world, () -> new Bear(id_generator, hasCordyceps))){
-                    return false;
-                }
-                return true;
+                return spawnEntities(world, () -> new Bear(id_generator, hasCordyceps));
 
             // Include other cases as needed based on your entity types
             default:
@@ -284,18 +273,15 @@ public abstract class Animal extends Organism {
         Entity entity = factory.create();
         Animal cub = (Animal) entity;
 
-        if (!putCubInWorld(world, cub)){
-            return false;
-        }
-        return true;
+        return putCubInWorld(world, cub);
     }
 
     /**
      * This method is used to put the cubs in the world
      * It makes sure the parents don't eat the cubs, as well as making sure it stays in its habitat until wakeup time.
-     * @param world
-     * @param cub
-     * @return
+     * @param world The simulation world where the animal exists.
+     * @param cub The cub to be put in the world.
+     * @return true when the cub has been put in the world.
      */
     public boolean putCubInWorld(World world, Animal cub) {
         world.add(cub);
@@ -340,8 +326,8 @@ public abstract class Animal extends Organism {
 
     /**
      * This method checks the female has a mate to breed with. This method is different for each type of animal.
-     * @param world
-     * @return
+     * @param world The simulation world where the animal exists.
+     * @return true if it can find a mate.
      */
     public boolean checkHasBreedMate(World world) {
         if (has_habitat && habitat.getResidents().size() > 1) {
@@ -670,9 +656,7 @@ public abstract class Animal extends Organism {
                 if (!friends.contains(animal)) {
                     if (animal.getType().equals(type) && sameTypeInteraction(world, animal)) {
                         return true;
-                    } else if (differentTypeInteraction(world, animal)) {
-                        return true;
-                    }
+                    } else return differentTypeInteraction(world, animal);
                 }
             }
         }
@@ -901,16 +885,6 @@ public abstract class Animal extends Organism {
             }
         }
         return false;
-    }
-
-    /**
-     * Checks if the animal is currently in hiding.
-     * Being in hiding affects the animal's visibility and interactions in the simulation.
-     *
-     * @return True if the animal is hiding, false otherwise.
-     */
-    public boolean isHiding() {
-        return is_hiding;
     }
 
     /**
