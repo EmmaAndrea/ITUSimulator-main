@@ -310,6 +310,7 @@ public class WolfTest {
      */
     @Test
     public void testWolfBreedingMethod() throws Exception {
+        // simply creates a world from the input file
         programRunner.create("./data/wolf-test1.txt");
 
         world = programRunner.getWorld();

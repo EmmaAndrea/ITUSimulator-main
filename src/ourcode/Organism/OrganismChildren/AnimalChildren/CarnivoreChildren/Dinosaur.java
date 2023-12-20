@@ -53,6 +53,12 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
 
         previous_location = world.getLocation(this);
         super.act(world);
+
+        // Stop at once if something happened that killed the dinosaur.
+        if (!world.contains(this)) {
+            return;
+        }
+
         Location current_location = world.getLocation(this);
 
         // Make footprint
@@ -71,11 +77,6 @@ public abstract class Dinosaur extends Predator implements DynamicDisplayInforma
             power = 6;
         } else {
             if (mother != null) followMother(world);
-            return;
-        }
-
-        // Stop at once if something happened that killed the dinosaur.
-        if (!world.contains(this)) {
             return;
         }
 
